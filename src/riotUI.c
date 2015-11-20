@@ -79,6 +79,10 @@ int levelSelect(struct Windows *gameInterface, struct MapList *mapList,
     int y = 3;
     int x;
 
+#ifdef _DEBUG
+    progress=7;
+#endif
+
     struct Map *map;//, *last;
 
     wclear(menu);
@@ -89,7 +93,6 @@ int levelSelect(struct Windows *gameInterface, struct MapList *mapList,
     mvwhline(menu, y += 2, 21, ACS_HLINE, 37);
     y += 2;
 
-    mvwprintw(menu,0,0,"%d",progress);
     for (x=0; x<9; x++){
         if (x <= progress)
         {
@@ -99,34 +102,14 @@ int levelSelect(struct Windows *gameInterface, struct MapList *mapList,
             mvwprintw(menu,y+x,21,"[/] LOCKED");
         }
     }
-
     wrefresh(menu);
     while (1){
         input = wgetch(menu);
         select = input - '0';
-        if (select >= 0 && select <= 8/*progress*/)
+        if (select >= 0 && select <= progress)
             return (int) (select);
     }
 }
-
-
-/*bool ifProt(struct UnitList * current) {
-
-   bool isProtThere = TRUE;
-
-   if (current) {
-      if (current->count) {
-         for(int i = 0; i <= getLength(current) - 1; i++) {
-
-
-
-         }
-      }
-   } else {
-      return FALSE;
-   }
-
-}*/
 
 
 void drawInmateSelection(struct Windows *win, struct Map *map,
@@ -136,10 +119,6 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
     int y;
     int numAdded = 0;
     static bool ifProt = FALSE;
-//
-//    mvwprintw(win->body, MAP_ROWS, 3,
-//        "Press the corresponding letter to buy inmate");
-//    mvwprintw(win->footer, 0, 3, "Press \"Enter\" to play:");
     do {
         updateHeader(win->header, map);
         wrefresh(win->header);
@@ -366,7 +345,7 @@ void drawGuards(WINDOW *body, struct Map *map, struct UnitList *guards) {
 
 void drawLevel(struct Windows *windows, struct Map *map,
     struct UnitList *guards) {
-
+    char protName[20];
     char output[100];
     int i;
     int y;
@@ -408,15 +387,23 @@ void drawLevel(struct Windows *windows, struct Map *map,
     /*Populates footer*/
     strcpy(output, "");
     for (i = 0; i < strlen(map->inmates); i++) {
-        strcat(output, getInmateName(map->inmates[i]));
-        strcat(output, "\t");
-        if (i == 3) {
-            mvwaddstr(windows->footer, 1, 10, output);
+        if (map->inmates[i]=='r'){
+            strcat(protName, getInmateName(map->inmates[i]));
+            mvwaddstr(windows->footer, 2,1,protName);
+        }
+        else{
+            strcat(output, getInmateName(map->inmates[i]));
+            strcat(output, "\t");
+        }
+        if (i == 4) {
+            mvwaddstr(windows->footer, 1, 15, output);
             strcpy(output, "");
         }
     }
-    mvwprintw(windows->footer, 1, 1, "INMATES");
-    mvwaddstr(windows->footer, 2, 10, output);
+    mvwprintw(windows->footer, 1, 1, "INMATES:");
+    mvwaddstr(windows->footer, 2, 15, output);
+    mvwaddch(windows->footer, 2, MAX_COLS-1, ACS_VLINE);
+    mvwaddch(windows->footer, 1, MAX_COLS-1, ACS_VLINE);
 
     wrefresh(windows->body);
     wrefresh(windows->header);
@@ -581,7 +568,7 @@ char *getInmateName(char ch) {
         case 'l':
             return "[l]unatic(16)";
         case 'f':
-            return "[f]fatty(60)";
+            return "[f]atty(60)";
         case 's':
             return "[s]peedy(10)";
         case 'c':
