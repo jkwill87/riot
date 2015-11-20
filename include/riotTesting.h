@@ -26,7 +26,12 @@ ARGUMENTS: The guard list
 */
 
 
-void printGuardList(struct UnitList *guardList);
+void printGuardList(struct UnitList *guardList);/*
+
+DESCRIPTION: Prints out the guard list
+
+ARGUMENTS: The guard list 
+*/
 
 
 void unitsMove(char *loadDir);/*
