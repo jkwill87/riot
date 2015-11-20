@@ -1,10 +1,5 @@
 #include "riotUI.h"
 
-#ifndef _DEBUG
-#define _DEBUG
-#endif
-
-
 void uiInit(struct Windows *win) {
 
     int y, x;
@@ -76,16 +71,15 @@ enum GameMode menuMain(struct Windows *gameInterface) {
 
 
 int levelSelect(struct Windows *gameInterface, struct MapList *mapList,
-    bool *playerProgress) {
+    int progress) {
     WINDOW *menu = gameInterface->menu;
-    struct Map *current;
+    //struct Map *current;
+    char input;
     int select;
     int y = 3;
+    int x;
 
-#ifndef _DEBUG
-    bool unlocked[MAX_LEVELS];
-    struct Map *current, *last;
-#endif
+    struct Map *map;//, *last;
 
     wclear(menu);
     box(menu, 0, 0);
@@ -95,48 +89,24 @@ int levelSelect(struct Windows *gameInterface, struct MapList *mapList,
     mvwhline(menu, y += 2, 21, ACS_HLINE, 37);
     y += 2;
 
-    /* Always print first level */
-    mvwprintw(menu, y, 21, "[0] %s", mapList->level[0].name);
-
-#ifndef _DEBUG
-    unlocked[0] = true;
-#endif
-
-    /* Print additional levels */
-    for (int i = 1; i < mapList->count; i++) {
-        current = &mapList->level[i];
-#ifndef _DEBUG
-        last = &mapList->level[i - 1];
-        if (!current->hidden) {
-            mvwprintw(menu, y + i, 21, "[%c] %s",
-                last->beaten ? i + '0' : '-', current->name);
-        } else if (current->hidden && last->beaten) {
-            mvwprintw(menu, y + i, 21, "[%i] %s", i, current->name);
-        } else y--;
-#else
-        mvwprintw(menu, y + i, 21, "[%c] %s", i + '0', current->name);
-#endif
-
-        /* Set unlocked state */
-#ifndef _DEBUG
-        unlocked[i] = current->beaten;
-#endif
+    mvwprintw(menu,0,0,"%d",progress);
+    for (x=0; x<9; x++){
+        if (x <= progress)
+        {
+            map = &mapList->level[x];
+            mvwprintw(menu,y+x,21,"[%d] %s",x,map->name);
+        }else{
+            mvwprintw(menu,y+x,21,"[/] LOCKED");
+        }
     }
-    mvwaddstr(menu, MAX_ROWS - 4, 21, "[b]ack");
+
     wrefresh(menu);
-
-    /* Get user input */
-    do {
-        select = (char) wgetch(menu);
-        if (select == 'b') return -1;
-        if (select - '0' < 0 || select > MAX_LEVELS) continue;
-#ifndef _DEBUG
-        } while (!unlocked[select - '0']);
-#else
-    } while (false);
-#endif
-
-    return (int) (select - '0');
+    while (1){
+        input = wgetch(menu);
+        select = input - '0';
+        if (select >= 0 && select <= progress)
+            return (int) (select);
+    }
 }
 
 
@@ -289,6 +259,19 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                     mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
                 }
                 break;
+            case 'p':
+                if (map->repMax >= 10) {
+                    mvwprintw(win->footer, 0, 40, "PROTAGANIST ADDED");
+                    inmate = createInmate(input);
+                    map->repMax -= 10;
+                    enqueue(inmates, inmate);
+                    numAdded++;
+                    updateQueue(win->body, inmates, numAdded);
+                }
+                else {
+                    mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
+                }
+                break;
             default:
                 mvwprintw(win->footer, 0, 40, "INMATE NOT FOUND");
         }
@@ -320,6 +303,29 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
     wrefresh(win->body);
 }
 
+void eraseInmate(struct Windows * win, struct Path * path, struct Inmate * inmate) {
+    struct TileNode * nextTile;
+    nextTile = path->first;
+    char ch;
+    int * coordinates;
+
+    //for (int i = 0; i < path->count; i++) { 
+    //    nextTile = nextTile->next;
+    //}
+    //ch = nextTile->type;
+    while (1){
+        if(nextTile->next == NULL){
+            quit("location not in path, cannot erase");
+        }
+        nextTile = nextTile->next;
+        if(nextTile->location == inmate->position){
+            ch=nextTile->type;
+            break;
+        }
+    }
+    coordinates = getCoordinate(inmate->position);
+    mvwaddch(win->body, coordinates[0], coordinates[1], ch);
+}
 
 void updateHeader(WINDOW *header, struct Map *map) {
     wclear(header);
@@ -478,12 +484,11 @@ void redrawUnit(WINDOW *body, struct Inmate *inmate, struct Path *path,
         setColor = PURPLE;
     }
 
-#ifndef _DEBUG
+#ifdef _DEBUG
     /* Print movement debug information if the debug macro has been set */
     mvwprintw(
-        body, 0, 1, "%d %d %f %f, %d, %d, %f, %f",
-        newCoordinates[0], newCoordinates[1],
-        inmate->position, php, inmate->currentHealth, inmate->maxHealth, hp, mhp
+        body, 0, 1, "%d, %d",
+        inmate->currentHealth, inmate->maxHealth
     );
 #endif
 
@@ -511,10 +516,9 @@ int *getCoordinate(int position) {
 
 
 void drawText(struct Windows *windows, struct Dialog dialog,
-    enum GameMode gameMode) {
+    enum GameMode gameMode, struct Map *map) {
     char *target = NULL;
     char current;
-    char new[] = "Placeholder newgame text"; //TODO revise
     int height = 0;
     int i = 1;
     int yOff, xOff;
@@ -522,8 +526,7 @@ void drawText(struct Windows *windows, struct Dialog dialog,
     /* Get dialogue text field */
     switch (gameMode) {
         case NEW:
-            target = new;
-            height=1;
+            target = dialog.textIntro;
             break;
         case CONTINUE:
             target = dialog.textIntro;
@@ -543,8 +546,8 @@ void drawText(struct Windows *windows, struct Dialog dialog,
     /* Print borders and static text */
     wclear(windows->menu);
     box(windows->menu, 0, 0);
-    mvwaddstr(windows->menu,2,xOff,"Level x: Title"); //TODO revise
-    mvwaddstr(windows->menu,2,MAX_COLS-27-xOff,"Press any key to continue...");
+    mvwprintw(windows->menu,2,xOff,"Level %d: %s",map->levelNo,map->name);
+    mvwprintw(windows->menu,MAX_ROWS -3,4,"Press any key to continue...");
 
 
     wrefresh(windows->menu);
@@ -595,6 +598,8 @@ char *getInmateName(char ch) {
             return "[a]ttorney(30)";
         case 'd':
             return "[d]octor(10)";
+        case 'r':
+            return "p[r]otaganist";
         default:
             return "FAIL";
     }

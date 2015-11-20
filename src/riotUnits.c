@@ -287,7 +287,7 @@ bool simulate(struct Windows *gameInterface,
         }
 
         inmateMove(inmateList, path);
-        //guardAttack(guardList, inmateList);
+        guardAttack(guardList, inmateList);
         nextInmate = getHead(inmateList);
 
         for (int i = 0; i < inmateList->count; i++) {
@@ -350,21 +350,62 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList) {
     nextGuard = getHead(guardList);
     nextInmate = getHead(inmateList);
 
-    do {
+    #ifdef _DEBUGM
+	printf("Guard Attack has begun.\n\n");
+	printf("Inmates List size: %d\n", inmateList->count);
+	printf("Guards List size: %d\n\n", guardList->count);
+	#endif
+	/*do {
         do {
             if (inRange(nextInmate, nextGuard))
                 dealDamage(nextInmate, nextGuard);
             nextInmate = getNext(nextInmate);
         } while (getNext(nextInmate) != NULL);
         nextGuard = getNext(nextGuard);
-    } while (getNext(nextGuard) != NULL);
+    } while (getNext(nextGuard) != NULL);*/
+
+	for (int i=0;i<inmateList->count;i++){
+		for (int j=0;j<guardList->count;j++){
+			if (inRange(nextInmate, nextGuard)){
+		        dealDamage(nextInmate, nextGuard);
+			}
+			if (getNext(nextGuard) != NULL){
+		    	nextGuard = getNext(nextGuard);
+			}
+		}
+		if (getNext(nextInmate) != NULL){
+			nextInmate = getNext(nextInmate);
+		}
+	}	
 }
 
 
 void dealDamage(struct UnitNode *inmateNode, struct UnitNode *guardNode) {
-    ((struct Inmate *) inmateNode->unit)->currentHealth =
-        ((struct Inmate *) inmateNode->unit)->currentHealth -
-            ((struct Guard *) guardNode->unit)->damage;
+	int currentHealth;
+	int damage;
+
+	#ifdef DEBUG
+    printf("#####Inmate attacked#####\n");
+    printf("Inmate Position: %f\n",
+        ((struct Inmate *) inmateNode->unit)->position);
+    printf("Guard Position: %d\n",
+        ((struct Guard *) guardNode->unit)->position);
+    printf("Health before attack: %d\n",
+        ((struct Inmate *) inmateNode->unit)->currentHealth);
+    printf("Damage dealt by guard: %d\n",
+        ((struct Guard *) guardNode->unit)->damage);
+    #endif
+
+	currentHealth = ((struct Inmate *) inmateNode->unit)->currentHealth;
+	damage = ((struct Guard *) guardNode->unit)->damage;
+    ((struct Inmate *) inmateNode->unit)->currentHealth = currentHealth - damage;
+
+    #ifdef DEBUG
+    printf("Health after attack: %d\n",
+        ((struct Inmate *) inmateNode->unit)->currentHealth);
+    printf("########################\n");
+    printf("\n");
+    #endif
 }
 
 
@@ -380,19 +421,29 @@ bool inRange(struct UnitNode *inmate, struct UnitNode *guard) {
     guardPosition = ((struct Guard *) guard->unit)->position;
     range = ((struct Guard *) guard->unit)->range;
 
-    yDifference = (((inmatePosition - 1) / MAX_COLS) + 1) -
-        -
-            (((guardPosition - 1) / MAX_COLS) + 1);
+    yDifference = (((inmatePosition - 1) / MAX_COLS) + 1) - (((guardPosition - 1) / MAX_COLS) + 1);
     xDifference = (guardPosition + (yDifference * MAX_COLS)) - inmatePosition;
     yDifference = abs(yDifference);
     xDifference = abs(xDifference);
     totalDifference = xDifference + yDifference;
 
+   // // #ifdef DEBUGM
+   //  // printf("#####Calculating Range#####\n");
+   //  // printf("Unit position: %d\n", inmatePosition);
+   //  // printf("Guard position: %d\n", guardPosition);
+   //  // printf("Y Difference: %d\n", yDifference);
+   //  printf("X Difference: %d\n", xDifference);
+   //  // printf("Total Difference: %d\n", totalDifference);
+   //  // printf("Range of the Guard: %d\n", range);
+   //  // printf("############################\n");
+   //  printf("\n");
+   // // #endif
+
     return range >= totalDifference;
 }
 
 
-void getGuards(struct UnitList *guards, struct Map map) {
+struct UnitList* getGuards(struct UnitList *guards, struct Map map) {
 
     struct Guard *guard;
     int i, j, position;
@@ -412,10 +463,11 @@ void getGuards(struct UnitList *guards, struct Map map) {
                 guard = createGuard(mapChar);
                 guard->position = position;
                 enqueue(guards, guard);
+                printf("FOUND GUARD, Guard List size: %d\n",guards->count);
             }
         }
     }
 
-    return;
+    return guards;
 }
 

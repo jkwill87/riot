@@ -72,7 +72,7 @@ ARGUMENTS: The path which the tile is being added to
            The type of tile that is going to be added*/
 
 
-void getGuards(struct UnitList *guards, struct Map map);/*
+struct UnitList* getGuards(struct UnitList *guards, struct Map map);/*
 
 DESCRIPTION: Retrieves the guard data from the given map and stores the guards into a linked list UnitList structure.
 
@@ -132,6 +132,14 @@ DESCRIPTION: Checks whether the position exists in the previously checked array.
 
 ARGUMENTS: Array of all positions previously checked (int prevChecked[]).
            Position to be compared against the previously checked positions.
+*/
+
+
+void copyMap (struct Map *initialMap, struct Map *dupeMap);/*
+
+DESCRIPTION: Copies the elements from the initalMap to the dupeMap
+
+ARGUEMENTS: Initial Map Pointer, Map pointer for the duplicate to be used during gameplay
 */
 
 #endif //RIOT_MAP

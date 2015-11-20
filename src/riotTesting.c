@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
         else if (!strcmp(argv[i], "-unitmove"))
             unitsMove(argv[2] ? argv[2] : NULL);
         else if (!strcmp(argv[i], "-color")) colorTest();
-//        else if (!strcmp(argv[i], "-play")) unitsPlay(argv[2]);
+        else if (!strcmp(argv[i], "-play")) unitsPlay(argv[2]);
         else printf("Unknown command (%s)\n", argv[i]);
     }
 
@@ -135,77 +135,70 @@ void unitsMove(char *loadDir) {
 }
 
 
-//
-//void unitsPlay(char *argument){
-//    struct MapList *mapList;
-//    enum GameMode gameMode;
-//    struct Windows gameInterface;
-//    struct Dialog *dialog = calloc(MAX_LEVELS,sizeof(struct Dialog));
-//    struct MapList *testList = malloc(sizeof(struct MapList));
-//    parseMap(loadDir,testList,&dialog);    int levelSelect;
-//    uiSet(INIT, &gameInterface);
-//
-//    /* Begin body game loop */
-//    do {
-//        uiSet(MENU, &gameInterface);
-//        gameMode = menuMain(&gameInterface);
-//        uiSet(gameMode, &gameInterface);
-//
-//        switch (gameMode) {
-//            case NEW:
-//                play(gameInterface,mapList->level[0]);
-//                break;
-//            case CONTINUE:
-//                levelSelect = levelSelect(&gameInterface, mapList);
-//                play(gameInterface,mapList->level[levelSelect]);
-//                break;
-//            default:
-//                break;
-//        }
-//    } while (gameMode != EXIT);
-//
-//    quit("Thanks for playing.\n");
-//}
 
-//
-//void unitsTest(void) {
-//    struct UnitList *inmates, *guards;
-//    struct Inmate *inmateUnit;
-//    struct Guard *guardUnit;
-//    inmates = createList();
-//    guards = createList();
-//
-//    guardUnit = createGuard(DOGS);
-//    guardUnit->position = (rand() % MAPSIZE) + 1;
-//    enqueue(guards, guardUnit);
-//    printf("Adding a guard to the list (%d)\n", guards->count);
-//    printf("Guard position is: %d\n", guardUnit->position);
-//    putchar('\n');
-//
-//    srand(time(NULL));
-//
-//    for (int i = 0; i < TRIALS; i++) {
-//        inmateUnit = createInmate(HOMEBOY);
-//        inmateUnit->position = (rand() % 90) + 1;
-//        enqueue(inmates, inmateUnit);
-//        printf("Adding an inmate to the list (%d)\n", inmates->count);
-//        printf("Inmate position is: %f\n", inmateUnit->position);
-//    }
-//
-//    putchar('\n');
-//    guardAttack(guards, inmates);
-//
-//    while (inmates->count) {
-//        printf("Removing an inmate from the list (%d)\n", inmates->count);
-//        rmUnit(dequeue(inmates));
-//    }
-//    putchar('\n');
-//
-//    destroyList(inmates);
-//    destroyList(guards);
-//
-//    return;
-//}
+void unitsPlay(char *argument){
+
+    enum GameMode gameMode;
+    struct Windows windows;
+    struct MapList mapList;
+    struct Map *map;
+    struct Dialog dialog[MAX_LEVELS];
+    struct UnitList inmates, guards;
+    struct UnitNode *unitNode;
+    struct Path path;
+    bool progress[MAX_LEVELS];
+    int level=3;
+
+    /* Parse map files */
+    parseMap(argument, &mapList, dialog);
+
+    /* Create nCurses WINDOWs */
+    //uiInit(&windows);
+
+    /* Present user with main menu */
+    //gameMode = menuMain(&windows);
+
+    // do{
+    //     if(gameMode==EXIT){
+    //         break;
+    //     } else if (gameMode!=NEW){
+    //        // level = levelSelect(&windows, &mapList, progress);
+    //     }
+
+        /* Select current map */
+        map = &(mapList).level[level];
+
+        getGuards(&guards, *map);
+        getPath(&path, *map);
+    //     inmates.count = 0;
+    //     inmates.head = NULL;
+    //     inmates.tail = NULL;
+
+    //     /* Draw level */
+    //     drawLevel(&windows, map, &guards);
+
+    //     /* Prompt user for unit selection */
+    //     drawInmateSelection(&windows, map, &inmates, &guards);
+
+    //     unitNode = getHead(&inmates);
+    //     for (int i = 0; i < inmates.count; i++) {
+    //         ((struct Inmate *) unitNode->unit)->position = path.first->location;
+    //         unitNode = unitNode->next;
+    //     }
+
+    //     /* Simulate unit interactions */
+    //     progress[level] = simulate(&windows, &guards, &inmates, &path);
+    //     if(progress[level]) gameMode=WIN;
+    //     else gameMode=LOSE;
+
+    //     /* Display outro text */
+    //     drawText(&windows, dialog[level], gameMode);
+
+//     } while (level!=EXIT);
+
+    // uiFree(&windows);
+    // quit("Thanks for playing.\n");
+}
 
 
 void mapTest(char *loadDir) {
@@ -215,12 +208,37 @@ void mapTest(char *loadDir) {
     struct Map current;
     struct Path path;
     struct UnitList guardList;
+    struct UnitList *inmates;
+    struct Inmate * inmate;
     printf("Riot Levels Found %d:\n\n", testList->count);
 
-    for (int i = 0; i < testList->count; i++) {
+    inmates = malloc(sizeof(struct UnitList));
+
+    inmates->count = 0;
+    inmates->head = NULL;
+    inmates->tail = NULL;
+
+
+    /*for (int i=0;i<30;i++){
+        inmate = createInmate('f');
+        inmate->position = rand() % (MAP_ROWS*MAP_COLS);
+        enqueue(inmates,inmate);
+        inmate = createInmate('s');
+        inmate->position = rand() % (MAP_ROWS*MAP_COLS);
+        enqueue(inmates,inmate);
+    }*/
+    inmate = createInmate('s');
+    inmate->position = rand() % (MAP_ROWS*MAP_COLS);
+    enqueue(inmates,inmate);
+    inmate = createInmate('s');
+    inmate->position = rand() % (MAP_ROWS*MAP_COLS);
+    enqueue(inmates,inmate);
+    for (int i = 3; i < 4; i++) {
         current = testList->level[i];
         getPath(&path, current);
         getGuards(&guardList, current);
+       // printf("\n\nGuard list size after function %d\n\n");
+        guardAttack(&guardList,inmates);
         printf("LEVEL %d: \n\n", i);
 
         printf("Name: %s\n", current.name);
@@ -232,10 +250,10 @@ void mapTest(char *loadDir) {
         }
 
 //        printPath(path);
-//        printGuardList(guardList);
+  //      printGuardList(guardList);
         printf("\n\n");
 
-//        destroyList(&guardList);
+        //destroyList(&guardList);
     }
 
     return;
