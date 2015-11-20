@@ -284,7 +284,7 @@ bool simulate(struct Windows *gameInterface,
     delay.tv_sec = 0;
     delay.tv_nsec = 400000000L;  // Half second in nano seconds
 
-    while (simulateTime < 400) {
+    while (simulateTime < 800) {
 
         nextInmate = getHead(inmateList);
         for (int i = 0; i < inmateList->count; i++) {

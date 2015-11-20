@@ -479,16 +479,19 @@ void eraseInmate(WINDOW *body, struct Path * path, float position) {
 
     while (1){
         if(nextTile->next == NULL){
-            quit("location not in path, cannot erase");
+            break;
+            //quit("location not in path, cannot erase");
         }
         nextTile = nextTile->next;
         if(nextTile->location == position){
-            ch=nextTile->type;
+            if (nextTile->type =='#')
+                nextTile->type='.';
+            ch = nextTile->type;
+            coordinates = getCoordinate(position);
+            mvwaddch(body, coordinates[0], coordinates[1], ch);
             break;
         }
     }
-    coordinates = getCoordinate(position);
-    mvwaddch(body, coordinates[0], coordinates[1], ch);
 }
 
 
