@@ -233,7 +233,7 @@ void mapTest(char *loadDir) {
     inmate = createInmate('s');
     inmate->position = rand() % (MAP_ROWS*MAP_COLS);
     enqueue(inmates,inmate);
-    for (int i = 3; i < 4; i++) {
+    for (int i = 2; i < 3; i++) {
         current = testList->level[i];
         getPath(&path, current);
         getGuards(&guardList, current);
