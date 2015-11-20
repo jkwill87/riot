@@ -336,7 +336,7 @@ void printGuard(struct Guard *guard) {
             break;
 
         case PSYCH:
-            printf("unit:\t\tPsychopath\n");
+            printf("unit:\t\tPsychiatrist\n");
             break;
 
         case SHARP:

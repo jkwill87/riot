@@ -117,6 +117,7 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
     struct Inmate *inmate;
     char input;
     int y;
+    int i;
     int numAdded = 0;
     static bool ifProt = FALSE;
     do {
@@ -124,7 +125,7 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
         wrefresh(win->header);
         input = wgetch(win->body);
         switch (input) {
-            case 'r':
+            case PROTAGONIST:
                 if (!ifProt) {
                     ifProt = TRUE;
                     mvwprintw(win->footer, 0, 40, "PROTAGONIST ADDED");
@@ -137,122 +138,149 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                     mvwprintw(win->footer, 0, 40, "PROTAGONIST ALREADY PRESENT");
                 }
                 break;
-            case 'h':
-                if (map->repMax >= 10) {
-                    mvwprintw(win->footer, 0, 40, "HOMEBOY ADDED");
-                    map->repMax -= 10;
-                    inmate = createInmate(input);
-                    enqueue(inmates, inmate);
-                    numAdded++;
-                    updateQueue(win->body, inmates, numAdded);
-                }
-                else {
-                    mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
-                }
-                break;
-            case 'b':
-                if (map->repMax >= 16) {
-                    mvwprintw(win->footer, 0, 40, "BRUISER ADDED");
-                    inmate = createInmate(input);
-                    map->repMax -= 16;
-                    enqueue(inmates, inmate);
-                    numAdded++;
-                    updateQueue(win->body, inmates, numAdded);
-                }
-                else {
-                    mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
+            case HOMEBOY:
+                for (i = 0; i < strlen(map->inmates); i++){
+                    if (map->inmates[i] == HOMEBOY){
+                        i=strlen(map->inmates)+2;
+                        if (map->repMax >= 10) {
+                            mvwprintw(win->footer, 0, 40, "HOMEBOY ADDED");
+                            map->repMax -= 10;
+                            inmate = createInmate(input);
+                            enqueue(inmates, inmate);
+                            numAdded++;
+                            updateQueue(win->body, inmates, numAdded);
+                        }
+                        else {
+                            mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
+                        }
+                    }
                 }
                 break;
-            case 'l':
-                if (map->repMax >= 16) {
-                    mvwprintw(win->footer, 0, 40, "LUNATIC ADDED");
-                    inmate = createInmate(input);
-                    map->repMax -= 16;
-                    enqueue(inmates, inmate);
-                    numAdded++;
-                    updateQueue(win->body, inmates, numAdded);
-                }
-                else {
-                    mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
-                }
-                break;
-            case 'f':
-                if (map->repMax >= 60) {
-                    mvwprintw(win->footer, 0, 40, "FATTY ADDED");
-                    inmate = createInmate(input);
-                    map->repMax -= 60;
-                    enqueue(inmates, inmate);
-                    numAdded++;
-                    updateQueue(win->body, inmates, numAdded);
-                }
-                else {
-                    mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
+            case BRUISER:
+                for (i = 0; i < strlen(map->inmates); i++){
+                    if (map->inmates[i] == BRUISER){
+                        i=strlen(map->inmates)+2;
+                        if (map->repMax >= 16) {
+                            mvwprintw(win->footer, 0, 40, "BRUISER ADDED");
+                            inmate = createInmate(input);
+                            map->repMax -= 16;
+                            enqueue(inmates, inmate);
+                            numAdded++;
+                            updateQueue(win->body, inmates, numAdded);
+                        }
+                        else {
+                            mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
+                        }
+                    }
                 }
                 break;
-            case 's':
-                if (map->repMax >= 10) {
-                    mvwprintw(win->footer, 0, 40, "SPEEDY ADDED");
-                    inmate = createInmate(input);
-                    map->repMax -= 10;
-                    enqueue(inmates, inmate);
-                    numAdded++;
-                    updateQueue(win->body, inmates, numAdded);
+            case LUNATIC:
+                for (i = 0; i < strlen(map->inmates); i++){
+                    if (map->inmates[i] == LUNATIC){
+                        i=strlen(map->inmates)+2;
+                        if (map->repMax >= 16) {
+                            mvwprintw(win->footer, 0, 40, "LUNATIC ADDED");
+                            inmate = createInmate(input);
+                            map->repMax -= 16;
+                            enqueue(inmates, inmate);
+                            numAdded++;
+                            updateQueue(win->body, inmates, numAdded);
+                        }
+                        else {
+                            mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
+                        }
+                    }
                 }
                 break;
-            case 'c':
-                if (map->repMax >= 20) {
-                    mvwprintw(win->footer, 0, 40, "CUTIE ADDED");
-                    inmate = createInmate(input);
-                    map->repMax -= 20;
-                    enqueue(inmates, inmate);
-                    numAdded++;
-                    updateQueue(win->body, inmates, numAdded);
-                }
-                else {
-                    mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
-                }
-                break;
-            case 'a':
-                if (map->repMax >= 30) {
-                    mvwprintw(win->footer, 0, 40, "ATTORNEY ADDED");
-                    inmate = createInmate(input);
-                    map->repMax -= 30;
-                    enqueue(inmates, inmate);
-                    numAdded++;
-                    updateQueue(win->body, inmates, numAdded);
-                }
-                else {
-                    mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
+            case FATTY:
+                for (i = 0; i < strlen(map->inmates); i++){
+                    if (map->inmates[i] == FATTY){
+                        i=strlen(map->inmates)+2;
+                        if (map->repMax >= 60) {
+                            mvwprintw(win->footer, 0, 40, "FATTY ADDED");
+                            inmate = createInmate(input);
+                            map->repMax -= 60;
+                            enqueue(inmates, inmate);
+                            numAdded++;
+                            updateQueue(win->body, inmates, numAdded);
+                        }
+                        else {
+                            mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
+                        }
+                    }
                 }
                 break;
-            case 'd':
-                if (map->repMax >= 10) {
-                    mvwprintw(win->footer, 0, 40, "DOCTOR ADDED");
-                    inmate = createInmate(input);
-                    map->repMax -= 10;
-                    enqueue(inmates, inmate);
-                    numAdded++;
-                    updateQueue(win->body, inmates, numAdded);
-                }
-                else {
-                    mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
-                }
-                break;
-            case 'p':
-                if (map->repMax >= 10) {
-                    mvwprintw(win->footer, 0, 40, "PROTAGANIST ADDED");
-                    inmate = createInmate(input);
-                    map->repMax -= 10;
-                    enqueue(inmates, inmate);
-                    numAdded++;
-                    updateQueue(win->body, inmates, numAdded);
-                }
-                else {
-                    mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
+            case SPEEDY:
+                for (i = 0; i < strlen(map->inmates); i++){
+                    if (map->inmates[i] == SPEEDY){
+                        i=strlen(map->inmates)+2;
+                        if (map->repMax >= 10) {
+                            mvwprintw(win->footer, 0, 40, "SPEEDY ADDED");
+                            inmate = createInmate(input);
+                            map->repMax -= 10;
+                            enqueue(inmates, inmate);
+                            numAdded++;
+                            updateQueue(win->body, inmates, numAdded);
+                        }
+                    }
                 }
                 break;
-            default:
-                mvwprintw(win->footer, 0, 40, "INMATE NOT FOUND");
+            case CUTIE:
+                for (i = 0; i < strlen(map->inmates); i++){
+                    if (map->inmates[i] == CUTIE){
+                        i=strlen(map->inmates)+2;
+                        if (map->repMax >= 20) {
+                            mvwprintw(win->footer, 0, 40, "CUTIE ADDED");
+                            inmate = createInmate(input);
+                            map->repMax -= 20;
+                            enqueue(inmates, inmate);
+                            numAdded++;
+                            updateQueue(win->body, inmates, numAdded);
+                        }
+                        else {
+                            mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
+                        }
+                    }
+                }
+                break;
+            case ATTORNEY:
+                for (i = 0; i < strlen(map->inmates); i++){
+                    if (map->inmates[i] == ATTORNEY){
+                        i=strlen(map->inmates)+2;
+                        if (map->repMax >= 30) {
+                            mvwprintw(win->footer, 0, 40, "ATTORNEY ADDED");
+                            inmate = createInmate(input);
+                            map->repMax -= 30;
+                            enqueue(inmates, inmate);
+                            numAdded++;
+                            updateQueue(win->body, inmates, numAdded);
+                        }
+                        else {
+                            mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
+                        }
+                    }
+                }
+                break;
+            case DOCTOR:
+                for (i = 0; i < strlen(map->inmates); i++){
+                    if (map->inmates[i] == DOCTOR){
+                        i=strlen(map->inmates)+2;
+                        if (map->repMax >= 10) {
+                            mvwprintw(win->footer, 0, 40, "DOCTOR ADDED");
+                            inmate = createInmate(input);
+                            map->repMax -= 10;
+                            enqueue(inmates, inmate);
+                            numAdded++;
+                            updateQueue(win->body, inmates, numAdded);
+                        }
+                        else {
+                            mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
+                        }
+                    }
+                }
+                break;
+//            default:
+//                mvwprintw(win->footer, 0, 40, "INMATE NOT FOUND");
         }
         if (map->repMax < 10) {
             mvwprintw(win->footer, 0, 20, "INSUFICIENT FUNDS");
@@ -387,7 +415,7 @@ void drawLevel(struct Windows *windows, struct Map *map,
     /*Populates footer*/
     strcpy(output, "");
     for (i = 0; i < strlen(map->inmates); i++) {
-        if (map->inmates[i]=='r'){
+        if (map->inmates[i]==PROTAGONIST){
             strcat(protName, getInmateName(map->inmates[i]));
             mvwaddstr(windows->footer, 2,1,protName);
         }
@@ -559,23 +587,23 @@ void drawText(struct Windows *windows, struct Dialog dialog,
 
 char *getInmateName(char ch) {
     switch (ch) {
-        case 'r':
-            return "p[r]otagonist";
-        case 'h':
+        case PROTAGONIST:
+            return "[p]rotagonist";
+        case HOMEBOY:
             return "[h]omeboy(10)";
-        case 'b':
+        case BRUISER:
             return "[b]ruiser(16)";
-        case 'l':
+        case LUNATIC:
             return "[l]unatic(16)";
-        case 'f':
+        case FATTY:
             return "[f]atty(60)";
-        case 's':
+        case SPEEDY:
             return "[s]peedy(10)";
-        case 'c':
+        case CUTIE:
             return "[c]utie(20)";
-        case 'a':
+        case ATTORNEY:
             return "[a]ttorney(30)";
-        case 'd':
+        case DOCTOR:
             return "[d]octor(10)";
         default:
             return "FAIL";

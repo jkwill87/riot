@@ -72,7 +72,7 @@ enum InmateType {/*
  InmateType is a mnemonic which can be used to equivocate inmate types with
  the associated keypresses used to spawn them.*/
 
-    PROTAGONIST = 'r',
+    PROTAGONIST = 'p',
     HOMEBOY = 'h',
     BRUISER = 'b',
     LUNATIC = 'l',
