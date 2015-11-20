@@ -82,6 +82,7 @@ int main(int argc, char **argv) {
 
 void quit(char *message) {
     if (stdscr) endwin();
-    printf("%s. Exiting.", message);
+    printf("%s. Exiting.\n", message);
     exit(1);
 }
+

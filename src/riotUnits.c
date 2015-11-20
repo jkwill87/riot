@@ -114,8 +114,7 @@ struct Inmate *createInmate(enum InmateType type) {
     struct Inmate *unit = malloc(sizeof(struct Inmate));
 
     unit->type = type;
-    unit->position = -1;
-
+    unit->position = -1;    
     switch (type) {
 
         case PROTAGONIST:
@@ -191,7 +190,7 @@ struct Inmate *createInmate(enum InmateType type) {
             break;
 
         default:
-            quit("Creating unsupported unit type.");
+            quit("Creating unsupported unit type INMATE.");
             break;
     }
 
@@ -258,7 +257,7 @@ struct Guard *createGuard(enum GuardType type) {
             break;
 
         default:
-            quit("Creating unsupported unit type.");
+            quit("Creating unsupported unit type");
             break;
     }
 
@@ -463,7 +462,7 @@ struct UnitList* getGuards(struct UnitList *guards, struct Map map) {
                 guard = createGuard(mapChar);
                 guard->position = position;
                 enqueue(guards, guard);
-                printf("FOUND GUARD, Guard List size: %d\n",guards->count);
+                printf("FOUND GUARD, Guard List size: %d %c\n",guards->count,mapChar);
             }
         }
     }

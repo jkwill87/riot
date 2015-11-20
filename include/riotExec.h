@@ -133,7 +133,6 @@ enum GameMode {/*
 
 
 /* Function Prototypes */
-
 void quit(char *message);/*
 
 DESCRIPTION: quit() is called as a method for the program to gracefully return
