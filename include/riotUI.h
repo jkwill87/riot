@@ -130,4 +130,12 @@ ARGUMENTS: The abbreviation of the inmate, for example 'H' for homeboy
 */
 
 
+bool ifProt(struct UnitList * current); /*
+
+DESCRIPTION: Return the name of the inmate
+
+ARGUMENTS: The abbreviation of the inmate, for example 'H' for homeboy  
+*/
+
+
 #endif //RIOT_UI

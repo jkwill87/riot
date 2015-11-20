@@ -140,12 +140,32 @@ int levelSelect(struct Windows *gameInterface, struct MapList *mapList,
 }
 
 
+/*bool ifProt(struct UnitList * current) {
+
+   bool isProtThere = TRUE;
+
+   if (current) {
+      if (current->count) {
+         for(int i = 0; i <= getLength(current) - 1; i++) {
+
+
+
+         }
+      }
+   } else {
+      return FALSE;
+   }
+
+}*/
+
+
 void drawInmateSelection(struct Windows *win, struct Map *map,
     struct UnitList *inmates, struct UnitList *guards) {
     struct Inmate *inmate;
     char input;
     int y;
     int numAdded = 0;
+    static bool ifProt = FALSE;
 //
 //    mvwprintw(win->body, MAP_ROWS, 3,
 //        "Press the corresponding letter to buy inmate");
@@ -155,6 +175,19 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
         wrefresh(win->header);
         input = wgetch(win->body);
         switch (input) {
+            case 'r':
+                if (!ifProt) {
+                    ifProt = TRUE;
+                    mvwprintw(win->footer, 0, 40, "PROTAGONIST ADDED");
+                    inmate = createInmate(input);
+                    enqueue(inmates, inmate);
+                    numAdded++;
+                    updateQueue(win->body, inmates, numAdded);
+                }
+                else {
+                    mvwprintw(win->footer, 0, 40, "PROTAGONIST ALREADY PRESENT");
+                }
+                break;
             case 'h':
                 if (map->repMax >= 10) {
                     mvwprintw(win->footer, 0, 40, "HOMEBOY ADDED");
@@ -544,6 +577,8 @@ void drawText(struct Windows *windows, struct Dialog dialog,
 
 char *getInmateName(char ch) {
     switch (ch) {
+        case 'r':
+            return "p[r]otagonist";
         case 'h':
             return "[h]omeboy(10)";
         case 'b':

@@ -5,7 +5,6 @@
 #include "riotUnits.h"
 #include "riotUI.h"
 
-
 void destroyList(struct UnitList *list) {
 
     struct UnitNode *tempNode = NULL;
