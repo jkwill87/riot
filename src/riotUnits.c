@@ -277,7 +277,7 @@ bool simulate(struct Windows *gameInterface,
     delay.tv_sec = 0;
     delay.tv_nsec = 50000000L;  // Half second in nano seconds
 
-    while (simulateTime < 40) {
+    while (simulateTime < 100) {
 
         nextInmate = getHead(inmateList);
         for (int i = 0; i < inmateList->count; i++) {
@@ -327,19 +327,29 @@ void inmateMove(struct UnitList *inmateList, struct Path *path) {
         }
         prevPos = ((struct Inmate *) nextInmate->unit)->position;
         ((struct Inmate *) nextInmate->unit)->position =
-            ((struct Inmate *) nextInmate->unit)->position +
-                (float) ((struct Inmate *) nextInmate->unit)->speed / 8;
-        if ((int) ((struct Inmate *) nextInmate->unit)->position ==
-            prevPos + 1 && nextTile->next != NULL)
+        ((struct Inmate *) nextInmate->unit)->position +
+        (float) ((struct Inmate *) nextInmate->unit)->speed / 8;
+        if (nextTile->next != NULL && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1 
+            && nextTile->next->type == '#' && ((struct Inmate *) nextInmate->unit)->doorSmash == 30) {
             ((struct Inmate *) nextInmate->unit)->position = nextTile->next->location;
-        else if ((int) ((struct Inmate *) nextInmate->unit)->position ==
-            prevPos + 1 && nextTile->next == NULL) {
+            ((struct Inmate *) nextInmate->unit)->doorSmash = 0;
+        }                
+        else if (nextTile->next != NULL && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1 
+            && nextTile->next->type == '#' && ((struct Inmate *) nextInmate->unit)->doorSmash != 30) {
+            ((struct Inmate *) nextInmate->unit)->position = prevPos;
+            ((struct Inmate *) nextInmate->unit)->doorSmash++;
+        } 
+        else if (nextTile->next != NULL && (int) ((struct Inmate *) nextInmate->unit)->position ==
+            prevPos + 1)
+            ((struct Inmate *) nextInmate->unit)->position = nextTile->next->location;
+        else if (nextTile->next == NULL && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1) {
             ((struct Inmate *) nextInmate->unit)->delUnit = TRUE;
             //endwin();
         }
         nextInmate = getNext(nextInmate);
     } while (getNext(nextInmate));
 }
+
 
 
 void guardAttack(struct UnitList *guardList, struct UnitList *inmateList) {
@@ -349,11 +359,11 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList) {
     nextGuard = getHead(guardList);
     nextInmate = getHead(inmateList);
 
-    #ifdef _DEBUGM
-	printf("Guard Attack has begun.\n\n");
-	printf("Inmates List size: %d\n", inmateList->count);
-	printf("Guards List size: %d\n\n", guardList->count);
-	#endif
+//  #ifdef _DEBUG
+	// printf("Guard Attack has begun.\n\n");
+	// printf("Inmates List size: %d\n", inmateList->count);
+	// printf("Guards List size: %d\n\n", guardList->count);
+//	#endif
 	/*do {
         do {
             if (inRange(nextInmate, nextGuard))
@@ -383,28 +393,28 @@ void dealDamage(struct UnitNode *inmateNode, struct UnitNode *guardNode) {
 	int currentHealth;
 	int damage;
 
-	#ifdef DEBUG
-    printf("#####Inmate attacked#####\n");
-    printf("Inmate Position: %f\n",
-        ((struct Inmate *) inmateNode->unit)->position);
-    printf("Guard Position: %d\n",
-        ((struct Guard *) guardNode->unit)->position);
-    printf("Health before attack: %d\n",
-        ((struct Inmate *) inmateNode->unit)->currentHealth);
-    printf("Damage dealt by guard: %d\n",
-        ((struct Guard *) guardNode->unit)->damage);
-    #endif
+	//#ifdef DEBUG
+    // printf("#####Inmate attacked#####\n");
+    // printf("Inmate Position: %f\n",
+    //     ((struct Inmate *) inmateNode->unit)->position);
+    // printf("Guard Position: %d\n",
+    //     ((struct Guard *) guardNode->unit)->position);
+    // printf("Health before attack: %d\n",
+    //     ((struct Inmate *) inmateNode->unit)->currentHealth);
+    // printf("Damage dealt by guard: %d\n",
+    //     ((struct Guard *) guardNode->unit)->damage);
+    //#endif
 
 	currentHealth = ((struct Inmate *) inmateNode->unit)->currentHealth;
 	damage = ((struct Guard *) guardNode->unit)->damage;
     ((struct Inmate *) inmateNode->unit)->currentHealth = currentHealth - damage;
 
-    #ifdef DEBUG
-    printf("Health after attack: %d\n",
-        ((struct Inmate *) inmateNode->unit)->currentHealth);
-    printf("########################\n");
-    printf("\n");
-    #endif
+    //#ifdef DEBUG
+    // printf("Health after attack: %d\n",
+    //     ((struct Inmate *) inmateNode->unit)->currentHealth);
+    // printf("########################\n");
+    // printf("\n");
+   // #endif
 }
 
 
@@ -412,31 +422,33 @@ bool inRange(struct UnitNode *inmate, struct UnitNode *guard) {
     int inmatePosition;
     int guardPosition;
     int range;
-    int xDifference;
-    int yDifference;
+    int xDifference,yDifference;
+    int inmateY,guardY;
     int totalDifference;
 
     inmatePosition = ((struct Inmate *) inmate->unit)->position;
     guardPosition = ((struct Guard *) guard->unit)->position;
     range = ((struct Guard *) guard->unit)->range;
 
-    yDifference = (((inmatePosition - 1) / MAX_COLS) + 1) - (((guardPosition - 1) / MAX_COLS) + 1);
-    xDifference = (guardPosition + (yDifference * MAX_COLS)) - inmatePosition;
+    inmateY = (inmatePosition-1)/MAP_COLS;
+    guardY = (guardPosition-1)/MAP_COLS;
+    yDifference = (inmateY + 1) - (guardY + 1);
+    xDifference = abs(guardPosition-(guardY*MAP_COLS))-abs(inmatePosition-(inmateY*MAP_COLS));
     yDifference = abs(yDifference);
     xDifference = abs(xDifference);
     totalDifference = xDifference + yDifference;
 
-   // // #ifdef DEBUGM
-   //  // printf("#####Calculating Range#####\n");
-   //  // printf("Unit position: %d\n", inmatePosition);
-   //  // printf("Guard position: %d\n", guardPosition);
-   //  // printf("Y Difference: %d\n", yDifference);
-   //  printf("X Difference: %d\n", xDifference);
-   //  // printf("Total Difference: %d\n", totalDifference);
-   //  // printf("Range of the Guard: %d\n", range);
-   //  // printf("############################\n");
-   //  printf("\n");
-   // // #endif
+   // #ifdef DEBUGM
+    // printf("#####Calculating Range#####\n");
+    // printf("Unit position: %d\n", inmatePosition);
+    // printf("Guard position: %d\n", guardPosition);
+    // printf("Y Difference: %d\n", yDifference);
+    // printf("X Difference: %d\n", xDifference);
+    // printf("Total Difference: %d\n", totalDifference);
+    // printf("Range of the Guard: %d\n", range);
+    // printf("############################\n");
+    // printf("\n");
+   // #endif
 
     return range >= totalDifference;
 }
