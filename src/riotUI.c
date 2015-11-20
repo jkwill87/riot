@@ -303,25 +303,6 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
     wrefresh(win->body);
 }
 
-void eraseInmate(struct Windows * win, struct Path * path, struct Inmate * inmate) {
-    struct TileNode * nextTile;
-    nextTile = path->first;
-    char ch;
-    int * coordinates;
-
-    while (1){
-        if(nextTile->next == NULL){
-            quit("location not in path, cannot erase");
-        }
-        nextTile = nextTile->next;
-        if(nextTile->location == inmate->position){
-            ch=nextTile->type;
-            break;
-        }
-    }
-    coordinates = getCoordinate(inmate->position);
-    mvwaddch(win->body, coordinates[0], coordinates[1], ch);
-}
 
 void updateHeader(WINDOW *header, struct Map *map) {
     wclear(header);
@@ -447,15 +428,12 @@ void drawLevel(struct Windows *windows, struct Map *map,
 
 void redrawUnit(WINDOW *body, struct Inmate *inmate, struct Path *path,
     float oldPosition) {
-    int *currentCoordinates = malloc(sizeof(int) * 2);
-    int *newCoordinates = malloc(sizeof(int) * 2);
+    int *coordinates = malloc(sizeof(int) * 2);
     float hp, mhp, php;
     int setColor = GREEN;
     hp = (float) inmate->currentHealth;
     mhp = (float) inmate->maxHealth;
     php = (hp / mhp) * 100;
-    struct TileNode *tNode = path->first;
-    char type = tNode->type;
 
     init_pair(1, COLOR_WHITE, COLOR_BLACK);
     init_pair(GREEN, GREEN, COLOR_BLACK);
@@ -463,12 +441,8 @@ void redrawUnit(WINDOW *body, struct Inmate *inmate, struct Path *path,
     init_pair(RED, RED, COLOR_BLACK);
     init_pair(PURPLE, PURPLE, COLOR_BLACK);
 
-    while (oldPosition < ((float) tNode->location)) {
-        tNode = tNode->next;
-    }
-    type = tNode->type;
-
     wbkgd(body, COLOR_PAIR(1));
+    eraseInmate(body,path,oldPosition);
 
     if (php > 75.0) {
         setColor = GREEN;
@@ -490,12 +464,31 @@ void redrawUnit(WINDOW *body, struct Inmate *inmate, struct Path *path,
 
     wbkgd(body, COLOR_PAIR(1));
 
-    currentCoordinates = getCoordinate(oldPosition);
-    mvwaddch(body, currentCoordinates[0], currentCoordinates[1], type);
-    newCoordinates = getCoordinate(inmate->position);
+    coordinates = getCoordinate(inmate->position);
     wbkgd(body, COLOR_PAIR(setColor));
-    mvwaddch(body, newCoordinates[0], newCoordinates[1], inmate->type);
+    mvwaddch(body, coordinates[0], coordinates[1], inmate->type);
     wbkgd(body, COLOR_PAIR (1));
+}
+
+
+void eraseInmate(WINDOW *body, struct Path * path, float position) {
+    struct TileNode * nextTile;
+    nextTile = path->first;
+    char ch;
+    int * coordinates;
+
+    while (1){
+        if(nextTile->next == NULL){
+            quit("location not in path, cannot erase");
+        }
+        nextTile = nextTile->next;
+        if(nextTile->location == position){
+            ch=nextTile->type;
+            break;
+        }
+    }
+    coordinates = getCoordinate(position);
+    mvwaddch(body, coordinates[0], coordinates[1], ch);
 }
 
 

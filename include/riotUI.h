@@ -87,7 +87,7 @@ DESCRIPTION: Function to redraw units on the screen
 ARGUMENTS: A pointer to the interface window, unit to be drawn, integer health value, curreent position and position to be mmoved to
 
 POSTCONDITION: Ensures that the unit given is drawn at the given newPostiion*/
-void eraseUnit(struct Windows * win, int position);/*
+void eraseInmate(WINDOW *body, struct Path * path, float position);/*
 
 DESCRIPTION: Erases a unit off the screen and restores tile
 
