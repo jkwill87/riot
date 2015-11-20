@@ -6,7 +6,7 @@ void uiInit(struct Windows *win) {
 
     initscr();
     start_color();
-    init_pair(1, COLOR_WHITE, COLOR_BLACK);
+    init_pair(2, COLOR_WHITE, COLOR_BLACK);
 
     noecho(); // hide keypresses
     curs_set(FALSE); // hide cursor
@@ -455,6 +455,7 @@ void redrawUnit(WINDOW *body, struct Inmate *inmate, struct Path *path,
     init_pair(YELLOW, YELLOW, COLOR_BLACK);
     init_pair(RED, RED, COLOR_BLACK);
     init_pair(PURPLE, PURPLE, COLOR_BLACK);
+    init_pair(DAMAGED, COLOR_BLACK, DAMAGED);
 
     wbkgd(body, COLOR_PAIR(1));
     eraseInmate(body,path,oldPosition);
@@ -495,9 +496,7 @@ void eraseInmate(WINDOW *body, struct Path * path, float position) {
     while (1){
         if(nextTile->next == NULL){
             break;
-            //quit("location not in path, cannot erase");
         }
-        nextTile = nextTile->next;
         if(nextTile->location == position){
             if (nextTile->type =='#')
                 nextTile->type='.';
@@ -506,6 +505,7 @@ void eraseInmate(WINDOW *body, struct Path * path, float position) {
             mvwaddch(body, coordinates[0], coordinates[1], ch);
             break;
         }
+        nextTile = nextTile->next;
     }
 }
 

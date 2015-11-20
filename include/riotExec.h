@@ -17,7 +17,7 @@
 #define HEADER 3
 #define FOOTER 4
 #define MAIN 17
-#define TICSPEED 1
+#define TICSPEED .25
 
 #define MAX_TEXT 500
 #define INMATE_TYPES 10
@@ -116,6 +116,8 @@ enum Colour {/*
     YELLOW = 11,
     RED = 9,
     PURPLE = 5,
+    DAMAGED = 1,
+
 };
 
 
