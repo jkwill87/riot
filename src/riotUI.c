@@ -104,7 +104,7 @@ int levelSelect(struct Windows *gameInterface, struct MapList *mapList,
     while (1){
         input = wgetch(menu);
         select = input - '0';
-        if (select >= 0 && select <= progress)
+        if (select >= 0 && select <= 8/*progress*/)
             return (int) (select);
     }
 }
@@ -309,10 +309,6 @@ void eraseInmate(struct Windows * win, struct Path * path, struct Inmate * inmat
     char ch;
     int * coordinates;
 
-    //for (int i = 0; i < path->count; i++) { 
-    //    nextTile = nextTile->next;
-    //}
-    //ch = nextTile->type;
     while (1){
         if(nextTile->next == NULL){
             quit("location not in path, cannot erase");
