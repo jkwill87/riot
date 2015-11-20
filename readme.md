@@ -44,7 +44,7 @@ RIOT! intends to switch the roles of a traditional tower defence game, placing t
 ## Changelog
 
 *(11/18/2015)Unit speeds changed from random values to powers of 2 (1,2,4,8..)
-
+*(11/20/2015)Breaking down doors reduced from 5 ticks to 4 ticks
 
 ## Contributors
 
