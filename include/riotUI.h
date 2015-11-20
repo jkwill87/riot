@@ -23,7 +23,7 @@ void uiFree(struct Windows *win);
 
 
 void drawText (struct Windows *windows, struct Dialog dialog,
-    enum GameMode gameMode);
+    enum GameMode gameMode, struct Map *map);
 
 
 enum GameMode menuMain(struct Windows *);/*

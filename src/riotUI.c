@@ -461,10 +461,9 @@ int *getCoordinate(int position) {
 
 
 void drawText(struct Windows *windows, struct Dialog dialog,
-    enum GameMode gameMode) {
+    enum GameMode gameMode, struct Map *map) {
     char *target = NULL;
     char current;
-    char new[] = "Placeholder newgame text"; //TODO revise
     int height = 0;
     int i = 1;
     int yOff, xOff;
@@ -472,8 +471,7 @@ void drawText(struct Windows *windows, struct Dialog dialog,
     /* Get dialogue text field */
     switch (gameMode) {
         case NEW:
-            target = new;
-            height=1;
+            target = dialog.textIntro;
             break;
         case CONTINUE:
             target = dialog.textIntro;
@@ -493,8 +491,8 @@ void drawText(struct Windows *windows, struct Dialog dialog,
     /* Print borders and static text */
     wclear(windows->menu);
     box(windows->menu, 0, 0);
-    mvwaddstr(windows->menu,2,xOff,"Level x: Title"); //TODO revise
-    mvwaddstr(windows->menu,2,MAX_COLS-27-xOff,"Press any key to continue...");
+    mvwprintw(windows->menu,2,xOff,"Level %d: %s",map->levelNo,map->name);
+    mvwprintw(windows->menu,MAX_ROWS -3,4,"Press any key to continue...");
 
 
     wrefresh(windows->menu);

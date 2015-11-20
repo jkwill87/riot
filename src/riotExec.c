@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
         currentMap = &(mapList).level[level];
         copyMap(currentMap,map);
         /* Display intro text */
-        drawText(&windows, dialog[level], gameMode);
+        drawText(&windows, dialog[level], gameMode,map);
 
         /* Initialize game elements */
         getGuards(&guards, *map);
@@ -69,8 +69,8 @@ int main(int argc, char **argv) {
             gameMode=LOSE;
         }
         /* Display outro text */
-        drawText(&windows, dialog[level], gameMode);
-
+        drawText(&windows, dialog[level], gameMode, map);
+        gameMode = CONTINUE;
     } while (level!=EXIT);
 
     uiFree(&windows);
