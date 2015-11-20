@@ -20,7 +20,7 @@ void uiInit(struct Windows *win) {
     win->body = newwin(MAIN, MAX_COLS, HEADER, 0);
     win->footer = newwin(FOOTER, MAX_COLS, HEADER + MAIN, 0);
     win->menu = newwin(MAX_ROWS, MAX_COLS, 0, 0);
-    wbkgd(win->body, COLOR_PAIR (1));
+    wbkgd(win->body, COLOR_PAIR (2));
 }
 
 
@@ -450,14 +450,18 @@ void redrawUnit(WINDOW *body, struct Inmate *inmate, struct Path *path,
     mhp = (float) inmate->maxHealth;
     php = (hp / mhp) * 100;
 
-    init_pair(1, COLOR_WHITE, COLOR_BLACK);
+    init_pair(2, COLOR_WHITE, COLOR_BLACK);
     init_pair(GREEN, GREEN, COLOR_BLACK);
     init_pair(YELLOW, YELLOW, COLOR_BLACK);
     init_pair(RED, RED, COLOR_BLACK);
     init_pair(PURPLE, PURPLE, COLOR_BLACK);
     init_pair(DAMAGED, COLOR_BLACK, DAMAGED);
+    init_pair(20, GREEN, DAMAGED);
+    init_pair(21, YELLOW, DAMAGED);
+    init_pair(22, RED, DAMAGED);
+    init_pair(23, PURPLE, DAMAGED);
 
-    wbkgd(body, COLOR_PAIR(1));
+    wbkgd(body, COLOR_PAIR(2));
     eraseInmate(body,path,oldPosition);
 
     if (php > 75.0) {
@@ -478,12 +482,12 @@ void redrawUnit(WINDOW *body, struct Inmate *inmate, struct Path *path,
     );
 #endif
 
-    wbkgd(body, COLOR_PAIR(1));
+    wbkgd(body, COLOR_PAIR(2));
 
     coordinates = getCoordinate(inmate->position);
     wbkgd(body, COLOR_PAIR(setColor));
     mvwaddch(body, coordinates[0], coordinates[1], inmate->type);
-    wbkgd(body, COLOR_PAIR (1));
+    wbkgd(body, COLOR_PAIR (2));
 }
 
 
