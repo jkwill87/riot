@@ -346,12 +346,15 @@ void inmateMove(struct UnitList *inmateList, struct Path *path) {
             ((struct Inmate *) nextInmate->unit)->position = prevPos;
             ((struct Inmate *) nextInmate->unit)->doorSmash++;
         } 
-        else if (nextTile->next != NULL && (int) ((struct Inmate *) nextInmate->unit)->position ==
+        else if (nextTile->next->type != '&' && (int) ((struct Inmate *) nextInmate->unit)->position ==
             prevPos + 1)
             ((struct Inmate *) nextInmate->unit)->position = nextTile->next->location;
-        else if (nextTile->next == NULL && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1) {
+        else if (nextTile->next->type == '&'  && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1) {
             ((struct Inmate *) nextInmate->unit)->delUnit = TRUE;
-            //endwin();
+            //((struct Inmate *) nextInmate->unit)->position = nextTile->location;
+            endwin();
+            exit(1);
+            
         }
         nextInmate = getNext(nextInmate);
     } while (getNext(nextInmate));
