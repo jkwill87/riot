@@ -24,8 +24,8 @@ struct Inmate {/*
     bool delUnit;
     char type;
     float position;
-    unsigned int currentHealth;
-    unsigned int maxHealth;
+    int currentHealth;
+    int maxHealth;
     unsigned int speed;
     unsigned int rep;
     unsigned int panic;
@@ -176,7 +176,7 @@ POSTCONDITIONS: Memory is allocated for a new Inmate struct.*/
 
 
 bool simulate(struct Windows *win, struct UnitList *guardList,
-    struct UnitList *inmateList, struct Path *path); /*
+    struct UnitList *inmateList, struct Path *path, struct Map *map); /*
 
   DESCRIPTION: Simulates all unit interactions and drawing for a period of time
   

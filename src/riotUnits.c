@@ -274,8 +274,8 @@ struct Guard *createGuard(enum GuardType type) {
 
 bool simulate(struct Windows *gameInterface,
     struct UnitList *guardList, struct UnitList *inmateList,
-    struct Path *path) {
-
+    struct Path *path, struct Map *map) {
+    int i;
     struct UnitNode *nextInmate;
     float simulateTime = 0;
     int prevPos[inmateList->count];
@@ -287,7 +287,7 @@ bool simulate(struct Windows *gameInterface,
     while (simulateTime < 800) {
 
         nextInmate = getHead(inmateList);
-        for (int i = 0; i < inmateList->count; i++) {
+        for (i = 0; i < inmateList->count; i++) {
             prevPos[i] = ((struct Inmate *) nextInmate->unit)->position;
             nextInmate = nextInmate->next;
         }
@@ -297,22 +297,23 @@ bool simulate(struct Windows *gameInterface,
         nextInmate = getHead(inmateList);
 
         for (int i = 0; i < inmateList->count; i++) {
-            if (((struct Inmate *) nextInmate->unit)->delUnit == FALSE)
-                redrawUnit(gameInterface->body,
-                    (struct Inmate *) nextInmate->unit, path, prevPos[i]);
-            else {
-                /*Call redraw but delete it?, or simply call eraseUnit in UI*/
-                dequeue(inmateList);
+/*Dequeues all units that are marked for deletion    vv SWITCHED FROM FALSE AND COMMENTED OUT LINES
+These are both units that are dead or that have reached the end of the map*/
+            if (((struct Inmate *) nextInmate->unit)->delUnit == TRUE){
+                /*NEED TO DO: 
+                eraseInmate(gameInterface->body,path,(struct Inmate *) nextInmate->unit)//this code exists
+                remove (inmateList, i); //needs to be written, removes an inmate fromthe middle of the list
+                */
+                }
+                nextInmate = nextInmate->next;
             }
-            nextInmate = nextInmate->next;
+            /*The only UI fucntion that Simulate needs to worry about*/
+            gameplayRefresh (gameInterface->body,map,guardList,inmateList,path);
+            simulateTime += 4*TICSPEED;
+            nanosleep(&delay, NULL);
         }
-        simulateTime += 4*TICSPEED;
-        wrefresh(gameInterface->body);
-        nanosleep(&delay, NULL);
-    }
-
+    /*LOOP ENDS AND RETURNS TRUE REGARDLESS*/
     return true;  //TODO return win condition
-
 }
 
 

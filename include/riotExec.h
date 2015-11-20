@@ -117,6 +117,7 @@ enum Colour {/*
     RED = 9,
     PURPLE = 5,
     DAMAGED = 1,
+    DEFAULT = 2,
 
 };
 

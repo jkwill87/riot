@@ -43,6 +43,12 @@ ARGUMENTS: The game interface
            The list of maps*/
 
 
+int getPrevPos (struct Path *path, struct Inmate *inmate);/*
+
+DESCRIPTION: Gets the preveious position that the unit moved from;
+*/
+
+
 void inmateRemove(int position);/*
 
 DESCRIPTION: Removes an inmate of a certain position from the list
@@ -69,7 +75,7 @@ ARGUMENTS: The header window
 */
 
 
-void updateQueue (WINDOW *body, struct UnitList *list, int numAdded);/*
+void updateQueue (WINDOW *body, struct UnitList *inmateList, int size);/*
 DESCRIPTION: Updates the units in the box drawn by drawQueue function
 
 ArRGUMENTS: The body window
@@ -77,17 +83,33 @@ ArRGUMENTS: The body window
 */
 
 
-void redrawUnit(WINDOW *body, struct Inmate *inmate, struct Path *path, float oldPosition);
+void drawGuards(WINDOW *body, struct Map *map, struct UnitList *guards);/*
+
+*/
 
 
-/*
+int getColor (struct Inmate *inmate);/*
+
+DESCRIPTION: gets the color based on the units health and attack state
+
+*/
+
+
+void redrawUnit(WINDOW *body, struct Inmate *inmate, struct Path *path);/*
 
 DESCRIPTION: Function to redraw units on the screen
 
 ARGUMENTS: A pointer to the interface window, unit to be drawn, integer health value, curreent position and position to be mmoved to
 
 POSTCONDITION: Ensures that the unit given is drawn at the given newPostiion*/
-void eraseInmate(WINDOW *body, struct Path * path, float position);/*
+
+
+void eraseInmate(WINDOW *body, struct Path * path, struct Inmate *inmate);/*
+
+DESCRIPTION: this is an interface for Simulation in riotUnits */
+
+
+void eraseInmatePos(WINDOW *body, struct Path * path, float position);/*
 
 DESCRIPTION: Erases a unit off the screen and restores tile
 
@@ -95,6 +117,11 @@ ARGUMENTS: Pointer to the interface window and position as an integer value
 
 POSTCONDITION: Ensures the given position displays an aseterisk */
 
+
+void gameplayRefresh (WINDOW *body, struct Map *map, struct UnitList *guardList, struct UnitList *inmateList,struct Path *path);/*
+
+DESCRIPTION: Redraws the screen, this is for color functionality
+*/
 
 int * getCoordinate(int position);/*
 

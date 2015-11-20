@@ -6,7 +6,7 @@ void uiInit(struct Windows *win) {
 
     initscr();
     start_color();
-    init_pair(2, COLOR_WHITE, COLOR_BLACK);
+    init_pair(DEFAULT, COLOR_WHITE, COLOR_BLACK);
 
     noecho(); // hide keypresses
     curs_set(FALSE); // hide cursor
@@ -20,7 +20,6 @@ void uiInit(struct Windows *win) {
     win->body = newwin(MAIN, MAX_COLS, HEADER, 0);
     win->footer = newwin(FOOTER, MAX_COLS, HEADER + MAIN, 0);
     win->menu = newwin(MAX_ROWS, MAX_COLS, 0, 0);
-    wbkgd(win->body, COLOR_PAIR (2));
 }
 
 
@@ -326,16 +325,27 @@ void updateHeader(WINDOW *header, struct Map *map) {
 }
 
 
-void updateQueue(WINDOW *body, struct UnitList *inmates, int numAdded) {
+void updateQueue(WINDOW *body, struct UnitList *inmateList, int size) {
+    struct UnitNode *nextInmate;
     struct Inmate *temp;
-    struct UnitNode *node;
-    node = getHead(inmates);
-    temp = (struct Inmate *) node->unit;
-    mvwaddch(body, 5 + numAdded, MAX_COLS - 3, temp->type);
-    if (numAdded < 5) {
-        mvwaddch(body, 6 + numAdded, MAX_COLS - 3, '.');
+    int i;
+    nextInmate = getHead(inmateList);
+    for (i=0; i<size; i++){
+        temp = (struct Inmate*)nextInmate->unit;
+        mvwaddch(body, 6+i, MAX_COLS - 3, temp->type);
     }
-    wrefresh(body);
+    if (size < 5){
+        mvwaddch(body, 6+i, MAX_COLS - 3, '.');
+    }
+  //  struct Inmate *temp;
+  //  struct UnitNode *node;
+  //  node = getHead(inmates);
+  //  temp = (struct Inmate *) node->unit;
+  //  mvwaddch(body, 5 + numAdded, MAX_COLS - 3, temp->type);
+  //  if (numAdded < 5) {
+  //      mvwaddch(body, 6 + numAdded, MAX_COLS - 3, '.');
+  //  }
+  //  wrefresh(body);
 }
 
 
@@ -388,6 +398,8 @@ void drawLevel(struct Windows *windows, struct Map *map,
     mvwaddch(windows->body, 11, MAX_COLS - 6, ACS_LLCORNER);
     mvwaddch(windows->body, 11, MAX_COLS - 2, ACS_LRCORNER);
     mvwaddch(windows->body, 6, MAX_COLS - 3, '.');
+    for (y = 7; y < 11; y++)
+        mvwaddch(windows->body, y, MAX_COLS - 3, ' ');
     for (y = 1; y < 6; y++)
         mvwprintw(windows->body, 5 + y, MAX_COLS - 5, "%d", y);
     for (y = 0; y < 3; y++) {
@@ -440,17 +452,13 @@ void drawLevel(struct Windows *windows, struct Map *map,
     return;
 }
 
+void gameplayRefresh (WINDOW *body, struct Map *map, struct UnitList *guardList, struct UnitList *inmateList,
+    struct Path *path){
+    int i;
+    struct UnitNode *nextInmate;
 
-void redrawUnit(WINDOW *body, struct Inmate *inmate, struct Path *path,
-    float oldPosition) {
-    int *coordinates = malloc(sizeof(int) * 2);
-    float hp, mhp, php;
-    int setColor = GREEN;
-    hp = (float) inmate->currentHealth;
-    mhp = (float) inmate->maxHealth;
-    php = (hp / mhp) * 100;
-
-    init_pair(2, COLOR_WHITE, COLOR_BLACK);
+    //Initializes all colors
+    init_pair(DEFAULT, COLOR_WHITE, COLOR_BLACK);
     init_pair(GREEN, GREEN, COLOR_BLACK);
     init_pair(YELLOW, YELLOW, COLOR_BLACK);
     init_pair(RED, RED, COLOR_BLACK);
@@ -460,43 +468,92 @@ void redrawUnit(WINDOW *body, struct Inmate *inmate, struct Path *path,
     init_pair(21, YELLOW, DAMAGED);
     init_pair(22, RED, DAMAGED);
     init_pair(23, PURPLE, DAMAGED);
-
-    wbkgd(body, COLOR_PAIR(2));
-    eraseInmate(body,path,oldPosition);
-
-    if (php > 75.0) {
-        setColor = GREEN;
-    } else if (php > 50.0) {
-        setColor = YELLOW;
-    } else if (php > 25.0) {
-        setColor = RED;
-    } else {
-        setColor = PURPLE;
+    //set color black/white
+    wattron(body,COLOR_PAIR(DEFAULT));
+    //redraw map
+//    drawMap(body,map);
+    //redraw queuebox
+//    updateQueue(body,inmateList,getLength(inmateList));
+    //redraw guardList
+//    drawGuards(body,map,guardList);
+    //redraw unitList //colors change here
+    nextInmate = getHead(inmateList);
+    for (i=0; i< getLength(inmateList); i++){
+        wattron(body,COLOR_PAIR(getColor((struct Inmate*)nextInmate->unit)));
+        redrawUnit(body, (struct Inmate *)nextInmate->unit,path);
+        wattron(body,COLOR_PAIR(DEFAULT));
+        eraseInmatePos(body, path,getPrevPos(path,(struct Inmate*)nextInmate->unit));
+        nextInmate=nextInmate->next;
     }
+    //set color back to black and white
+    wattron(body,COLOR_PAIR(DEFAULT));
 
-#ifdef _DEBUG
-    /* Print movement debug information if the debug macro has been set */
-    mvwprintw(
-        body, 0, 1, "%d, %d",
-        inmate->currentHealth, inmate->maxHealth
-    );
-#endif
 
-    wbkgd(body, COLOR_PAIR(2));
-
-    coordinates = getCoordinate(inmate->position);
-    wbkgd(body, COLOR_PAIR(setColor));
-    mvwaddch(body, coordinates[0], coordinates[1], inmate->type);
-    wbkgd(body, COLOR_PAIR (2));
+    //refresh body
+    wrefresh(body);
+    //refresh();
+    //return
+    return;
 }
 
 
-void eraseInmate(WINDOW *body, struct Path * path, float position) {
+int getPrevPos (struct Path *path, struct Inmate *inmate){
+    struct TileNode *currentTile;
+    struct TileNode *nextTile;
+
+    currentTile = path->first;
+    if (currentTile->next == NULL)
+        quit("No Path Found When Getting Prev Pos");
+    nextTile = currentTile->next;
+    while (1){
+        if(nextTile->next == NULL)
+            return (currentTile->location);
+            //quit("Position never found");
+        if(nextTile->location == inmate->position)
+            return (currentTile->location);
+        currentTile= nextTile;
+        nextTile= nextTile->next;
+    }
+}
+
+int getColor (struct Inmate *inmate){
+    float hp, mhp, php;
+    int setColor = GREEN;
+    hp = (float) inmate->currentHealth;
+    mhp = (float) inmate->maxHealth;
+    php = (hp / mhp) * 100;
+    if (php >= 75.0) {
+        setColor = GREEN;
+        //if inmate->beingAttacked == true
+            //setColor == 20
+    } else if (php >= 50.0) {
+        setColor = YELLOW;
+        //if inmate->beingAttacked == true
+            //setColor == 21
+    } else if (php >= 25.0) {
+        setColor = RED;
+        //if inmate->beingAttacked == true
+            //setColor == 22
+    } else {
+        setColor = PURPLE;
+        //if inmate->beingAttacked == true
+            //setColor == 23
+    }
+    return setColor;
+}
+
+void redrawUnit(WINDOW *body, struct Inmate *inmate, struct Path *path) {
+    int *coordinates = malloc(sizeof(int) * 2);
+    coordinates = getCoordinate(inmate->position);
+    mvwaddch(body, coordinates[0], coordinates[1], inmate->type);
+}
+
+
+void eraseInmatePos(WINDOW *body, struct Path * path, float position) {
     struct TileNode * nextTile;
     nextTile = path->first;
     char ch;
     int * coordinates;
-
     while (1){
         if(nextTile->next == NULL){
             break;
@@ -511,6 +568,10 @@ void eraseInmate(WINDOW *body, struct Path * path, float position) {
         }
         nextTile = nextTile->next;
     }
+}
+
+void eraseInmate(WINDOW *body, struct Path *path,struct Inmate *inmate){
+    eraseInmatePos(body, path, inmate->position);
 }
 
 

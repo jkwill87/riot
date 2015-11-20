@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
         }
 
         /* Simulate unit interactions */
-        won = simulate(&windows, &guards, &inmates, &path);
+        won = simulate(&windows, &guards, &inmates, &path, map);
         if(won){
             gameMode=WIN;
             if (level == progress){
