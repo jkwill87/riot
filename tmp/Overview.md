@@ -1,7 +1,6 @@
-1.	Overview
+**1.	Overview**
 
-
-1.1.	Description
+**1.1.	Description**
 
 RIOT! is a reverse tower defence game set in a prison theme.  RIOT! intends to switch the roles of a traditional tower defence game, placing the user in control of what would conventionally be the enemy horde.
 
@@ -10,10 +9,10 @@ The game’s objective is to escort the protagonist through each of correction f
 Whether it’s trying to sober up from the Drunk Tank or escaping the clutches of the fabled Guantanamo, the difficulty only goes up as more guards arrive to bring your attempts to a halt.
 
 
-1.2.	Technical Features
+**1.2.	Technical Features**
 
 
-2.	Instructions
+**2.	Instructions**
 
  In-order to play RIOT! you will have to do following...
 1.	From the command line inside the root folder of the game, type and enter “make” in-order to compile the game.
@@ -34,7 +33,7 @@ Exit exits RIOT!
 9.	If you complete the level, the player will be prompted with a message that continues the story, otherwise it will prompt them to start it again.
 
 
-3.	Design Changes
+**3.	Design Changes**
 
 - 8 levels instead of 9
 - tentative tick time (is 1/6th of a second in design doc)
@@ -43,7 +42,7 @@ Exit exits RIOT!
 - protagonist changes
 
 
-4.	Incomplete Features
+**4.	Incomplete Features**
 
 
 
