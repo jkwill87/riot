@@ -6,12 +6,14 @@ int main(int argc, char **argv) {
     enum GameMode gameMode;
     struct Windows windows;
     struct MapList mapList;
-    struct Map *map;
+    struct Map *map=malloc(sizeof(struct Map));
+    struct Map *currentMap;
     struct Dialog dialog[MAX_LEVELS];
     struct UnitList inmates, guards;
     struct UnitNode *unitNode;
     struct Path path;
-    bool progress[MAX_LEVELS];
+    int progress =0;
+    bool won =0;
     int level=0;
 
     /* Parse map files */
@@ -31,8 +33,8 @@ int main(int argc, char **argv) {
         }
 
         /* Select current map */
-        map = &(mapList).level[level];
-
+        currentMap = &(mapList).level[level];
+        copyMap(currentMap,map);
         /* Display intro text */
         drawText(&windows, dialog[level], gameMode);
 
@@ -56,10 +58,16 @@ int main(int argc, char **argv) {
         }
 
         /* Simulate unit interactions */
-        progress[level] = simulate(&windows, &guards, &inmates, &path);
-        if(progress[level]) gameMode=WIN;
-        else gameMode=LOSE;
-
+        won = simulate(&windows, &guards, &inmates, &path);
+        if(won){
+            gameMode=WIN;
+            if (level == progress){
+                progress++;
+            }
+        }
+        else{
+            gameMode=LOSE;
+        }
         /* Display outro text */
         drawText(&windows, dialog[level], gameMode);
 
