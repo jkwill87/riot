@@ -26,7 +26,12 @@ ARGUMENTS: The guard list
 */
 
 
-void printGuardList(struct UnitList *guardList);
+void printGuardList(struct UnitList *guardList);/*
+
+DESCRIPTION: Prints out the guard list
+
+ARGUMENTS: The guard list 
+*/
 
 
 void unitsMove(char *loadDir);/*
@@ -56,7 +61,12 @@ ARGUMENTS: The location of the directory
 */
 
 
-void writeToFile(char *message);
+void writeToFile(char *message);/*
+
+DESCRIPTION: Function that writes information to a file for debugging purposes
+
+ARGUMENTS: The message
+*/
 
 
 void colorTest();

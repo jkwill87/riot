@@ -134,4 +134,12 @@ ARGUMENTS: Array of all positions previously checked (int prevChecked[]).
            Position to be compared against the previously checked positions.
 */
 
+
+void copyMap (struct Map *initialMap, struct Map *dupeMap);/*
+
+DESCRIPTION: Copies the elements from the initalMap to the dupeMap
+
+ARGUEMENTS: Initial Map Pointer, Map pointer for the duplicate to be used during gameplay
+*/
+
 #endif //RIOT_MAP

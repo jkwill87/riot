@@ -279,3 +279,20 @@ void destroyPath(struct Path *path) {
     }
     free(path);
 }
+
+void copyMap (struct Map *initialMap, struct Map *dupeMap){
+    int x,y;
+    strcpy(dupeMap->name, initialMap->name);
+    dupeMap->levelNo = initialMap->levelNo;
+    for(y=0; y<MAP_ROWS; y++){
+        for(x=0; x<MAP_COLS; x++){
+            dupeMap->overlay[y][x]=initialMap->overlay[y][x];
+        }
+    }
+    for(y=0; y<INMATE_TYPES; y++){
+        dupeMap->inmates[y]= initialMap->inmates[y];
+    }
+    dupeMap->panicMax= initialMap->panicMax;
+    dupeMap->repMax= initialMap->repMax;
+
+}
