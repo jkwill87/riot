@@ -42,6 +42,7 @@ struct Guard {/*
     unsigned int damage;
     unsigned int range;
     unsigned int cooldown;
+    unsigned int cooldownRemaining;
     enum AI ai;
 
 };
