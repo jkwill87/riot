@@ -72,7 +72,7 @@ ARGUMENTS: The path which the tile is being added to
            The type of tile that is going to be added*/
 
 
-void getGuards(struct UnitList *guards, struct Map map);/*
+struct UnitList* getGuards(struct UnitList *guards, struct Map map);/*
 
 DESCRIPTION: Retrieves the guard data from the given map and stores the guards into a linked list UnitList structure.
 

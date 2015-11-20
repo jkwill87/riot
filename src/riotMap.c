@@ -131,6 +131,8 @@ void getPath(struct Path *path, struct Map map) {
             if (map.overlay[i][j] == '$') {
                 position = (i * MAP_COLS) + j;
                 count = 0;
+                pushToPath(createTileNode(position, map.overlay[i][j]),path);
+                printf("Pushing to path at position: %d\n",position);
                 prevChecked[count] = position;
                 goto outer;
             }
@@ -151,13 +153,17 @@ struct Path *pathSolve(struct Map map, struct Path *path, int prevChecked[],
     i = (currentPosition - 1) / MAP_COLS;
     j = currentPosition - (MAP_COLS * i);
 
+    printf("\n\ni is: %d\n",i);
+    printf("j is: %d\n",j);
+    printf("Adding: %c\n",map.overlay[i][j]);
     beingChecked = ((i + 1) * MAP_COLS) + j;
 
+    //Move down
     if (!beenChecked(prevChecked, beingChecked) &&
         isPathCharacter(map.overlay[i + 1][j])) {
         nextPosition = currentPosition + MAP_COLS;
         prevChecked[count] = currentPosition;
-        pushToPath(createTileNode(currentPosition, map.overlay[i + 1][j]),
+        pushToPath(createTileNode(nextPosition, map.overlay[i + 1][j]),
             path);
         pathSolve(map, path, prevChecked, count + 1, nextPosition);
     }
@@ -168,7 +174,7 @@ struct Path *pathSolve(struct Map map, struct Path *path, int prevChecked[],
         isPathCharacter(map.overlay[i][j + 1])) {
         nextPosition = currentPosition + 1;
         prevChecked[count] = currentPosition;
-        pushToPath(createTileNode(currentPosition, map.overlay[i][j + 1]),
+        pushToPath(createTileNode(nextPosition, map.overlay[i][j + 1]),
             path);
         pathSolve(map, path, prevChecked, count + 1, nextPosition);
     }
@@ -180,7 +186,7 @@ struct Path *pathSolve(struct Map map, struct Path *path, int prevChecked[],
             isPathCharacter(map.overlay[i - 1][j])) {
             nextPosition = currentPosition - MAP_COLS;
             prevChecked[count] = currentPosition;
-            pushToPath(createTileNode(currentPosition, map.overlay[i - 1][j]),
+            pushToPath(createTileNode(nextPosition, map.overlay[i-1][j]),
                 path);
             pathSolve(map, path, prevChecked, count + 1, nextPosition);
         }
@@ -193,7 +199,7 @@ struct Path *pathSolve(struct Map map, struct Path *path, int prevChecked[],
             isPathCharacter(map.overlay[i][j - 1])) {
             nextPosition = currentPosition - 1;
             prevChecked[count] = currentPosition;
-            pushToPath(createTileNode(currentPosition, map.overlay[i][j]),
+            pushToPath(createTileNode(nextPosition, map.overlay[i][j-1]),
                 path);
             pathSolve(map, path, prevChecked, count + 1, nextPosition);
         }

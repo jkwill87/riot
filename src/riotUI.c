@@ -445,12 +445,11 @@ void redrawUnit(WINDOW *body, struct Inmate *inmate, struct Path *path,
         setColor = PURPLE;
     }
 
-#ifndef _DEBUG
+#ifdef _DEBUG
     /* Print movement debug information if the debug macro has been set */
     mvwprintw(
-        body, 0, 1, "%d %d %f %f, %d, %d, %f, %f",
-        newCoordinates[0], newCoordinates[1],
-        inmate->position, php, inmate->currentHealth, inmate->maxHealth, hp, mhp
+        body, 0, 1, "%d, %d",
+        inmate->currentHealth, inmate->maxHealth
     );
 #endif
 
