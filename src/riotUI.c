@@ -287,6 +287,29 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
     wrefresh(win->body);
 }
 
+void eraseInmate(struct Windows * win, struct Path * path, struct Inmate * inmate) {
+    struct TileNode * nextTile;
+    nextTile = path->first;
+    char ch;
+    int * coordinates;
+
+    //for (int i = 0; i < path->count; i++) { 
+    //    nextTile = nextTile->next;
+    //}
+    //ch = nextTile->type;
+    while (1){
+        if(nextTile->next == NULL){
+            quit("location not in path, cannot erase");
+        }
+        nextTile = nextTile->next;
+        if(nextTile->location == inmate->position){
+            ch=nextTile->type;
+            break;
+        }
+    }
+    coordinates = getCoordinate(inmate->position);
+    mvwaddch(win->body, coordinates[0], coordinates[1], ch);
+}
 
 void updateHeader(WINDOW *header, struct Map *map) {
     wclear(header);
