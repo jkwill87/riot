@@ -5,7 +5,6 @@
 #include "riotUnits.h"
 #include "riotUI.h"
 
-
 void destroyList(struct UnitList *list) {
 
     struct UnitNode *tempNode = NULL;
@@ -279,7 +278,7 @@ bool simulate(struct Windows *gameInterface,
     delay.tv_sec = 0;
     delay.tv_nsec = 50000000L;  // Half second in nano seconds
 
-    while (simulateTime < 40) {
+    while (simulateTime < 100) {
 
         nextInmate = getHead(inmateList);
         for (int i = 0; i < inmateList->count; i++) {
@@ -329,19 +328,29 @@ void inmateMove(struct UnitList *inmateList, struct Path *path) {
         }
         prevPos = ((struct Inmate *) nextInmate->unit)->position;
         ((struct Inmate *) nextInmate->unit)->position =
-            ((struct Inmate *) nextInmate->unit)->position +
-                (float) ((struct Inmate *) nextInmate->unit)->speed / 8;
-        if ((int) ((struct Inmate *) nextInmate->unit)->position ==
-            prevPos + 1 && nextTile->next != NULL)
+        ((struct Inmate *) nextInmate->unit)->position +
+        (float) ((struct Inmate *) nextInmate->unit)->speed / 8;
+        if (nextTile->next != NULL && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1 
+            && nextTile->next->type == '#' && ((struct Inmate *) nextInmate->unit)->doorSmash == 30) {
             ((struct Inmate *) nextInmate->unit)->position = nextTile->next->location;
-        else if ((int) ((struct Inmate *) nextInmate->unit)->position ==
-            prevPos + 1 && nextTile->next == NULL) {
+            ((struct Inmate *) nextInmate->unit)->doorSmash = 0;
+        }                
+        else if (nextTile->next != NULL && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1 
+            && nextTile->next->type == '#' && ((struct Inmate *) nextInmate->unit)->doorSmash != 30) {
+            ((struct Inmate *) nextInmate->unit)->position = prevPos;
+            ((struct Inmate *) nextInmate->unit)->doorSmash++;
+        } 
+        else if (nextTile->next != NULL && (int) ((struct Inmate *) nextInmate->unit)->position ==
+            prevPos + 1)
+            ((struct Inmate *) nextInmate->unit)->position = nextTile->next->location;
+        else if (nextTile->next == NULL && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1) {
             ((struct Inmate *) nextInmate->unit)->delUnit = TRUE;
             //endwin();
         }
         nextInmate = getNext(nextInmate);
     } while (getNext(nextInmate));
 }
+
 
 
 void guardAttack(struct UnitList *guardList, struct UnitList *inmateList) {

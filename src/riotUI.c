@@ -104,10 +104,29 @@ int levelSelect(struct Windows *gameInterface, struct MapList *mapList,
     while (1){
         input = wgetch(menu);
         select = input - '0';
-        if (select >= 0 && select <= progress)
+        if (select >= 0 && select <= 8/*progress*/)
             return (int) (select);
     }
 }
+
+
+/*bool ifProt(struct UnitList * current) {
+
+   bool isProtThere = TRUE;
+
+   if (current) {
+      if (current->count) {
+         for(int i = 0; i <= getLength(current) - 1; i++) {
+
+
+
+         }
+      }
+   } else {
+      return FALSE;
+   }
+
+}*/
 
 
 void drawInmateSelection(struct Windows *win, struct Map *map,
@@ -116,6 +135,7 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
     char input;
     int y;
     int numAdded = 0;
+    static bool ifProt = FALSE;
 //
 //    mvwprintw(win->body, MAP_ROWS, 3,
 //        "Press the corresponding letter to buy inmate");
@@ -125,6 +145,19 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
         wrefresh(win->header);
         input = wgetch(win->body);
         switch (input) {
+            case 'r':
+                if (!ifProt) {
+                    ifProt = TRUE;
+                    mvwprintw(win->footer, 0, 40, "PROTAGONIST ADDED");
+                    inmate = createInmate(input);
+                    enqueue(inmates, inmate);
+                    numAdded++;
+                    updateQueue(win->body, inmates, numAdded);
+                }
+                else {
+                    mvwprintw(win->footer, 0, 40, "PROTAGONIST ALREADY PRESENT");
+                }
+                break;
             case 'h':
                 if (map->repMax >= 10) {
                     mvwprintw(win->footer, 0, 40, "HOMEBOY ADDED");
@@ -270,6 +303,25 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
     wrefresh(win->body);
 }
 
+void eraseInmate(struct Windows * win, struct Path * path, struct Inmate * inmate) {
+    struct TileNode * nextTile;
+    nextTile = path->first;
+    char ch;
+    int * coordinates;
+
+    while (1){
+        if(nextTile->next == NULL){
+            quit("location not in path, cannot erase");
+        }
+        nextTile = nextTile->next;
+        if(nextTile->location == inmate->position){
+            ch=nextTile->type;
+            break;
+        }
+    }
+    coordinates = getCoordinate(inmate->position);
+    mvwaddch(win->body, coordinates[0], coordinates[1], ch);
+}
 
 void updateHeader(WINDOW *header, struct Map *map) {
     wclear(header);
@@ -524,6 +576,8 @@ void drawText(struct Windows *windows, struct Dialog dialog,
 
 char *getInmateName(char ch) {
     switch (ch) {
+        case 'r':
+            return "p[r]otagonist";
         case 'h':
             return "[h]omeboy(10)";
         case 'b':
@@ -540,8 +594,6 @@ char *getInmateName(char ch) {
             return "[a]ttorney(30)";
         case 'd':
             return "[d]octor(10)";
-        case 'r':
-            return "p[r]otaganist";
         default:
             return "FAIL";
     }
