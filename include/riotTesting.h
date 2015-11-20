@@ -56,7 +56,12 @@ ARGUMENTS: The location of the directory
 */
 
 
-void writeToFile(char *message);
+void writeToFile(char *message);/*
+
+DESCRIPTION: Function that writes information to a file for debugging purposes
+
+ARGUMENTS: The message
+*/
 
 
 void colorTest();
