@@ -598,8 +598,6 @@ char *getInmateName(char ch) {
             return "[a]ttorney(30)";
         case 'd':
             return "[d]octor(10)";
-        case 'r':
-            return "p[r]otaganist";
         default:
             return "FAIL";
     }

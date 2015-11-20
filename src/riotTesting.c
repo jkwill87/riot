@@ -138,15 +138,15 @@ void unitsMove(char *loadDir) {
 
 void unitsPlay(char *argument){
 
-    enum GameMode gameMode;
-    struct Windows windows;
+//    enum GameMode gameMode;
+//struct Windows windows;
     struct MapList mapList;
     struct Map *map;
     struct Dialog dialog[MAX_LEVELS];
-    struct UnitList inmates, guards;
-    struct UnitNode *unitNode;
+//    struct UnitList inmates;
+    struct UnitList guards;
+//    struct UnitNode *unitNode;
     struct Path path;
-    bool progress[MAX_LEVELS];
     int level=3;
 
     /* Parse map files */
