@@ -5,6 +5,15 @@
 #include "riotUnits.h"
 #include "riotUI.h"
 
+
+/*static void writeToFile(char message){
+    FILE * file = fopen("test.txt","a");
+
+    fprintf(file,"%c\n",message);
+
+    fclose(file);
+}*/
+
 void destroyList(struct UnitList *list) {
 
     struct UnitNode *tempNode = NULL;
@@ -278,17 +287,17 @@ bool simulate(struct Windows *gameInterface,
     int i;
     struct UnitNode *nextInmate;
     float simulateTime = 0;
-    int prevPos[inmateList->count];
+    //int prevPos[inmateList->count];
     struct timespec delay;
 
     delay.tv_sec = 0;
-    delay.tv_nsec = 400000000L;  // Half second in nano seconds
+    delay.tv_nsec = 40000000L;  // Half second in nano seconds
 
-    while (simulateTime < 800) {
+    while (simulateTime < 400) {
 
         nextInmate = getHead(inmateList);
         for (i = 0; i < inmateList->count; i++) {
-            prevPos[i] = ((struct Inmate *) nextInmate->unit)->position;
+            //prevPos[i] = ((struct Inmate *) nextInmate->unit)->position;
             nextInmate = nextInmate->next;
         }
 
@@ -304,11 +313,12 @@ These are both units that are dead or that have reached the end of the map*/
                 eraseInmate(gameInterface->body,path,(struct Inmate *) nextInmate->unit)//this code exists
                 remove (inmateList, i); //needs to be written, removes an inmate fromthe middle of the list
                 */
+            } else {
+                    /*The only UI fucntion that Simulate needs to worry about*/
+                    gameplayRefresh (gameInterface->body,map,guardList,inmateList,path);
                 }
-                nextInmate = nextInmate->next;
+                nextInmate = nextInmate->next; 
             }
-            /*The only UI fucntion that Simulate needs to worry about*/
-            gameplayRefresh (gameInterface->body,map,guardList,inmateList,path);
             simulateTime += 4*TICSPEED;
             nanosleep(&delay, NULL);
         }
@@ -338,12 +348,12 @@ void inmateMove(struct UnitList *inmateList, struct Path *path) {
         ((struct Inmate *) nextInmate->unit)->position +
         (float) ((struct Inmate *) nextInmate->unit)->speed / 8;
         if (nextTile->next != NULL && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1 
-            && nextTile->next->type == '#' && ((struct Inmate *) nextInmate->unit)->doorSmash == 30) {
+            && nextTile->next->type == '#' && ((struct Inmate *) nextInmate->unit)->doorSmash == 3) {
             ((struct Inmate *) nextInmate->unit)->position = nextTile->next->location;
             ((struct Inmate *) nextInmate->unit)->doorSmash = 0;
         }                
         else if (nextTile->next != NULL && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1 
-            && nextTile->next->type == '#' && ((struct Inmate *) nextInmate->unit)->doorSmash != 30) {
+            && nextTile->next->type == '#' && ((struct Inmate *) nextInmate->unit)->doorSmash != 3) {
             ((struct Inmate *) nextInmate->unit)->position = prevPos;
             ((struct Inmate *) nextInmate->unit)->doorSmash++;
         } 
@@ -352,10 +362,7 @@ void inmateMove(struct UnitList *inmateList, struct Path *path) {
             ((struct Inmate *) nextInmate->unit)->position = nextTile->next->location;
         else if (nextTile->next->type == '&'  && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1) {
             ((struct Inmate *) nextInmate->unit)->delUnit = TRUE;
-            //((struct Inmate *) nextInmate->unit)->position = nextTile->location;
-            endwin();
-            exit(1);
-            
+            ((struct Inmate *) nextInmate->unit)->position = nextTile->location;            
         }
         nextInmate = getNext(nextInmate);
     } while (getNext(nextInmate));
@@ -488,4 +495,3 @@ struct UnitList* getGuards(struct UnitList *guards, struct Map map) {
 
     return guards;
 }
-
