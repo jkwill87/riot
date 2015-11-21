@@ -202,7 +202,7 @@ ARGUMENTS: The list of inmates (UnitList * inmateList).
 
 void moveAnimation(struct UnitNode * nextInmate, struct TileNode *nextTile, int prevPos);
 
-void guardAttack(struct UnitList * guardList, struct UnitList *inmateList);/*
+void guardAttack(struct UnitList * guardList, struct UnitList *inmateList,struct Map map);/*
 
 DESCRIPTION: Has every guard attack an inmate within its range.
 

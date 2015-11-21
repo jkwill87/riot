@@ -332,34 +332,31 @@ bool simulate(struct Windows *gameInterface,
             nextInmate = nextInmate->next;
         }
         inmateMove(inmateList, path);
-        guardAttack(guardList, inmateList);
+        guardAttack(guardList, inmateList,*map);
         nextInmate = getHead(inmateList);
         for (int i = 0; i < inmateList->count; i++) {
-        /*Dequeues all units that are marked for deletion    vv SWITCHED FROM FALSE AND COMMENTED OUT LINES
-        These are both units that are dead or that have reached the end of the map*/
-            if (((struct Inmate *) nextInmate->unit)->dead == TRUE || ((struct Inmate *) nextInmate->unit)->reachedEnd == TRUE){
-                //NEED TO DO: 
-//                eraseInmate(gameInterface->body,path,(struct Inmate *) nextInmate->unit);
-//                wrefresh(gameInterface->body);
+            /*Dequeues all units that are marked for deletion    vv SWITCHED FROM FALSE AND COMMENTED OUT LINES
+            These are both units that are dead or that have reached the end of the map*/
+            if (((struct Inmate *) nextInmate->unit)->dead == TRUE){
                 removeUnit (inmateList, i); //needs to be written, removes an inmate fromthe middle of the list
             }
-            else if (((struct Inmate *) nextInmate->unit)->reachedEnd == TRUE){
+            else if (((struct Inmate *) nextInmate->unit)->reachedEnd == TRUE ){
                 map->panicCur += ((struct Inmate *) nextInmate->unit)->panic;
+                removeUnit (inmateList, i);
             }
-            else {}
                 nextInmate = nextInmate->next; 
-            }
-            /*The only UI fucntion that Simulate needs to worry about*/
-            gameplayRefresh (gameInterface->body,map,guardList,inmateList,path);
-            //If you lose freeze for one second
-            if (inmateList->head == NULL){
-                sleep(1);
-            }
-            //Otherwise keep pausing half a second
-            else{
-                nanosleep(&delay, NULL);
-            }
         }
+        /*The only UI fucntion that Simulate needs to worry about*/
+        gameplayRefresh (gameInterface->body,map,guardList,inmateList,path);
+        //If you lose freeze for one second
+        if (inmateList->head == NULL){
+            sleep(1);
+        }
+        //Otherwise keep pausing half a second
+        else{
+            nanosleep(&delay, NULL);
+        }
+    }
     /*LOOP ENDS AND RETURNS TRUE REGARDLESS*/
     return true;  //TODO return win condition
 }
@@ -457,7 +454,7 @@ void moveAnimation(struct UnitNode * nextInmate, struct TileNode *nextTile, int 
 
 
 
-void guardAttack(struct UnitList *guardList, struct UnitList *inmateList) {
+void guardAttack(struct UnitList *guardList, struct UnitList *inmateList, struct Map map) {
     struct UnitNode *nextInmate;
     struct UnitNode *nextGuard;
 
@@ -469,7 +466,7 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList) {
 	printf("Inmates List size: %d\n", inmateList->count);
 	printf("Guards List size: %d\n\n", guardList->count);
 	#endif
-
+    
 	for (int i=0;i<inmateList->count;i++){
 		for (int j=0;j<guardList->count;j++){
 			if (inRange(nextInmate, nextGuard)){
