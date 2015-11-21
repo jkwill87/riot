@@ -21,7 +21,8 @@ struct Inmate {/*
 
  Inmate stores the stats related to inmate units.*/
 
-    bool delUnit;
+    bool dead;
+    bool reachedEnd;
     char type;
     float position;
     int currentHealth;

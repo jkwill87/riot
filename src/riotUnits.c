@@ -153,7 +153,8 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 2;
             unit->rep = 0;
             unit->panic = 0;
-            unit->delUnit = FALSE;
+            unit->dead = FALSE;
+            unit->reachedEnd = FALSE;
             break;
 
         case HOMEBOY:
@@ -161,7 +162,8 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 4;
             unit->rep = 5;
             unit->panic = 2;
-            unit->delUnit = FALSE;
+            unit->dead = FALSE;
+            unit->reachedEnd = FALSE;
             break;
 
         case BRUISER:
@@ -169,7 +171,8 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 4;
             unit->rep = 15;
             unit->panic = 6;
-            unit->delUnit = FALSE;
+            unit->dead = FALSE;
+            unit->reachedEnd = FALSE;
             break;
 
         case LUNATIC:
@@ -177,7 +180,8 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 6;
             unit->rep = 10;
             unit->panic = 8;
-            unit->delUnit = FALSE;
+            unit->dead = FALSE;
+            unit->reachedEnd = FALSE;
             break;
 
         case FATTY:
@@ -185,7 +189,8 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 2;
             unit->rep = 10;
             unit->panic = 4;
-            unit->delUnit = FALSE;
+            unit->dead = FALSE;
+            unit->reachedEnd = FALSE;
             break;
 
         case SPEEDY:
@@ -193,7 +198,8 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 8;
             unit->rep = 20;
             unit->panic = 2;
-            unit->delUnit = FALSE;
+            unit->dead = FALSE;
+            unit->reachedEnd = FALSE;
             break;
 
         case CUTIE:
@@ -201,7 +207,8 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 4;
             unit->rep = 20;
             unit->panic = 1;
-            unit->delUnit = FALSE;
+            unit->dead = FALSE;
+            unit->reachedEnd = FALSE;
             break;
 
         case ATTORNEY:
@@ -209,7 +216,8 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 4;
             unit->rep = 30;
             unit->panic = 2;
-            unit->delUnit = FALSE;
+            unit->dead = FALSE;
+            unit->reachedEnd = FALSE;
             break;
 
         case DOCTOR:
@@ -217,7 +225,8 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 4;
             unit->rep = 40;
             unit->panic = 2;
-            unit->delUnit = FALSE;
+            unit->dead = FALSE;
+            unit->reachedEnd = FALSE;
             break;
 
         default:
@@ -330,7 +339,7 @@ bool simulate(struct Windows *gameInterface,
         for (int i = 0; i < inmateList->count; i++) {
         /*Dequeues all units that are marked for deletion    vv SWITCHED FROM FALSE AND COMMENTED OUT LINES
         These are both units that are dead or that have reached the end of the map*/
-            if (((struct Inmate *) nextInmate->unit)->delUnit == TRUE){
+            if (((struct Inmate *) nextInmate->unit)->dead == TRUE){
                 //NEED TO DO: 
                 eraseInmate(gameInterface->body,path,(struct Inmate *) nextInmate->unit);
                 removeUnit (inmateList, i); //needs to be written, removes an inmate fromthe middle of the list
@@ -434,7 +443,7 @@ void moveAnimation(struct UnitNode * nextInmate, struct TileNode *nextTile, int 
         prevPos + 1)
         ((struct Inmate *) nextInmate->unit)->position = nextTile->next->location;
     else if (nextTile->next->type == '&'  && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1) {
-        ((struct Inmate *) nextInmate->unit)->delUnit = TRUE;
+        ((struct Inmate *) nextInmate->unit)->reachedEnd = TRUE;
         ((struct Inmate *) nextInmate->unit)->position = nextTile->location;            
     }
 }
@@ -458,7 +467,7 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList) {
 		for (int j=0;j<guardList->count;j++){
 			if (inRange(nextInmate, nextGuard)){
                 if (((struct Inmate *) nextInmate->unit)->currentHealth <= 0){
-                    ((struct Inmate *) nextInmate->unit)->delUnit = true;
+                    ((struct Inmate *) nextInmate->unit)->dead = true;
                 }
 				else if (((struct Guard*)nextGuard->unit)->cooldownRemaining == 0){
 					((struct Guard*)nextGuard->unit)->cooldownRemaining = ((struct Guard*)nextGuard->unit)->cooldown;
