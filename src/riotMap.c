@@ -37,10 +37,8 @@ void parseMap(char *loadDir, struct MapList *mapList, struct Dialog *dialog) {
 
     /* Attempt to iterate through files in loadDir */
     if ((directory = opendir(loadDir)))
-
         while ((entry = readdir(directory))) {
             sprintf(path, "%s/%s", loadDir, entry->d_name);
-
             /* Skip if not readable .riot# file */
             if (regexec(&riotExt, entry->d_name, 0, NULL, 0)) continue;
             if (!(file = fopen(path, "r"))) continue;
@@ -55,39 +53,32 @@ void parseMap(char *loadDir, struct MapList *mapList, struct Dialog *dialog) {
                 current = &mapList->level[entry->d_name[0] - '0'];
                 current->levelNo = entry->d_name[0] - '0';
             }
-
             /* Get level name */
             fgets(line, MAX_COLS, file);
             strtok(line, "]");
             strcpy(current->name, strtok(NULL, "\n"));
-
             /* Get rep */
             fgets(line, MAX_COLS, file);
             strtok(line, "]");
             current->repMax = atoi(strtok(NULL, "\n"));
-
             /* Get panic */
             fgets(line, MAX_COLS, file);
             strtok(line, "]");
             current->panicMax = atoi(strtok(NULL, "\n"));
-
             /* Get units */
             fgets(line, MAX_COLS, file);
             strtok(line, "]");
             strcpy(current->inmates, strtok(NULL, "\n"));
-
             /* Get map */
             while ((fgetc(file) == '>'));
             for (y = 0; y < MAP_ROWS; y++) {
                 fgets(current->overlay[y], MAP_COLS, file);
                 fseek(file, 2, SEEK_CUR);
             }
-
             /* Get text boxes*/
             textBox[0] = dialog[current->levelNo].textIntro;
             textBox[1] = dialog[current->levelNo].textWin;
             textBox[2] = dialog[current->levelNo].textLose;
-
             for (int i = 0; i < 3; i++) {
                 x = 0;
                 do checkChar = fgetc(file); while (checkChar == '>');
@@ -97,22 +88,18 @@ void parseMap(char *loadDir, struct MapList *mapList, struct Dialog *dialog) {
                         textBox[i][x++] = checkChar;
                     }
             }
-
             fclose(file);
             mapList->count++;
             firstRun = false;
         }
-
     /* Clean up memory */
     closedir(directory);
     regfree(&riotExt);
     if (useCwd) free(loadDir); //getcwd calls malloc, if used must free loadDir
-
     /* Terminate if no map files where found */
     if (firstRun) {
         quit("No map files found");
     }
-
     return;
 }
 
@@ -122,7 +109,6 @@ void getPath(struct Path *path, struct Map map) {
     int count = 0;
     int position = 0;
     int prevChecked[MAP_ROWS * MAP_COLS];
-
     for (i = 0; i < (MAP_ROWS * MAP_COLS); i++)
         prevChecked[i] = 0;
     path->count = 0;
@@ -138,7 +124,6 @@ void getPath(struct Path *path, struct Map map) {
             }
         }
     }
-
     outer:
     pathSolve(map, path, prevChecked, count + 1, position);
 

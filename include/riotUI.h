@@ -49,14 +49,6 @@ DESCRIPTION: Gets the preveious position that the unit moved from;
 */
 
 
-void inmateRemove(int position);/*
-
-DESCRIPTION: Removes an inmate of a certain position from the list
-
-ARGUMENTS: The position of the inmate which will be removed
-*/
-
-
 void drawMap (WINDOW *bod, struct Map*map);/*
 
 DESCRIPTION: A function that is called at the beginning of the game to

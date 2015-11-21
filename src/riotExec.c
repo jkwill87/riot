@@ -21,10 +21,18 @@ int main(int argc, char **argv) {
     /* Create nCurses WINDOWs */
     uiInit(&windows);
 
-    /* Present user with main menu */
-    gameMode = menuMain(&windows);
+    /* Start with main menu */
+    gameMode = MENU;
 
+    /* Execute main game loop until user exits */
     do {
+
+        /* Present user with main menu */
+
+        if(gameMode == MENU)
+        gameMode = menuMain(&windows);
+
+
         if (gameMode == EXIT) {
             break;
         } else if (gameMode != NEW) {
@@ -33,8 +41,9 @@ int main(int argc, char **argv) {
 
         /* Select current map */
         currentMap = (mapList).level[level];
-        currentMap.panicCur =0;
+        currentMap.panicCur = 0;
         copyMap(&currentMap, map);
+
         /* Display intro text */
         drawText(&windows, dialog[level], gameMode, map);
 
@@ -59,15 +68,14 @@ int main(int argc, char **argv) {
         gameMode = simulate(&windows, &guards, &inmates, &path, &currentMap);
         if (gameMode == WIN) progress++;
 
-
         /* Display outro text */
         drawText(&windows, dialog[level], gameMode, map);
         gameMode = CONTINUE;
     } while (level != EXIT);
 
+   /* Free memory, exit */
     uiFree(&windows);
     quit("Thanks for playing.\n");
-
     return 0;
 }
 

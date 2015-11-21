@@ -128,6 +128,7 @@ enum GameMode {/*
  GameMode is a mnemonic which can be used to equivocate game modes with the
  associated keypresses used to inititate them.*/
 
+    MENU,
     NEW = 'n',
     CONTINUE = 'c',
     WIN,

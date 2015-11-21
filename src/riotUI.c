@@ -67,7 +67,9 @@ enum GameMode menuMain(struct Windows *gameInterface) {
     wrefresh(menu);
 
     /* Prompt for user input */
-    while (gameMode != NEW && gameMode != CONTINUE && gameMode != EXIT)
+    while (gameMode != NEW
+           && gameMode != CONTINUE
+           && gameMode != EXIT)
         gameMode = wgetch(menu);
 
     return gameMode;
@@ -79,7 +81,6 @@ int levelSelect(struct Windows *gameInterface, struct MapList *mapList,
 
     WINDOW *menu = gameInterface->menu;
     struct Map *current;
-    char input;
     int select;
     int y = 3;
     int x;
@@ -105,7 +106,7 @@ int levelSelect(struct Windows *gameInterface, struct MapList *mapList,
             current = &mapList->level[x];
             mvwprintw(menu, y + x, 21, "[%d] %s", x, current->name);
 
-            /* Hint at locked levels */
+        /* Hint at locked levels */
         } else {
             mvwprintw(menu, y + x, 21, "[/] LOCKED");
         }
@@ -114,9 +115,10 @@ int levelSelect(struct Windows *gameInterface, struct MapList *mapList,
 
     /* Prompt for user's level selection (until valid level selected) */
     do {
-        input = wgetch(menu);
-        select = input - '0';
-    } while (select < 0 || select > progress);
+        select = wgetch(menu) - '0'; //get input from user (as number value)
+        if (select >= 0 && select <= progress) return select;
+        else if (select == 'b' - '0') return -1;
+    } while (true);
 
     return select;
 }
@@ -126,7 +128,7 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
     struct UnitList *inmates, struct UnitList *guards) {
 
     struct Inmate *inmate;
-    char input;
+    int input;
     int y;
     int i;
     int numAdded = 0;
@@ -135,6 +137,7 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
         updateHeader(win->header, map);
         wrefresh(win->header);
         input = wgetch(win->body);
+
         switch (input) {
             case PROTAGONIST:
                 if (!ifProt) {
@@ -385,7 +388,7 @@ void drawMap(WINDOW *body, struct Map *map) {
                     mvwaddch(body,y,x+1,ACS_LTEE);
                 }
                 else if (n == 1 && e == 1 && w == 1 && s ==0){
-                    mvwaddch(body,y,x+1,ACS_BTEE);   
+                    mvwaddch(body,y,x+1,ACS_BTEE);
                 }
                 else if (s == 1 && e == 1 && w == 1 && n ==0){
                     mvwaddch(body,y,x+1,ACS_TTEE);
@@ -513,7 +516,7 @@ void gameplayRefresh (WINDOW *body, struct Map *map, struct UnitList *guardList,
     struct Inmate *inmate;
     struct Guard *guard;
     int *coordinates = malloc(sizeof(int) * 2);
-    
+
     //Initializes all colors
     init_pair(DEFAULT, COLOR_WHITE, COLOR_BLACK);
     init_pair(GREEN, GREEN, COLOR_BLACK);
@@ -593,7 +596,7 @@ int guardColor (struct Guard *guard){
     else if (pcd > 1.0)
         return (25);
     else
-        return (24); 
+        return (24);
 }
 
 int getColor (struct Inmate *inmate){
