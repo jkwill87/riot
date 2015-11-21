@@ -511,7 +511,8 @@ void guardAttackAOE(struct UnitNode *guardNode,
 }
 
 void guardAttackEnd(struct UnitNode *guardNode,
-    struct UnitList *inmateList) {
+    struct UnitList *inmateList) {   
+
 
 }
 

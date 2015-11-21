@@ -204,11 +204,13 @@ void pushToPath(struct TileNode *insertNode, struct Path *path) {
             nextNode = nextNode->next;
 
         nextNode->next = insertNode;
+        path->last = insertNode;
         path->count++;
     }
 
     else {
         path->first = insertNode;
+        path->last = insertNode;
         path->count++;
     }
 }
