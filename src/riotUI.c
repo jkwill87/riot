@@ -25,6 +25,8 @@ void uiInit(struct Windows *win) {
 
 void uiFree(struct Windows *win) {
     if (stdscr) {
+
+        /* Free memory allocated for nCurses windows */
         if (win->header) delwin(win->header);
         if (win->body) delwin(win->body);
         if (win->footer) delwin(win->footer);
@@ -41,6 +43,7 @@ enum GameMode menuMain(struct Windows *gameInterface) {
 
     int y = 3;
 
+    /* Print banner */
     wclear(menu);
     box(menu, 0, 0);
     mvwaddstr(menu, y++, 21, "8888888b. 8888888 .d88888b.88888888888");
@@ -52,16 +55,18 @@ enum GameMode menuMain(struct Windows *gameInterface) {
     mvwaddstr(menu, y++, 21, "888  T88b   888  Y88b. .d88P   888");
     mvwaddstr(menu, y++, 21, "888   T88b8888888  Y88888P     888");
 
+    /* Print seperating line */
     mvwhline(menu, y += 2, 21, ACS_HLINE, 37);
 
+    /* Print gameplay options */
     mvwaddstr(menu, y += 3, 21, "GAME MENU");
     y += 2;
     mvwaddstr(menu, y++, 21, "[n]ew game");
     mvwaddstr(menu, y++, 21, "[c]ontinue");
     mvwaddstr(menu, y++, 21, "[e]xit");
-
     wrefresh(menu);
 
+    /* Prompt for user input */
     while (gameMode != NEW && gameMode != CONTINUE && gameMode != EXIT)
         gameMode = wgetch(menu);
 
@@ -71,19 +76,19 @@ enum GameMode menuMain(struct Windows *gameInterface) {
 
 int levelSelect(struct Windows *gameInterface, struct MapList *mapList,
     int progress) {
+
     WINDOW *menu = gameInterface->menu;
-    //struct Map *current;
+    struct Map *current;
     char input;
     int select;
     int y = 3;
     int x;
 
 #ifdef _DEBUG
-    progress=7;
+    progress = mapList->count - 1; //unlocks all levels
 #endif
 
-    struct Map *map;//, *last;
-
+    /* Print box around menu WINDOW */
     wclear(menu);
     box(menu, 0, 0);
 
@@ -92,27 +97,34 @@ int levelSelect(struct Windows *gameInterface, struct MapList *mapList,
     mvwhline(menu, y += 2, 21, ACS_HLINE, 37);
     y += 2;
 
-    for (x=0; x<9; x++){
-        if (x <= progress)
-        {
-            map = &mapList->level[x];
-            mvwprintw(menu,y+x,21,"[%d] %s",x,map->name);
-        }else{
-            mvwprintw(menu,y+x,21,"[/] LOCKED");
+    /* Print level choices */
+    for (x = 0; x < mapList->count; x++) {
+
+        /* Print unlocked levels */
+        if (x <= progress) {
+            current = &mapList->level[x];
+            mvwprintw(menu, y + x, 21, "[%d] %s", x, current->name);
+
+            /* Hint at locked levels */
+        } else {
+            mvwprintw(menu, y + x, 21, "[/] LOCKED");
         }
     }
     wrefresh(menu);
-    while (1){
+
+    /* Prompt for user's level selection (until valid level selected) */
+    do {
         input = wgetch(menu);
         select = input - '0';
-        if (select >= 0 && select <= progress)
-            return (int) (select);
-    }
+    } while (select < 0 || select > progress);
+
+    return select;
 }
 
 
 void drawInmateSelection(struct Windows *win, struct Map *map,
     struct UnitList *inmates, struct UnitList *guards) {
+
     struct Inmate *inmate;
     char input;
     int y;
