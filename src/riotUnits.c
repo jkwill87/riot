@@ -2,6 +2,7 @@
 
 #include <ctype.h>
 #include <time.h>
+#include <unistd.h>
 #include "riotUnits.h"
 #include "riotUI.h"
 
@@ -94,19 +95,24 @@ struct UnitNode *dequeue(struct UnitList *queue) {
 void removeUnit(struct UnitList *list,int position){
     struct UnitNode *nextNode,*temp;
 
-    if (list->count <= position){
+    if (list->count <= position || list->count <= 0){
         printf("Error! Removing from an inexistent position!\n");
         exit(1);
     }
     nextNode = getHead(list);
-    for (int i=0;i<position-1;i++){
-        nextNode = getNext(nextNode);
+    if (position == 0){
+        free(list->head);
+        list->head = NULL;
     }
-    temp = nextNode->next;
-    nextNode->next = nextNode->next->next;
+    else{
+        for (int i=0;i<position-1;i++){
+            nextNode = getNext(nextNode);
+        }
+        temp = nextNode->next;
+        nextNode->next = nextNode->next->next;
+        free(temp);
+    }
     list->count--;
-    free(temp);
-
 }
 
 struct UnitNode *pop(struct UnitList *stack) {
@@ -302,14 +308,14 @@ bool simulate(struct Windows *gameInterface,
     struct Path *path, struct Map *map) {
     int i;
     struct UnitNode *nextInmate;
-    float simulateTime = 0;
     //int prevPos[inmateList->count];
     struct timespec delay;
 
     delay.tv_sec = 0;
     delay.tv_nsec = 40000000L;  // Half second in nano seconds
 
-    while (simulateTime < 400) {
+    //While inmates exist, keep simulating
+    while (inmateList->head != NULL) {
 
         nextInmate = getHead(inmateList);
         for (i = 0; i < inmateList->count; i++) {
@@ -335,8 +341,14 @@ bool simulate(struct Windows *gameInterface,
                 }
                 nextInmate = nextInmate->next; 
             }
-            simulateTime += 4*TICSPEED;
-            nanosleep(&delay, NULL);
+            //If you lose freeze for one second
+            if (inmateList->head == NULL){
+                sleep(1);
+            }
+            //Otherwise keep pausing half a second
+            else{
+                nanosleep(&delay, NULL);
+            }
         }
     /*LOOP ENDS AND RETURNS TRUE REGARDLESS*/
     return true;  //TODO return win condition
@@ -402,7 +414,10 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList) {
 	for (int i=0;i<inmateList->count;i++){
 		for (int j=0;j<guardList->count;j++){
 			if (inRange(nextInmate, nextGuard)){
-				if (((struct Guard*)nextGuard->unit)->cooldownRemaining == 0){
+                if (((struct Inmate *) nextInmate->unit)->currentHealth <= 0){
+                    ((struct Inmate *) nextInmate->unit)->delUnit = true;
+                }
+				else if (((struct Guard*)nextGuard->unit)->cooldownRemaining == 0){
 					((struct Guard*)nextGuard->unit)->cooldownRemaining = ((struct Guard*)nextGuard->unit)->cooldown;
 		        	dealDamage(nextInmate, nextGuard);
 				}
