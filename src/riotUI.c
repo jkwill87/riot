@@ -109,6 +109,9 @@ int levelSelect(struct Windows *gameInterface, struct MapList *mapList,
             mvwprintw(menu, y + x, 21, "[/] LOCKED");
         }
     }
+
+    mvwaddstr(menu, MAX_ROWS - 4, 21, "[b]ack");
+
     wrefresh(menu);
 
     /* Prompt for user's level selection (until valid level selected) */

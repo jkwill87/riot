@@ -1,7 +1,8 @@
 #include "riotExec.h"
 #include "riotUI.h"
 
-
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCDFAInspection"
 int main(int argc, char **argv) {
     enum GameMode gameMode;
     struct Windows windows;
@@ -13,9 +14,11 @@ int main(int argc, char **argv) {
     struct UnitNode *unitNode;
     struct Path path;
     int progress = 0;
-    int level = 0;
+    int level;
+
     /* Parse map files */
     parseMap(argv[1], &mapList, dialog);
+
     /* Create nCurses WINDOWs */
     uiInit(&windows);
 
@@ -25,17 +28,31 @@ int main(int argc, char **argv) {
     /* Execute main game loop until user exits */
     do {
 
-        /* Present user with main menu */
+        switch (gameMode){
 
-        if(gameMode == MENU)
-        gameMode = menuMain(&windows);
+            case MENU:
+                gameMode = menuMain(&windows);
+                continue;
 
+            case NEW:
+                level = 0;
+                break;
 
-        if (gameMode == EXIT) {
-            break;
-        } else if (gameMode != NEW) {
-            level = levelSelect(&windows, &mapList, progress);
+            case CONTINUE:
+                level = levelSelect(&windows, &mapList, progress);
+                break;
+
+            default:
+                break;
+
         }
+
+        if(gameMode==EXIT) break;
+        if (level==-1) {
+            gameMode = MENU;
+            continue;
+        }
+
         /* Select current map */
         currentMap = (mapList).level[level];
         currentMap.panicCur = 0;
@@ -43,19 +60,24 @@ int main(int argc, char **argv) {
 
         /* Display intro text */
         drawText(&windows, dialog[level], gameMode, map);
+
         /* Initialize game elements */
         getGuards(&guards, *map);
         getPath(&path, *map);
+
         /* Draw level */
         drawLevel(&windows, map, &guards);
+
         /* Prompt user for unit selection */
         drawInmateSelection(&windows, map, &inmates, &guards);
+
         /* Set origin to path origin */
         unitNode = getHead(&inmates);
         for (int i = 0; i < inmates.count; i++) {
             ((struct Inmate *) unitNode->unit)->position = path.first->location;
             unitNode = unitNode->next;
         }
+
         /* Simulate unit interactions */
         gameMode = simulate(&windows, &guards, &inmates, &path, &currentMap);
         if (gameMode == WIN) progress++;
@@ -63,13 +85,16 @@ int main(int argc, char **argv) {
         /* Display outro text */
         drawText(&windows, dialog[level], gameMode, map);
         gameMode = CONTINUE;
+
     } while (level != EXIT);
+
 
    /* Free memory, exit */
     uiFree(&windows);
     quit("Thanks for playing.\n");
     return 0;
 }
+#pragma clang diagnostic pop
 
 
 void quit(char *message) {
