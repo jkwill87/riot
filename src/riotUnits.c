@@ -366,24 +366,6 @@ enum GameMode simulate(struct Windows *gameInterface,
     return winCondition;
 }
 
-
-void updateGuardAccuracy(struct UnitList *guardList, int currentPanic,
-    int maximumPanic) {
-    struct UnitNode *nextNode;
-    struct Guard *nextGuard;
-
-    nextNode = getHead(guardList);
-    nextGuard = (struct Guard *) nextNode->unit;
-    for (int j = 0; j < guardList->count; j++) {
-        nextGuard->accuracy = (double) currentPanic / (double) maximumPanic;
-        if (nextNode->next != NULL) {
-            nextNode = nextNode->next;
-        }
-        nextGuard = (struct Guard *) nextNode->unit;
-    }
-}
-
-
 /*Moves the units through the map and calls 'inmateRedraw to draw/erase the
  units*/
 void inmateMove(struct UnitList *inmates, struct Path *path) {
@@ -455,39 +437,55 @@ void setDeadInmates(struct UnitList *inmateList) {
     }
 }
 
+void updateGuardAccuracy(struct UnitList *guardList, int currentPanic,
+    int maximumPanic) {
+    struct UnitNode *nextNode;
+    struct Guard *nextGuard;
 
-void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,
-    struct Map map) {
-    struct UnitNode *nextInmate;
-    struct UnitNode *nextGuard;
-
-    nextGuard = getHead(guardList);
-    nextInmate = getHead(inmateList);
-
-#ifdef _TESTING
-    printf("Guard Attack has begun.\n\n");
-    printf("Inmates List size: %d\n", inmateList->count);
-    printf("Guards List size: %d\n\n", guardList->count);
-#endif
-
-    for (int i = 0; i < inmateList->count; i++) {
-        for (int j = 0; j < guardList->count; j++) {
-            if (inRange(nextInmate, nextGuard)) {
-                if (((struct Guard *) nextGuard->unit)->cooldownRemaining ==
-                    0) {
-                    ((struct Guard *) nextGuard->unit)->cooldownRemaining = ((struct Guard *) nextGuard->unit)->cooldown;
-                    dealDamage(nextInmate, nextGuard);
-                }
-                ((struct Guard *) nextGuard->unit)->cooldownRemaining -= 1;
-            }
-            if (getNext(nextGuard) != NULL) {
-                nextGuard = getNext(nextGuard);
-            }
+    nextNode = getHead(guardList);
+    nextGuard = (struct Guard *) nextNode->unit;
+    for (int j = 0; j < guardList->count; j++) {
+        nextGuard->accuracy = (double) currentPanic / (double) maximumPanic;
+        if (nextNode->next != NULL) {
+            nextNode = nextNode->next;
         }
-        setDeadInmates(inmateList);
+        nextGuard = (struct Guard *) nextNode->unit;
     }
 }
 
+void guardAttack(struct UnitList *guardList, struct UnitList *inmateList, struct Map map) {
+    struct UnitNode *nextGuard;
+ 
+        #ifdef _DEBUGN
+    int chance=0,pass=0;
+        printf("Guard Attack has begun.\n\n");
+        printf("Inmates List size: %d\n", inmateList->count);
+        printf("Guards List size: %d\n\n", guardList->count);
+        #endif
+ 
+    nextGuard = getHead(guardList);
+        for (int j=0;j<guardList->count;j++){
+        switch(((struct Guard*)nextGuard->unit)->ai){
+            case PROX:
+                guardAttackProximity(nextGuard,inmateList);
+                break;
+            case AOE:
+                guardAttackAOE(nextGuard,inmateList);
+                break;
+            case END:
+                guardAttackEnd(nextGuard,inmateList);
+                break;
+            default:
+                printf("Error, unsupported AI type\n");
+                exit(1);
+                break;
+        }
+                if (getNext(nextGuard) != NULL){
+                nextGuard = getNext(nextGuard);
+                }
+        }
+    setDeadInmates(inmateList);
+}
 
 void guardAttackAOE(struct UnitNode *guardNode,
     struct UnitList *inmateList) {
@@ -517,6 +515,11 @@ void guardAttackEnd(struct UnitNode *guardNode,
 
 }
 
+
+void guardAttackProximity(struct UnitNode *guardNode,
+    struct UnitList *inmateList) {
+
+}
 
 bool tryAttack(struct UnitNode guardNode) {
     float missChance, guardAccuracy;

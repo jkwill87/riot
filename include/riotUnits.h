@@ -57,6 +57,9 @@ void guardAttackProximity(struct UnitNode *guardNode,
 void guardAttackAOE(struct UnitNode *guardNode,
     struct UnitList *inmateList);
 
+void guardAttackEnd(struct UnitNode *guardNode,
+    struct UnitList *inmateList);
+
 void setDeadInmates(struct UnitList *inmateList);
 
 bool tryAttack(struct UnitNode guardNode);
