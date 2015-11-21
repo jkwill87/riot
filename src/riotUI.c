@@ -4,10 +4,8 @@ void uiInit(struct Windows *win) {
 
     int y, x;
 
-    initscr();
-    start_color();
-    init_pair(DEFAULT, COLOR_WHITE, COLOR_BLACK);
-
+    initscr(); // init the scr 
+    start_color(); // start color
     noecho(); // hide keypresses
     curs_set(FALSE); // hide cursor
 
