@@ -1,5 +1,3 @@
-#define _DEFAULT_SOURCE
-
 #include <ctype.h>
 #include <time.h>
 #include <unistd.h>
@@ -91,7 +89,6 @@ void removeUnit(struct UnitList *list, int position) {
     struct UnitNode *nextNode, *temp;
 
     if (list->count <= position || list->count <= 0) {
-        printf("Error! Removing from an inexistent position!\n");
         exit(1);
     }
     nextNode = getHead(list);
@@ -109,6 +106,7 @@ void removeUnit(struct UnitList *list, int position) {
     }
     list->count--;
 }
+
 
 struct UnitNode *pop(struct UnitList *stack) {
 
@@ -456,16 +454,9 @@ void updateGuardAccuracy(struct UnitList *guardList, int currentPanic,
 void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,
      struct Map map,struct Path path) {
     struct UnitNode *nextGuard;
-    
+
     int exitPosition;
     exitPosition = path.last->location;
-
-    #ifdef _DEBUGN
-    int chance=0,pass=0;
-    printf("Guard Attack has begun.\n\n");
-    printf("Inmates List size: %d\n", inmateList->count);
-    printf("Guards List size: %d\n\n", guardList->count);
-    #endif
 
     nextGuard = getHead(guardList);
     for (int j=0;j<guardList->count;j++){
@@ -480,7 +471,6 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,
                 guardAttackEnd(nextGuard,inmateList,exitPosition);
                 break;
             default:
-                printf("Error, unsupported AI type\n");
                 exit(1);
                 break;
         }
@@ -651,29 +641,11 @@ void dealDamage(struct UnitNode *inmateNode, struct UnitNode *guardNode) {
     int currentHealth;
     int damage;
 
-#ifdef _TESTING
-    printf("#####Inmate attacked#####\n");
-    printf("Inmate Position: %f\n",
-        ((struct Inmate *) inmateNode->unit)->position);
-    printf("Guard Position: %d\n",
-        ((struct Guard *) guardNode->unit)->position);
-    printf("Health before attack: %d\n",
-        ((struct Inmate *) inmateNode->unit)->currentHealth);
-    printf("Damage dealt by guard: %d\n",
-        ((struct Guard *) guardNode->unit)->damage);
-#endif
 
     currentHealth = ((struct Inmate *) inmateNode->unit)->currentHealth;
     damage = ((struct Guard *) guardNode->unit)->damage;
     ((struct Inmate *) inmateNode->unit)->currentHealth =
         currentHealth - damage;
-
-#ifdef _TESTING
-    printf("Health after attack: %d\n",
-        ((struct Inmate *) inmateNode->unit)->currentHealth);
-    printf("########################\n");
-    printf("\n");
-#endif
 }
 
 
@@ -697,18 +669,6 @@ bool inRange(struct UnitNode *inmate, struct UnitNode *guard) {
     yDifference = abs(yDifference);
     xDifference = abs(xDifference);
     totalDifference = xDifference + yDifference;
-
-#ifdef _TESTING
-    printf("#####Calculating Range#####\n");
-    printf("Unit position: %d\n", inmatePosition);
-    printf("Guard position: %d\n", guardPosition);
-    printf("Y Difference: %d\n", yDifference);
-    printf("X Difference: %d\n", xDifference);
-    printf("Total Difference: %d\n", totalDifference);
-    printf("Range of the Guard: %d\n", range);
-    printf("############################\n");
-    printf("\n");
-#endif
 
     return range >= totalDifference;
 }
@@ -734,9 +694,6 @@ struct UnitList *getGuards(struct UnitList *guards, struct Map map) {
                 guard = createGuard(mapChar);
                 guard->position = position;
                 enqueue(guards, guard);
-                printf("FOUND GUARD, Guard List size: %d %c\n",
-                    guards->count,
-                    mapChar);
             }
         }
     }

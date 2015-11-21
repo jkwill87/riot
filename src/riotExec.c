@@ -4,6 +4,7 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCDFAInspection"
 int main(int argc, char **argv) {
+
     enum GameMode gameMode;
     struct Windows windows;
     struct MapList mapList;
