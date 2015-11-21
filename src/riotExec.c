@@ -14,10 +14,8 @@ int main(int argc, char **argv) {
     struct Path path;
     int progress = 0;
     int level = 0;
-
     /* Parse map files */
     parseMap(argv[1], &mapList, dialog);
-
     /* Create nCurses WINDOWs */
     uiInit(&windows);
 
@@ -38,7 +36,6 @@ int main(int argc, char **argv) {
         } else if (gameMode != NEW) {
             level = levelSelect(&windows, &mapList, progress);
         }
-
         /* Select current map */
         currentMap = (mapList).level[level];
         currentMap.panicCur = 0;
@@ -46,24 +43,19 @@ int main(int argc, char **argv) {
 
         /* Display intro text */
         drawText(&windows, dialog[level], gameMode, map);
-
         /* Initialize game elements */
         getGuards(&guards, *map);
         getPath(&path, *map);
-
         /* Draw level */
         drawLevel(&windows, map, &guards);
-
         /* Prompt user for unit selection */
         drawInmateSelection(&windows, map, &inmates, &guards);
-
         /* Set origin to path origin */
         unitNode = getHead(&inmates);
         for (int i = 0; i < inmates.count; i++) {
             ((struct Inmate *) unitNode->unit)->position = path.first->location;
             unitNode = unitNode->next;
         }
-
         /* Simulate unit interactions */
         gameMode = simulate(&windows, &guards, &inmates, &path, &currentMap);
         if (gameMode == WIN) progress++;

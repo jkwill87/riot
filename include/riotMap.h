@@ -22,6 +22,7 @@ struct Path {/*
  Path stores the game path as a list of TileNodes.*/
 
     struct TileNode *first;
+    struct TileNode *last;
     unsigned int count;
 };
 
