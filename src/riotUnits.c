@@ -87,20 +87,20 @@ void *dequeue(struct UnitList *queue) {
     return request;
 }
 
-void removeUnit(struct UnitList *list,int position){
-    struct UnitNode *nextNode,*temp;
+void removeUnit(struct UnitList *list, int position) {
+    struct UnitNode *nextNode, *temp;
 
-    if (list->count <= position || list->count <= 0){
+    if (list->count <= position || list->count <= 0) {
         printf("Error! Removing from an inexistent position!\n");
         exit(1);
     }
     nextNode = getHead(list);
-    if (position == 0){
+    if (position == 0) {
         free(list->head);
         list->head = NULL;
     }
-    else{
-        for (int i=0;i<position-1;i++){
+    else {
+        for (int i = 0; i < position - 1; i++) {
             nextNode = getNext(nextNode);
         }
         temp = nextNode->next;
@@ -248,6 +248,7 @@ struct Guard *createGuard(enum GuardType type) {
             guard->cooldown = 4;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = PROX;
+            guard->accuracy = 1;
             break;
 
         case DOGS:
@@ -256,6 +257,7 @@ struct Guard *createGuard(enum GuardType type) {
             guard->cooldown = 6;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = AOE;
+            guard->accuracy = 1;
             break;
 
         case LUNCH:
@@ -264,6 +266,7 @@ struct Guard *createGuard(enum GuardType type) {
             guard->cooldown = 12;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = AOE;
+            guard->accuracy = 1;
             break;
 
         case PSYCH:
@@ -272,6 +275,7 @@ struct Guard *createGuard(enum GuardType type) {
             guard->cooldown = 12;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = PROX;
+            guard->accuracy = 1;
             break;
 
         case SHARP:
@@ -280,6 +284,7 @@ struct Guard *createGuard(enum GuardType type) {
             guard->cooldown = 8;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = END;
+            guard->accuracy = 1;
             break;
 
         case WARDEN:
@@ -288,6 +293,7 @@ struct Guard *createGuard(enum GuardType type) {
             guard->cooldown = 20;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = PROX;
+            guard->accuracy = 1;
             break;
 
         case CYBORG:
@@ -296,6 +302,7 @@ struct Guard *createGuard(enum GuardType type) {
             guard->cooldown = 2;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = PROX;
+            guard->accuracy = 1;
             break;
 
         default:
@@ -307,7 +314,7 @@ struct Guard *createGuard(enum GuardType type) {
 }
 
 
-enum GameMode  simulate(struct Windows *gameInterface,
+enum GameMode simulate(struct Windows *gameInterface,
     struct UnitList *guardList, struct UnitList *inmateList,
     struct Path *path, struct Map *map) {
     int i;
@@ -327,32 +334,51 @@ enum GameMode  simulate(struct Windows *gameInterface,
             nextInmate = nextInmate->next;
         }
         inmateMove(inmateList, path);
-        guardAttack(guardList, inmateList,*map);
+        guardAttack(guardList, inmateList, *map);
         nextInmate = getHead(inmateList);
         for (int i = 0; i < inmateList->count; i++) {
             /*Dequeues all units that are marked for deletion    vv SWITCHED FROM FALSE AND COMMENTED OUT LINES
             These are both units that are dead or that have reached the end of the map*/
-            if (((struct Inmate *) nextInmate->unit)->dead == TRUE){
-                removeUnit (inmateList, i); //needs to be written, removes an inmate fromthe middle of the list
+            if (((struct Inmate *) nextInmate->unit)->dead == TRUE) {
+                removeUnit(inmateList,
+                    i); //needs to be written, removes an inmate fromthe middle of the list
             }
-            else if (((struct Inmate *) nextInmate->unit)->reachedEnd == TRUE ){
+            else if (((struct Inmate *) nextInmate->unit)->reachedEnd == TRUE) {
                 map->panicCur += ((struct Inmate *) nextInmate->unit)->panic;
-                removeUnit (inmateList, i);
+                removeUnit(inmateList, i);
+                updateGuardAccuracy(guardList, map->panicCur, map->panicMax);
             }
-                nextInmate = nextInmate->next; 
+            nextInmate = nextInmate->next;
         }
         /*The only UI fucntion that Simulate needs to worry about*/
-        gameplayRefresh (gameInterface->body,map,guardList,inmateList,path);
+        gameplayRefresh(gameInterface->body, map, guardList, inmateList, path);
         //If you lose freeze for one second
-        if (inmateList->head == NULL){
+        if (inmateList->head == NULL) {
             sleep(1);
         }
-        //Otherwise keep pausing half a second
-        else{
+            //Otherwise keep pausing half a second
+        else {
             nanosleep(&delay, NULL);
         }
     }
     return winCondition;
+}
+
+
+void updateGuardAccuracy(struct UnitList *guardList, int currentPanic,
+    int maximumPanic) {
+    struct UnitNode *nextNode;
+    struct Guard *nextGuard;
+
+    nextNode = getHead(guardList);
+    nextGuard = (struct Guard *) nextNode->unit;
+    for (int j = 0; j < guardList->count; j++) {
+        nextGuard->accuracy = (double) currentPanic / (double) maximumPanic;
+        if (nextNode->next != NULL) {
+            nextNode = nextNode->next;
+        }
+        nextGuard = (struct Guard *) nextNode->unit;
+    }
 }
 
 
@@ -416,7 +442,20 @@ void inmateMove(struct UnitList *inmates, struct Path *path) {
 }
 
 
-void guardAttack(struct UnitList *guardList, struct UnitList *inmateList, struct Map map) {
+void setDeadInmates(struct UnitList *inmateList) {
+    struct UnitNode *nextInmate;
+
+    nextInmate = getHead(inmateList);
+    for (int i = 0; i < inmateList->count; i++) {
+        if (((struct Inmate *) nextInmate->unit)->currentHealth <= 0) {
+            ((struct Inmate *) nextInmate->unit)->dead = true;
+        }
+    }
+}
+
+
+void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,
+    struct Map map) {
     struct UnitNode *nextInmate;
     struct UnitNode *nextGuard;
 
@@ -443,10 +482,49 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList, struct
                 nextGuard = getNext(nextGuard);
             }
         }
-        if (getNext(nextInmate) != NULL) {
-            nextInmate = getNext(nextInmate);
+        setDeadInmates(inmateList);
+    }
+}
+
+
+void guardAttackAOE(struct UnitNode *guardNode,
+    struct UnitList *inmateList) {
+    int i;
+    struct UnitNode *nextInmate;
+
+    if (((struct Guard *) guardNode->unit)->cooldownRemaining == 0 &&
+        tryAttack(*guardNode)) {
+        ((struct Guard *) guardNode->unit)->cooldownRemaining = ((struct Guard *) guardNode->unit)->cooldown;
+        nextInmate = getHead(inmateList);
+        for (i = 0; i < inmateList->count; i++) {
+            if (inRange(nextInmate, guardNode)) {
+                dealDamage(nextInmate, guardNode);
+            }
+            if (getNext(nextInmate) != NULL) {
+                nextInmate = getNext(nextInmate);
+            }
         }
     }
+    else {
+        ((struct Guard *) guardNode->unit)->cooldownRemaining -= 1;
+    }
+}
+
+void guardAttackEnd(struct UnitNode *guardNode,
+    struct UnitList *inmateList) {
+
+}
+
+
+bool tryAttack(struct UnitNode guardNode) {
+    float missChance, guardAccuracy;
+    time_t t;
+
+    srand((unsigned) time(&t));
+    guardAccuracy = ((struct Guard *) guardNode.unit)->accuracy;
+    missChance = 100 - (guardAccuracy * 100);
+
+    return (rand() % 100) > missChance;
 }
 
 
@@ -469,7 +547,7 @@ void dealDamage(struct UnitNode *inmateNode, struct UnitNode *guardNode) {
     currentHealth = ((struct Inmate *) inmateNode->unit)->currentHealth;
     damage = ((struct Guard *) guardNode->unit)->damage;
     ((struct Inmate *) inmateNode->unit)->currentHealth =
-            currentHealth - damage;
+        currentHealth - damage;
 
 #ifdef _TESTING
     printf("Health after attack: %d\n",
@@ -537,8 +615,9 @@ struct UnitList *getGuards(struct UnitList *guards, struct Map map) {
                 guard = createGuard(mapChar);
                 guard->position = position;
                 enqueue(guards, guard);
-                printf("FOUND GUARD, Guard List size: %d %c\n", guards->count,
-                       mapChar);
+                printf("FOUND GUARD, Guard List size: %d %c\n",
+                    guards->count,
+                    mapChar);
             }
         }
     }
