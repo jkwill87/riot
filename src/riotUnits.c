@@ -334,7 +334,7 @@ enum GameMode simulate(struct Windows *gameInterface,
             nextInmate = nextInmate->next;
         }
         inmateMove(inmateList, path);
-        guardAttack(guardList, inmateList, *map);
+        guardAttack(guardList, inmateList, *map,*path);
         nextInmate = getHead(inmateList);
         for (int i = 0; i < inmateList->count; i++) {
             /*Dequeues all units that are marked for deletion    vv SWITCHED FROM FALSE AND COMMENTED OUT LINES
@@ -453,7 +453,8 @@ void updateGuardAccuracy(struct UnitList *guardList, int currentPanic,
     }
 }
 
-void guardAttack(struct UnitList *guardList, struct UnitList *inmateList, struct Map map) {
+void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,
+     struct Map map,struct Path path) {
     struct UnitNode *nextGuard;
  
         #ifdef _DEBUGN
