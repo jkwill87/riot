@@ -287,12 +287,12 @@ void mapTest(char *loadDir) {
     inmate = createInmate('s');
     inmate->position = rand() % (MAP_ROWS*MAP_COLS);
     enqueue(inmates,inmate);
-    for (int i = 2; i < 3; i++) {
+    for (int i = 4; i < 5; i++) {
         current = testList->level[i];
         getPath(&path, current);
         getGuards(&guardList, current);
        // printf("\n\nGuard list size after function %d\n\n");
-       // guardAttack(&guardList,inmates);
+        guardAttack(&guardList,inmates,current,path);
         printf("LEVEL %d: \n\n", i);
 
         printf("Name: %s\n", current.name);

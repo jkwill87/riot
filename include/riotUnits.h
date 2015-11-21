@@ -6,6 +6,8 @@
 #include "riotMap.h"
 /* Data Types */
 
+#define CYCLE 50000000L;
+#define REL_DELAY 5
 
 struct UnitNode {/*
 
@@ -21,8 +23,6 @@ struct Inmate {/*
 
  Inmate stores the stats related to inmate units.*/
 
-    bool dead;
-    bool reachedEnd;
     char type;
     float position;
     int currentHealth;
@@ -67,6 +67,8 @@ bool tryAttack(struct UnitNode guardNode);
 void updateGuardAccuracy(struct UnitList *guardList, int currentPanic, int maximumPanic);
 
 int getDistance(int positionFrom,int positionTo);
+
+struct UnitNode* getClosestInmateToPosition(struct UnitList inmateList, int position);
 
 void destroyList(struct UnitList *);/*
 
@@ -200,8 +202,8 @@ PRECONDITIONS: The enum value is a valid inmate type.
 POSTCONDITIONS: Memory is allocated for a new Inmate struct.*/
 
 
-enum GameMode simulate(struct Windows *win, struct UnitList *guardList,
-    struct UnitList *inmateList, struct Path *path, struct Map *map); /*
+enum GameMode simulate(struct Windows *win, struct UnitList *guards,
+    struct UnitList *queued, struct Path *path, struct Map *map); /*
 
   DESCRIPTION: Simulates all unit interactions and drawing for a period of time
   
