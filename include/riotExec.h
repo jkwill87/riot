@@ -51,6 +51,7 @@ struct Map {/*
     char overlay[MAP_ROWS][MAP_COLS+1]; //+1 for null char
     char inmates[INMATE_TYPES];
     int panicMax;
+    int panicCur;
     int repMax;
 };
 

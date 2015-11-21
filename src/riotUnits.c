@@ -337,11 +337,15 @@ bool simulate(struct Windows *gameInterface,
         for (int i = 0; i < inmateList->count; i++) {
         /*Dequeues all units that are marked for deletion    vv SWITCHED FROM FALSE AND COMMENTED OUT LINES
         These are both units that are dead or that have reached the end of the map*/
-            if (((struct Inmate *) nextInmate->unit)->dead == TRUE){
+            if (((struct Inmate *) nextInmate->unit)->dead == TRUE || ((struct Inmate *) nextInmate->unit)->reachedEnd == TRUE){
                 //NEED TO DO: 
                 eraseInmate(gameInterface->body,path,(struct Inmate *) nextInmate->unit);
                 removeUnit (inmateList, i); //needs to be written, removes an inmate fromthe middle of the list
-            } else {
+            }
+            else if (((struct Inmate *) nextInmate->unit)->reachedEnd == TRUE){
+                map->panicCur += ((struct Inmate *) nextInmate->unit)->panic;
+            }
+            else {
                     /*The only UI fucntion that Simulate needs to worry about*/
                     gameplayRefresh (gameInterface->body,map,guardList,inmateList,path);
                 }
