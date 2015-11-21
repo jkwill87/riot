@@ -455,6 +455,9 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,
      struct Map map,struct Path path) {
     struct UnitNode *nextGuard;
 
+    int exitPosition;
+    exitPosition = path.last->location;
+
     nextGuard = getHead(guardList);
     for (int j=0;j<guardList->count;j++){
         switch(((struct Guard*)nextGuard->unit)->ai){
