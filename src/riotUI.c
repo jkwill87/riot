@@ -278,12 +278,11 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                     }
                 }
                 break;
-//            default:
-//                mvwprintw(win->footer, 0, 40, "INMATE NOT FOUND");
         }
         if (map->repMax < 10) {
             mvwprintw(win->footer, 0, 20, "INSUFICIENT FUNDS");
             wrefresh(win->footer);
+            wgetch(win->body);
             wgetch(win->body);
             break;
         }
@@ -337,15 +336,6 @@ void updateQueue(WINDOW *body, struct UnitList *inmateList, int size) {
     if (size < 5){
         mvwaddch(body, 6+i, MAX_COLS - 3, '.');
     }
-  //  struct Inmate *temp;
-  //  struct UnitNode *node;
-  //  node = getHead(inmates);
-  //  temp = (struct Inmate *) node->unit;
-  //  mvwaddch(body, 5 + numAdded, MAX_COLS - 3, temp->type);
-  //  if (numAdded < 5) {
-  //      mvwaddch(body, 6 + numAdded, MAX_COLS - 3, '.');
-  //  }
-  //  wrefresh(body);
 }
 
 
@@ -400,7 +390,6 @@ void drawMap(WINDOW *body, struct Map *map) {
                 else if (s == 1 && e == 1 && w == 0 && n ==0){
                     mvwaddch(body,y,x+1,ACS_ULCORNER);
                 }
-
             }
             else
                 mvwaddch(body,y,x+1,map->overlay[y][x]);
@@ -413,38 +402,33 @@ void drawMap(WINDOW *body, struct Map *map) {
 }
 
 
-void drawGuards(WINDOW *body, struct Map *map, struct UnitList *guards) {
-    int *coordinates;
-    int x;
-    struct UnitNode *guardNode;
-    struct Guard *guard;
-    char type;
-    guardNode = getHead(guards);
-    guard = (struct Guard *) guardNode->unit;
-    coordinates = getCoordinate(guard->position);
-    type = guard->type;
-    mvwaddch(body, coordinates[0], coordinates[1], type);
-    for (x = 1; x < getLength(guards) - 2; x++) {
-        guardNode = guardNode->next;
-        guard = (struct Guard *) guardNode->unit;
-        coordinates = getCoordinate(guard->position);
-        type = guard->type;
-        mvwaddch(body, coordinates[0], coordinates[1], type);
-    }
-}
-
-
 void drawLevel(struct Windows *windows, struct Map *map,
     struct UnitList *guards) {
     char protName[20];
     char output[100];
     int i;
     int y;
+    int *coordinates;
+    struct UnitNode *guardNode;
+    struct Guard *guard;
+    char type;
 
     wclear(windows->footer);
 
     drawMap(windows->body, map);
-    drawGuards(windows->body, map, guards);
+
+    guardNode = getHead(guards);
+    guard = (struct Guard *) guardNode->unit;
+    coordinates = getCoordinate(guard->position);
+    type = guard->type;
+    mvwaddch(windows->body, coordinates[0], coordinates[1], type);
+    for (y = 1; y < getLength(guards) - 2; y++) {
+        guardNode = guardNode->next;
+        guard = (struct Guard *) guardNode->unit;
+        coordinates = getCoordinate(guard->position);
+        type = guard->type;
+        mvwaddch(windows->body, coordinates[0], coordinates[1], type);
+    }
 
     /* Draw Queue */
     mvwaddstr(windows->body, 4, MAX_COLS - 6, "QUEUE");
@@ -453,6 +437,7 @@ void drawLevel(struct Windows *windows, struct Map *map,
     mvwaddch(windows->body, 11, MAX_COLS - 6, ACS_LLCORNER);
     mvwaddch(windows->body, 11, MAX_COLS - 2, ACS_LRCORNER);
     mvwaddch(windows->body, 6, MAX_COLS - 3, '.');
+
     for (y = 7; y < 11; y++)
         mvwaddch(windows->body, y, MAX_COLS - 3, ' ');
     for (y = 1; y < 6; y++)
@@ -512,7 +497,11 @@ void gameplayRefresh (WINDOW *body, struct Map *map, struct UnitList *guardList,
     struct Path *path){
     int i;
     struct UnitNode *nextInmate;
-
+    struct UnitNode *nextGuard;
+    struct Inmate *inmate;
+    struct Guard *guard;
+    int *coordinates = malloc(sizeof(int) * 2);
+    
     //Initializes all colors
     init_pair(DEFAULT, COLOR_WHITE, COLOR_BLACK);
     init_pair(GREEN, GREEN, COLOR_BLACK);
@@ -524,31 +513,41 @@ void gameplayRefresh (WINDOW *body, struct Map *map, struct UnitList *guardList,
     init_pair(21, YELLOW, DAMAGED);
     init_pair(22, RED, DAMAGED);
     init_pair(23, PURPLE, DAMAGED);
+    init_pair(24, COLOR_WHITE, GREEN);
+    init_pair(25, COLOR_WHITE, YELLOW);
+    init_pair(26, COLOR_WHITE, RED);
     //set color black/white
     wattron(body,COLOR_PAIR(DEFAULT));
     //redraw map
     drawMap(body,map);
     //redraw queuebox
-//    updateQueue(body,inmateList,getLength(inmateList));
-    //redraw guardList
-    drawGuards(body,map,guardList);
+    nextGuard = getHead(guardList);
+    for (i=0; i< getLength(guardList); i++){
+        guard = (struct Guard*)nextGuard->unit;
+        wattron(body,COLOR_PAIR(guardColor(guard)));
+        coordinates = getCoordinate(guard->position);
+        mvwaddch(body, coordinates[0], coordinates[1], guard->type);
+        wattron(body, COLOR_PAIR(DEFAULT));
+        nextGuard=nextGuard->next;
+    }
     //redraw unitList //colors change here
     nextInmate = getHead(inmateList);
     for (i=0; i< getLength(inmateList); i++){
-        wattron(body,COLOR_PAIR(getColor((struct Inmate*)nextInmate->unit)));
-        redrawUnit(body, (struct Inmate *)nextInmate->unit,path);
+        inmate = (struct Inmate*)nextInmate->unit;
+        wattron(body,COLOR_PAIR(getColor(inmate)));
+        coordinates = getCoordinate(inmate->position);
+        mvwaddch(body, coordinates[0], coordinates[1], inmate->type);
         wattron(body,COLOR_PAIR(DEFAULT));
-        eraseInmatePos(body, path,getPrevPos(path,(struct Inmate*)nextInmate->unit));
+        eraseInmatePos(body, path,getPrevPos(path,inmate));
         nextInmate=nextInmate->next;
     }
     //set color back to black and white
     wattron(body,COLOR_PAIR(DEFAULT));
-
-
     //refresh body
     wrefresh(body);
     //refresh();
     //return
+    //free(coordinates);
     return;
 }
 
@@ -570,6 +569,19 @@ int getPrevPos (struct Path *path, struct Inmate *inmate){
         currentTile= nextTile;
         nextTile= nextTile->next;
     }
+}
+
+int guardColor (struct Guard *guard){
+    float cd, cdr, pcd;
+    cd = (float) guard->cooldown;
+    cdr = (float) guard->cooldownRemaining;
+    pcd = (cdr/cd) *100;
+    if (pcd > 20.0)
+        return(26);
+    else if (pcd > 1.0)
+        return (25);
+    else
+        return (24); 
 }
 
 int getColor (struct Inmate *inmate){
@@ -596,12 +608,6 @@ int getColor (struct Inmate *inmate){
             //setColor == 23
     }
     return setColor;
-}
-
-void redrawUnit(WINDOW *body, struct Inmate *inmate, struct Path *path) {
-    int *coordinates = malloc(sizeof(int) * 2);
-    coordinates = getCoordinate(inmate->position);
-    mvwaddch(body, coordinates[0], coordinates[1], inmate->type);
 }
 
 

@@ -33,6 +33,7 @@ int main(int argc, char **argv) {
 
         /* Select current map */
         currentMap = (mapList).level[level];
+        currentMap.panicCur =0;
         copyMap(&currentMap, map);
         /* Display intro text */
         drawText(&windows, dialog[level], gameMode, map);

@@ -87,21 +87,14 @@ void drawGuards(WINDOW *body, struct Map *map, struct UnitList *guards);/*
 
 */
 
+int guardColor (struct Guard *guard);
+
 
 int getColor (struct Inmate *inmate);/*
 
 DESCRIPTION: gets the color based on the units health and attack state
 
 */
-
-
-void redrawUnit(WINDOW *body, struct Inmate *inmate, struct Path *path);/*
-
-DESCRIPTION: Function to redraw units on the screen
-
-ARGUMENTS: A pointer to the interface window, unit to be drawn, integer health value, curreent position and position to be mmoved to
-
-POSTCONDITION: Ensures that the unit given is drawn at the given newPostiion*/
 
 
 void eraseInmate(WINDOW *body, struct Path * path, struct Inmate *inmate);/*

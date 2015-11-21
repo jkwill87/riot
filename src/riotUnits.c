@@ -246,7 +246,7 @@ struct Guard *createGuard(enum GuardType type) {
             guard->damage = 5;
             guard->range = 2;
             guard->cooldown = 4;
-            guard->cooldownRemaining = guard->cooldown;
+            guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = PROX;
             break;
 
@@ -254,7 +254,7 @@ struct Guard *createGuard(enum GuardType type) {
             guard->damage = 4;
             guard->range = 4;
             guard->cooldown = 6;
-            guard->cooldownRemaining = guard->cooldown;
+            guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = AOE;
             break;
 
@@ -262,7 +262,7 @@ struct Guard *createGuard(enum GuardType type) {
             guard->damage = 0;
             guard->range = 6;
             guard->cooldown = 12;
-            guard->cooldownRemaining = guard->cooldown;
+            guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = AOE;
             break;
 
@@ -270,7 +270,7 @@ struct Guard *createGuard(enum GuardType type) {
             guard->damage = 0;
             guard->range = 6;
             guard->cooldown = 12;
-            guard->cooldownRemaining = guard->cooldown;
+            guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = PROX;
             break;
 
@@ -278,15 +278,15 @@ struct Guard *createGuard(enum GuardType type) {
             guard->damage = 6;
             guard->range = 10;
             guard->cooldown = 8;
-            guard->cooldownRemaining = guard->cooldown;
+            guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = END;
             break;
 
         case WARDEN:
             guard->damage = 100;
             guard->range = 8;
-            guard->cooldown = 2;
-            guard->cooldownRemaining = guard->cooldown;
+            guard->cooldown = 20;
+            guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = PROX;
             break;
 
@@ -294,7 +294,7 @@ struct Guard *createGuard(enum GuardType type) {
             guard->damage = 12;
             guard->range = 8;
             guard->cooldown = 2;
-            guard->cooldownRemaining = guard->cooldown;
+            guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = PROX;
             break;
 
