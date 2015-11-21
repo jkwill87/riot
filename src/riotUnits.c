@@ -454,9 +454,9 @@ void updateGuardAccuracy(struct UnitList *guardList, int currentPanic,
 void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,
      struct Map map,struct Path path) {
     struct UnitNode *nextGuard;
- 
+
     nextGuard = getHead(guardList);
-        for (int j=0;j<guardList->count;j++){
+    for (int j=0;j<guardList->count;j++){
         switch(((struct Guard*)nextGuard->unit)->ai){
             case PROX:
                 guardAttackProximity(nextGuard,inmateList);
@@ -465,16 +465,17 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,
                 guardAttackAOE(nextGuard,inmateList);
                 break;
             case END:
-                guardAttackEnd(nextGuard,inmateList);
+                guardAttackEnd(nextGuard,inmateList,exitPosition);
                 break;
             default:
                 exit(1);
                 break;
         }
-                if (getNext(nextGuard) != NULL){
-                nextGuard = getNext(nextGuard);
-                }
+        if (getNext(nextGuard) != NULL){
+            nextGuard = getNext(nextGuard);
         }
+    }
+
     setDeadInmates(inmateList);
 }
 
@@ -501,12 +502,68 @@ void guardAttackAOE(struct UnitNode *guardNode,
     }
 }
 
-void guardAttackEnd(struct UnitNode *guardNode,
-    struct UnitList *inmateList) {   
+struct UnitNode* getClosestInmateToExit(struct UnitList inmateList, int exitPosition){
+    int i,distance,lowestDistance = MAP_COLS * MAP_ROWS + 1;
+    struct UnitNode *nextUnit,*closestUnit;
+    struct Inmate *nextInmate;
 
+    nextUnit = getHead(&inmateList);
+    nextInmate = nextUnit->unit;
+
+
+    for (i=0;i<inmateList.count;i++){
+        distance = getDistance(exitPosition,nextInmate->position);
+        if (distance < lowestDistance){
+            closestUnit = nextUnit;
+        }
+        if (getNext(nextUnit) != NULL){
+            nextUnit = getNext(nextUnit);
+        }
+    }
+
+    return closestUnit;
+}
+
+int getDistance(int positionFrom,int positionTo){
+
+    int xDifference,yDifference;
+
+    yDifference = (((positionFrom - 1) / MAP_COLS) + 1) - (((positionTo - 1) / MAP_COLS) + 1);
+    xDifference = abs(positionFrom - ((((positionFrom - 1) / MAP_COLS) + 1) * MAP_COLS))
+                 - abs(positionTo - ((((positionTo - 1) / MAP_COLS) + 1) * MAP_COLS));
+    yDifference = abs(yDifference);
+    xDifference = abs(xDifference);
+    return xDifference + yDifference;
 
 }
 
+void guardAttackEnd(struct UnitNode *guardNode,
+    struct UnitList *inmateList,int exitPosition) {
+    struct UnitList inRangeList;   
+    struct UnitNode *nextUnit,*unitToAttack;
+    struct Inmate *nextInmate;
+    int i;
+
+    inRangeList.count = 0;
+    inRangeList.head = NULL;
+    inRangeList.tail = NULL;
+
+    nextUnit = getHead(inmateList);
+    nextInmate = nextUnit->unit;
+    //Get all the units in range and enqueue them into a list
+    for (i=0;i<inmateList->count;i++){
+        if(inRange(nextUnit,guardNode)){
+            enqueue(&inRangeList,nextInmate);
+        }
+        if (getNext(nextUnit) != NULL){
+            nextUnit = getNext(nextUnit);
+        }
+    }
+
+    //Get the closest inmate to exit and attack
+    unitToAttack = getClosestInmateToExit(inRangeList,exitPosition);
+    dealDamage(unitToAttack,guardNode);
+}
 
 void guardAttackProximity(struct UnitNode *guardNode,
     struct UnitList *inmateList) {

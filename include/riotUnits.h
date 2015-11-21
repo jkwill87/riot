@@ -58,13 +58,15 @@ void guardAttackAOE(struct UnitNode *guardNode,
     struct UnitList *inmateList);
 
 void guardAttackEnd(struct UnitNode *guardNode,
-    struct UnitList *inmateList);
+    struct UnitList *inmateList, int exitPosition);
 
 void setDeadInmates(struct UnitList *inmateList);
 
 bool tryAttack(struct UnitNode guardNode);
 
 void updateGuardAccuracy(struct UnitList *guardList, int currentPanic, int maximumPanic);
+
+int getDistance(int positionFrom,int positionTo);
 
 void destroyList(struct UnitList *);/*
 
