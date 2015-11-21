@@ -497,18 +497,19 @@ void guardAttackAOE(struct UnitNode *guardNode,
     int i;
     struct UnitNode *nextInmate;
 
-    if (((struct Guard *) guardNode->unit)->cooldownRemaining == 0 &&
-        tryAttack(*guardNode)) {
-        ((struct Guard *) guardNode->unit)->cooldownRemaining = ((struct Guard *) guardNode->unit)->cooldown;
-        nextInmate = getHead(inmateList);
-        for (i = 0; i < inmateList->count; i++) {
-            if (inRange(nextInmate, guardNode)) {
-                dealDamage(nextInmate, guardNode);
-            }
-            if (getNext(nextInmate) != NULL) {
-                nextInmate = getNext(nextInmate);
+    if (((struct Guard *) guardNode->unit)->cooldownRemaining == 0) {
+        if (tryAttack(*guardNode)){
+            nextInmate = getHead(inmateList);
+            for (i = 0; i < inmateList->count; i++) {
+                if (inRange(nextInmate, guardNode)) {
+                    dealDamage(nextInmate, guardNode);
+                }
+                if (getNext(nextInmate) != NULL) {
+                    nextInmate = getNext(nextInmate);
+                }
             }
         }
+        ((struct Guard *) guardNode->unit)->cooldownRemaining = ((struct Guard *) guardNode->unit)->cooldown;
     }
     else {
         ((struct Guard *) guardNode->unit)->cooldownRemaining -= 1;
@@ -563,14 +564,23 @@ void guardAttackEnd(struct UnitNode *guardNode,
 
     nextUnit = getHead(inmateList);
     nextInmate = nextUnit->unit;
-    //Get all the units in range and enqueue them into a list
-    for (i=0;i<inmateList->count;i++){
-        if(inRange(nextUnit,guardNode)){
-            enqueue(&inRangeList,nextInmate);
+
+    if (((struct Guard *) guardNode->unit)->cooldownRemaining == 0) {
+        if (tryAttack(*guardNode)){
+            //Get all the units in range and enqueue them into a list
+            for (i=0;i<inmateList->count;i++){
+                if(inRange(nextUnit,guardNode)){
+                    enqueue(&inRangeList,nextInmate);
+                }
+                if (getNext(nextUnit) != NULL){
+                    nextUnit = getNext(nextUnit);
+                }
+            }
         }
-        if (getNext(nextUnit) != NULL){
-            nextUnit = getNext(nextUnit);
-        }
+        ((struct Guard *) guardNode->unit)->cooldownRemaining = ((struct Guard *) guardNode->unit)->cooldown;
+    }
+    else{
+        ((struct Guard *) guardNode->unit)->cooldownRemaining -= 1;
     }
 
     //Get the closest inmate to exit and attack
