@@ -221,7 +221,7 @@ ARGUMENTS: The list of inmates (UnitList * inmateList).
 
 void moveAnimation(struct UnitNode *inmateN, struct TileNode *tileN, int lastPos);
 
-void guardAttack(struct UnitList * guardList, struct UnitList *inmateList,struct Map map, struct Path path);/*
+void guardAttack(struct UnitList * guardList, struct UnitList *inmateList, struct Path path);/*
 
 DESCRIPTION: Has every guard attack an inmate within its range.
 

@@ -325,7 +325,7 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
         if(elapsed%2) inmateMove(&deployed, path);
 
         /* Process guard attacks */
-//      else guardAttack(guards, &deployed);
+      else guardAttack(guards, &deployed,*path);
 
         /* Update display */
         gameplayRefresh(gameInterface->body, map, guards, &deployed, path);
@@ -426,8 +426,7 @@ void updateGuardAccuracy(struct UnitList *guardList, int currentPanic,
     }
 }
 
-void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,
-     struct Map map,struct Path path) {
+void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,struct Path path) {
     struct UnitNode *nextGuard;
 
     int exitPosition;
