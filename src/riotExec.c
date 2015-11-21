@@ -6,15 +6,14 @@ int main(int argc, char **argv) {
     enum GameMode gameMode;
     struct Windows windows;
     struct MapList mapList;
-    struct Map *map=malloc(sizeof(struct Map));
-    struct Map *currentMap;
+    struct Map *map = malloc(sizeof(struct Map));
+    struct Map currentMap;
     struct Dialog dialog[MAX_LEVELS];
     struct UnitList inmates, guards;
     struct UnitNode *unitNode;
     struct Path path;
-    int progress =0;
-    bool won =0;
-    int level=0;
+    int progress = 0;
+    int level = 0;
 
     /* Parse map files */
     parseMap(argv[1], &mapList, dialog);
@@ -25,25 +24,22 @@ int main(int argc, char **argv) {
     /* Present user with main menu */
     gameMode = menuMain(&windows);
 
-    do{
-        if(gameMode==EXIT){
+    do {
+        if (gameMode == EXIT) {
             break;
-        } else if (gameMode!=NEW){
+        } else if (gameMode != NEW) {
             level = levelSelect(&windows, &mapList, progress);
         }
 
         /* Select current map */
-        currentMap = &(mapList).level[level];
-        copyMap(currentMap,map);
+        currentMap = (mapList).level[level];
+        copyMap(&currentMap, map);
         /* Display intro text */
-        drawText(&windows, dialog[level], gameMode,map);
+        drawText(&windows, dialog[level], gameMode, map);
 
         /* Initialize game elements */
         getGuards(&guards, *map);
         getPath(&path, *map);
-        inmates.count = 0;
-        inmates.head = NULL;
-        inmates.tail = NULL;
 
         /* Draw level */
         drawLevel(&windows, map, &guards);
@@ -51,6 +47,7 @@ int main(int argc, char **argv) {
         /* Prompt user for unit selection */
         drawInmateSelection(&windows, map, &inmates, &guards);
 
+        /* Set origin to path origin */
         unitNode = getHead(&inmates);
         for (int i = 0; i < inmates.count; i++) {
             ((struct Inmate *) unitNode->unit)->position = path.first->location;
@@ -58,20 +55,14 @@ int main(int argc, char **argv) {
         }
 
         /* Simulate unit interactions */
-        won = simulate(&windows, &guards, &inmates, &path, map);
-        if(won){
-            gameMode=WIN;
-            if (level == progress){
-                progress++;
-            }
-        }
-        else{
-            gameMode=LOSE;
-        }
+        gameMode = simulate(&windows, &guards, &inmates, &path, &currentMap);
+        if (gameMode == WIN) progress++;
+
+
         /* Display outro text */
         drawText(&windows, dialog[level], gameMode, map);
         gameMode = CONTINUE;
-    } while (level!=EXIT);
+    } while (level != EXIT);
 
     uiFree(&windows);
     quit("Thanks for playing.\n");

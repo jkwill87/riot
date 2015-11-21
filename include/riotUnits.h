@@ -117,7 +117,7 @@ POSTCONDITIONS: Will store either the newly created UnitStore cointaing the
  unit within it's data member or NULL if not possible.*/
 
 
-struct UnitNode *dequeue(struct UnitList *queue);/*
+void *dequeue(struct UnitList *queue);/*
 
 DESCRIPTION: dequeue() will remove the front UnitNode of the passed UnitList.
  Memory is not freed by this funtion-- either its returned UnitNode will need
@@ -183,7 +183,7 @@ PRECONDITIONS: The enum value is a valid inmate type.
 POSTCONDITIONS: Memory is allocated for a new Inmate struct.*/
 
 
-bool simulate(struct Windows *win, struct UnitList *guardList,
+enum GameMode simulate(struct Windows *win, struct UnitList *guardList,
     struct UnitList *inmateList, struct Path *path, struct Map *map); /*
 
   DESCRIPTION: Simulates all unit interactions and drawing for a period of time

@@ -7,14 +7,6 @@
 #include "riotUI.h"
 
 
-/*static void writeToFile(char message){
-    FILE * file = fopen("test.txt","a");
-
-    fprintf(file,"%c\n",message);
-
-    fclose(file);
-}*/
-
 void destroyList(struct UnitList *list) {
 
     struct UnitNode *tempNode = NULL;
@@ -50,9 +42,11 @@ int getLength(struct UnitList *listIn) {
     return listIn ? listIn->count : (int) -1;
 }
 
+
 struct UnitNode *enqueue(struct UnitList *queue, void *unit) {
 
     struct UnitNode *newNode = malloc(sizeof(struct UnitNode));
+
     newNode->unit = unit;
 
     if (queue->count) {
@@ -75,19 +69,20 @@ struct UnitNode *enqueue(struct UnitList *queue, void *unit) {
 }
 
 
-struct UnitNode *dequeue(struct UnitList *queue) {
+void *dequeue(struct UnitList *queue) {
 
-    struct UnitNode *tempNode, *request = NULL;
+    struct UnitNode *tempNode;
+    void *request = NULL;
 
     if (queue->count) {
         tempNode = queue->tail->prev;
-        request = queue->tail;
+        if (!tempNode) queue->head = NULL;
+        request = queue->tail->unit;
         queue->count--;
         queue->tail = tempNode;
     }
 
-    if (queue->head)
-        queue->head->prev = NULL;
+    if (queue->head) queue->head->prev = NULL;
 
     return request;
 }
@@ -145,7 +140,7 @@ struct Inmate *createInmate(enum InmateType type) {
     struct Inmate *unit = malloc(sizeof(struct Inmate));
 
     unit->type = type;
-    unit->position = -1;    
+    unit->position = -1;
     switch (type) {
 
         case PROTAGONIST:
@@ -312,13 +307,13 @@ struct Guard *createGuard(enum GuardType type) {
 }
 
 
-bool simulate(struct Windows *gameInterface,
+enum GameMode  simulate(struct Windows *gameInterface,
     struct UnitList *guardList, struct UnitList *inmateList,
     struct Path *path, struct Map *map) {
     int i;
     struct UnitNode *nextInmate;
-    //int prevPos[inmateList->count];
     struct timespec delay;
+    enum GameMode winCondition = WIN; //TODO placeholder, revise
 
     delay.tv_sec = 0;
     delay.tv_nsec = 40000000L;  // Half second in nano seconds
@@ -357,8 +352,7 @@ bool simulate(struct Windows *gameInterface,
             nanosleep(&delay, NULL);
         }
     }
-    /*LOOP ENDS AND RETURNS TRUE REGARDLESS*/
-    return true;  //TODO return win condition
+    return winCondition;
 }
 
 
@@ -425,30 +419,30 @@ void inmateMove(struct UnitList *inmateList, struct Path *path) {
         nextInmate = getNext(nextInmate);
     } while (getNext(nextInmate));
 }*/
-    
+
 void moveAnimation(struct UnitNode * nextInmate, struct TileNode *nextTile, int prevPos) {
     //int prevPos = 0;
-    
+
     /*prevPos = ((struct Inmate *) nextInmate->unit)->position;
     ((struct Inmate *) nextInmate->unit)->position =
     ((struct Inmate *) nextInmate->unit)->position +
     (float) ((struct Inmate *) nextInmate->unit)->speed / 8;*/
-    if (nextTile->next != NULL && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1 
+    if (nextTile->next != NULL && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1
         && nextTile->next->type == '#' && ((struct Inmate *) nextInmate->unit)->doorSmash == 3) {
         ((struct Inmate *) nextInmate->unit)->position = nextTile->next->location;
         ((struct Inmate *) nextInmate->unit)->doorSmash = 0;
-    }                
-    else if (nextTile->next != NULL && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1 
+    }
+    else if (nextTile->next != NULL && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1
         && nextTile->next->type == '#' && ((struct Inmate *) nextInmate->unit)->doorSmash != 3) {
         ((struct Inmate *) nextInmate->unit)->position = prevPos;
         ((struct Inmate *) nextInmate->unit)->doorSmash++;
-    } 
+    }
     else if (nextTile->next->type != '&' && (int) ((struct Inmate *) nextInmate->unit)->position ==
         prevPos + 1)
         ((struct Inmate *) nextInmate->unit)->position = nextTile->next->location;
     else if (nextTile->next->type == '&'  && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1) {
         ((struct Inmate *) nextInmate->unit)->reachedEnd = TRUE;
-        ((struct Inmate *) nextInmate->unit)->position = nextTile->location;            
+        ((struct Inmate *) nextInmate->unit)->position = nextTile->location;
     }
 }
 
@@ -461,40 +455,38 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList, struct
     nextGuard = getHead(guardList);
     nextInmate = getHead(inmateList);
 
- 	#ifdef _DEBUGN
-	printf("Guard Attack has begun.\n\n");
-	printf("Inmates List size: %d\n", inmateList->count);
-	printf("Guards List size: %d\n\n", guardList->count);
-	#endif
-    
-	for (int i=0;i<inmateList->count;i++){
-		for (int j=0;j<guardList->count;j++){
-			if (inRange(nextInmate, nextGuard)){
-                if (((struct Inmate *) nextInmate->unit)->currentHealth <= 0){
-                    ((struct Inmate *) nextInmate->unit)->dead = true;
+#ifdef _TESTING
+    printf("Guard Attack has begun.\n\n");
+    printf("Inmates List size: %d\n", inmateList->count);
+    printf("Guards List size: %d\n\n", guardList->count);
+#endif
+
+    for (int i = 0; i < inmateList->count; i++) {
+        for (int j = 0; j < guardList->count; j++) {
+            if (inRange(nextInmate, nextGuard)) {
+                if (((struct Guard *) nextGuard->unit)->cooldownRemaining ==
+                    0) {
+                    ((struct Guard *) nextGuard->unit)->cooldownRemaining = ((struct Guard *) nextGuard->unit)->cooldown;
+                    dealDamage(nextInmate, nextGuard);
                 }
-				else if (((struct Guard*)nextGuard->unit)->cooldownRemaining == 0){
-					((struct Guard*)nextGuard->unit)->cooldownRemaining = ((struct Guard*)nextGuard->unit)->cooldown;
-		        	dealDamage(nextInmate, nextGuard);
-				}
-				((struct Guard*)nextGuard->unit)->cooldownRemaining -= 1;
-			}
-			if (getNext(nextGuard) != NULL){
-	    		nextGuard = getNext(nextGuard);
-			}
-		}
-		if (getNext(nextInmate) != NULL){
-			nextInmate = getNext(nextInmate);
-		}
-	}	
+                ((struct Guard *) nextGuard->unit)->cooldownRemaining -= 1;
+            }
+            if (getNext(nextGuard) != NULL) {
+                nextGuard = getNext(nextGuard);
+            }
+        }
+        if (getNext(nextInmate) != NULL) {
+            nextInmate = getNext(nextInmate);
+        }
+    }
 }
 
 
 void dealDamage(struct UnitNode *inmateNode, struct UnitNode *guardNode) {
-	int currentHealth;
-	int damage;
+    int currentHealth;
+    int damage;
 
-	#ifdef DEBUGN
+#ifdef _TESTING
     printf("#####Inmate attacked#####\n");
     printf("Inmate Position: %f\n",
         ((struct Inmate *) inmateNode->unit)->position);
@@ -504,18 +496,19 @@ void dealDamage(struct UnitNode *inmateNode, struct UnitNode *guardNode) {
         ((struct Inmate *) inmateNode->unit)->currentHealth);
     printf("Damage dealt by guard: %d\n",
         ((struct Guard *) guardNode->unit)->damage);
-    #endif
+#endif
 
-	currentHealth = ((struct Inmate *) inmateNode->unit)->currentHealth;
-	damage = ((struct Guard *) guardNode->unit)->damage;
-    ((struct Inmate *) inmateNode->unit)->currentHealth = currentHealth - damage;
+    currentHealth = ((struct Inmate *) inmateNode->unit)->currentHealth;
+    damage = ((struct Guard *) guardNode->unit)->damage;
+    ((struct Inmate *) inmateNode->unit)->currentHealth =
+            currentHealth - damage;
 
-    #ifdef DEBUGN
+#ifdef _TESTING
     printf("Health after attack: %d\n",
         ((struct Inmate *) inmateNode->unit)->currentHealth);
     printf("########################\n");
     printf("\n");
-   #endif
+#endif
 }
 
 
@@ -523,23 +516,24 @@ bool inRange(struct UnitNode *inmate, struct UnitNode *guard) {
     int inmatePosition;
     int guardPosition;
     int range;
-    int xDifference,yDifference;
-    int inmateY,guardY;
+    int xDifference, yDifference;
+    int inmateY, guardY;
     int totalDifference;
 
     inmatePosition = ((struct Inmate *) inmate->unit)->position;
     guardPosition = ((struct Guard *) guard->unit)->position;
     range = ((struct Guard *) guard->unit)->range;
 
-    inmateY = (inmatePosition-1)/MAP_COLS;
-    guardY = (guardPosition-1)/MAP_COLS;
+    inmateY = (inmatePosition - 1) / MAP_COLS;
+    guardY = (guardPosition - 1) / MAP_COLS;
     yDifference = (inmateY + 1) - (guardY + 1);
-    xDifference = abs(guardPosition-(guardY*MAP_COLS))-abs(inmatePosition-(inmateY*MAP_COLS));
+    xDifference = abs(guardPosition - (guardY * MAP_COLS)) -
+                  abs(inmatePosition - (inmateY * MAP_COLS));
     yDifference = abs(yDifference);
     xDifference = abs(xDifference);
     totalDifference = xDifference + yDifference;
 
-   #ifdef DEBUGN
+#ifdef _TESTING
     printf("#####Calculating Range#####\n");
     printf("Unit position: %d\n", inmatePosition);
     printf("Guard position: %d\n", guardPosition);
@@ -549,13 +543,13 @@ bool inRange(struct UnitNode *inmate, struct UnitNode *guard) {
     printf("Range of the Guard: %d\n", range);
     printf("############################\n");
     printf("\n");
-   #endif
+#endif
 
     return range >= totalDifference;
 }
 
 
-struct UnitList* getGuards(struct UnitList *guards, struct Map map) {
+struct UnitList *getGuards(struct UnitList *guards, struct Map map) {
 
     struct Guard *guard;
     int i, j, position;
@@ -575,7 +569,8 @@ struct UnitList* getGuards(struct UnitList *guards, struct Map map) {
                 guard = createGuard(mapChar);
                 guard->position = position;
                 enqueue(guards, guard);
-                printf("FOUND GUARD, Guard List size: %d %c\n",guards->count,mapChar);
+                printf("FOUND GUARD, Guard List size: %d %c\n", guards->count,
+                       mapChar);
             }
         }
     }
