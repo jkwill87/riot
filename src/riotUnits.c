@@ -144,64 +144,64 @@ struct Inmate *createInmate(enum InmateType type) {
 
         case PROTAGONIST:
             unit->currentHealth = unit->maxHealth = 5;
+            unit->rep = REP_PROTAGONIST;
             unit->speed = 4;
-            unit->rep = 0;
             unit->panic = 0;
             break;
 
         case HOMEBOY:
             unit->currentHealth = unit->maxHealth = 10;
+            unit->rep = REP_HOMEBOY;
             unit->speed = 2;
-            unit->rep = 5;
             unit->panic = 2;
             break;
 
         case BRUISER:
             unit->currentHealth = unit->maxHealth = 16;
+            unit->rep = REP_BRUISER;
             unit->speed = 4;
-            unit->rep = 15;
             unit->panic = 6;
             break;
 
         case LUNATIC:
             unit->currentHealth = unit->maxHealth = 16;
+            unit->rep = REP_LUNATIC;
             unit->speed = 2;
-            unit->rep = 10;
             unit->panic = 8;
             break;
 
         case FATTY:
             unit->currentHealth = unit->maxHealth = 40;
+            unit->rep = REP_FATTY;
             unit->speed = 8;
-            unit->rep = 10;
             unit->panic = 4;
             break;
 
         case SPEEDY:
             unit->currentHealth = unit->maxHealth = 10;
-            unit->speed = 1;
+            unit->rep = REP_SPEEDY;
             unit->rep = 20;
             unit->panic = 2;
             break;
 
         case CUTIE:
             unit->currentHealth = unit->maxHealth = 20;
+            unit->rep = REP_CUTIE;
             unit->speed = 4;
-            unit->rep = 20;
             unit->panic = 1;
             break;
 
         case ATTORNEY:
             unit->currentHealth = unit->maxHealth = 30;
+            unit->rep = REP_ATTORNEY;
             unit->speed = 4;
-            unit->rep = 30;
             unit->panic = 2;
             break;
 
         case DOCTOR:
             unit->currentHealth = unit->maxHealth = 10;
+            unit->rep = REP_DOCTOR;
             unit->speed = 4;
-            unit->rep = 40;
             unit->panic = 2;
             break;
 
