@@ -45,11 +45,23 @@ struct Guard {/*
     unsigned int cooldown;
     unsigned int cooldownRemaining;
     enum AI ai;
-
+    float accuracy;
 };
 
 
 /* Linked UnitList Operations */
+
+void guardAttackProximity(struct UnitNode *guardNode,
+    struct UnitList *inmateList);
+
+void guardAttackAOE(struct UnitNode *guardNode,
+    struct UnitList *inmateList);
+
+void setDeadInmates(struct UnitList *inmateList);
+
+bool tryAttack(struct UnitNode guardNode);
+
+void updateGuardAccuracy(struct UnitList *guardList, int currentPanic, int maximumPanic);
 
 void destroyList(struct UnitList *);/*
 

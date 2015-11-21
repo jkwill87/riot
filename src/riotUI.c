@@ -533,7 +533,6 @@ void gameplayRefresh (WINDOW *body, struct Map *map, struct UnitList *guardList,
     //set color black/white
     wattron(body,COLOR_PAIR(DEFAULT));
     //redraw map
-    //drawMap(body,map);
     //redraw queuebox
     nextGuard = getHead(guardList);
     for (i=0; i< getLength(guardList); i++){
