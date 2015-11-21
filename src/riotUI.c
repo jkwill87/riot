@@ -340,10 +340,12 @@ void updateQueue(WINDOW *body, struct UnitList *inmateList, int size) {
     struct UnitNode *nextInmate;
     struct Inmate *temp;
     int i;
-    nextInmate = getHead(inmateList);
+    nextInmate = getTail(inmateList);
     for (i=0; i<size; i++){
         temp = (struct Inmate*)nextInmate->unit;
         mvwaddch(body, 6+i, MAX_COLS - 3, temp->type);
+        if(nextInmate->prev != NULL)
+        nextInmate = nextInmate->prev; 
     }
     if (size < 5){
         mvwaddch(body, 6+i, MAX_COLS - 3, '.');
@@ -531,7 +533,7 @@ void gameplayRefresh (WINDOW *body, struct Map *map, struct UnitList *guardList,
     //set color black/white
     wattron(body,COLOR_PAIR(DEFAULT));
     //redraw map
-    drawMap(body,map);
+    //drawMap(body,map);
     //redraw queuebox
     nextGuard = getHead(guardList);
     for (i=0; i< getLength(guardList); i++){
@@ -709,7 +711,6 @@ void drawText(struct Windows *windows, struct Dialog dialog,
     wresize(windows->menu, height, MAP_COLS + 1); // +1 for newline
     mvwin(windows->menu, yOff, xOff);
     wclear(windows->menu);
-
 
     /* Printout to screen */
     mvwaddstr(windows->menu,0,0, target);

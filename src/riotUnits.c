@@ -163,7 +163,7 @@ struct Inmate *createInmate(enum InmateType type) {
 
         case BRUISER:
             unit->currentHealth = unit->maxHealth = 16;
-            unit->speed = 4;
+            unit->speed = 2;
             unit->rep = 15;
             unit->panic = 6;
             unit->dead = FALSE;
@@ -172,7 +172,7 @@ struct Inmate *createInmate(enum InmateType type) {
 
         case LUNATIC:
             unit->currentHealth = unit->maxHealth = 16;
-            unit->speed = 6;
+            unit->speed = 4;
             unit->rep = 10;
             unit->panic = 8;
             unit->dead = FALSE;
@@ -181,7 +181,7 @@ struct Inmate *createInmate(enum InmateType type) {
 
         case FATTY:
             unit->currentHealth = unit->maxHealth = 40;
-            unit->speed = 2;
+            unit->speed = 1;
             unit->rep = 10;
             unit->panic = 4;
             unit->dead = FALSE;
@@ -199,7 +199,7 @@ struct Inmate *createInmate(enum InmateType type) {
 
         case CUTIE:
             unit->currentHealth = unit->maxHealth = 20;
-            unit->speed = 4;
+            unit->speed = 2;
             unit->rep = 20;
             unit->panic = 1;
             unit->dead = FALSE;
@@ -208,7 +208,7 @@ struct Inmate *createInmate(enum InmateType type) {
 
         case ATTORNEY:
             unit->currentHealth = unit->maxHealth = 30;
-            unit->speed = 4;
+            unit->speed = 2;
             unit->rep = 30;
             unit->panic = 2;
             unit->dead = FALSE;
@@ -217,7 +217,7 @@ struct Inmate *createInmate(enum InmateType type) {
 
         case DOCTOR:
             unit->currentHealth = unit->maxHealth = 10;
-            unit->speed = 4;
+            unit->speed = 2;
             unit->rep = 40;
             unit->panic = 2;
             unit->dead = FALSE;
@@ -316,7 +316,7 @@ enum GameMode  simulate(struct Windows *gameInterface,
     enum GameMode winCondition = WIN; //TODO placeholder, revise
 
     delay.tv_sec = 0;
-    delay.tv_nsec = 40000000L;  // Half second in nano seconds
+    delay.tv_nsec = 50000000L;  // Half second in nano seconds
 
     //While inmates exist, keep simulating
     while (inmateList->head != NULL) {
@@ -332,13 +332,14 @@ enum GameMode  simulate(struct Windows *gameInterface,
         for (int i = 0; i < inmateList->count; i++) {
             /*Dequeues all units that are marked for deletion    vv SWITCHED FROM FALSE AND COMMENTED OUT LINES
             These are both units that are dead or that have reached the end of the map*/
-            if (((struct Inmate *) nextInmate->unit)->dead == TRUE){
+            if (((struct Inmate *) nextInmate->unit)->currentHealth <=  0){
                 removeUnit (inmateList, i); //needs to be written, removes an inmate fromthe middle of the list
             }
             else if (((struct Inmate *) nextInmate->unit)->reachedEnd == TRUE ){
                 map->panicCur += ((struct Inmate *) nextInmate->unit)->panic;
                 removeUnit (inmateList, i);
             }
+            if (nextInmate->next != NULL)
                 nextInmate = nextInmate->next; 
         }
         /*The only UI fucntion that Simulate needs to worry about*/
@@ -352,6 +353,7 @@ enum GameMode  simulate(struct Windows *gameInterface,
             nanosleep(&delay, NULL);
         }
     }
+    gameplayRefresh (gameInterface->body,map,guardList,inmateList,path);
     return winCondition;
 }
 
