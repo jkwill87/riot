@@ -3,16 +3,13 @@
 void uiInit(struct Windows *win) {
 
     int y, x;
-
     initscr(); // init the scr 
     start_color(); // start color
     noecho(); // hide keypresses
     curs_set(FALSE); // hide cursor
-
     /* Verify terminal dimensions */
     getmaxyx(stdscr, y, x);
     if ((x < MAX_COLS) || (y < MAX_ROWS)) quit("Terminal size too small");
-
     /* Set window positions*/
     win->header = newwin(HEADER, MAX_COLS, 0, 0);
     win->body = newwin(MAIN, MAX_COLS, HEADER, 0);
@@ -23,7 +20,6 @@ void uiInit(struct Windows *win) {
 
 void uiFree(struct Windows *win) {
     if (stdscr) {
-
         /* Free memory allocated for nCurses windows */
         if (win->header) delwin(win->header);
         if (win->body) delwin(win->body);
@@ -38,9 +34,7 @@ enum GameMode menuMain(struct Windows *gameInterface) {
 
     enum GameMode gameMode = _GAME_MODE_LIMIT;
     WINDOW *menu = gameInterface->menu;
-
     int y = 3;
-
     /* Print banner */
     wclear(menu);
     box(menu, 0, 0);
@@ -52,10 +46,8 @@ enum GameMode menuMain(struct Windows *gameInterface) {
     mvwaddstr(menu, y++, 21, "888 T88b    888  888     888   888");
     mvwaddstr(menu, y++, 21, "888  T88b   888  Y88b. .d88P   888");
     mvwaddstr(menu, y++, 21, "888   T88b8888888  Y88888P     888");
-
     /* Print seperating line */
     mvwhline(menu, y += 2, 21, ACS_HLINE, 37);
-
     /* Print gameplay options */
     mvwaddstr(menu, y += 3, 21, "GAME MENU");
     y += 2;
@@ -63,13 +55,11 @@ enum GameMode menuMain(struct Windows *gameInterface) {
     mvwaddstr(menu, y++, 21, "[c]ontinue");
     mvwaddstr(menu, y++, 21, "[e]xit");
     wrefresh(menu);
-
     /* Prompt for user input */
     while (gameMode != NEW
            && gameMode != CONTINUE
            && gameMode != EXIT)
         gameMode = wgetch(menu);
-
     return gameMode;
 }
 
@@ -143,7 +133,6 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
             case PROTAGONIST:
                 if (!ifProt) {
                     ifProt = TRUE;
-                    mvwprintw(win->footer, 0, 40, "PROTAGONIST ADDED");
                     inmate = createInmate(input);
                     enqueue(inmates, inmate);
                     numAdded++;
@@ -156,10 +145,8 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
             case HOMEBOY:
                 for (i = 0; i < strlen(map->inmates); i++){
                     if (map->inmates[i] == HOMEBOY){
-                        i=strlen(map->inmates)+2;
-                        if (map->repMax >= 10) {
-                            mvwprintw(win->footer, 0, 40, "HOMEBOY ADDED");
-                            map->repMax -= 10;
+                        if (map->repMax >= REP_HOMEBOY) {
+                            map->repMax -= REP_HOMEBOY;
                             inmate = createInmate(input);
                             enqueue(inmates, inmate);
                             numAdded++;
@@ -168,17 +155,16 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                         else {
                             mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
                         }
+                        break;
                     }
                 }
                 break;
             case BRUISER:
                 for (i = 0; i < strlen(map->inmates); i++){
                     if (map->inmates[i] == BRUISER){
-                        i=strlen(map->inmates)+2;
-                        if (map->repMax >= 16) {
-                            mvwprintw(win->footer, 0, 40, "BRUISER ADDED");
+                        if (map->repMax >= REP_BRUISER) {
                             inmate = createInmate(input);
-                            map->repMax -= 16;
+                            map->repMax -= REP_BRUISER;
                             enqueue(inmates, inmate);
                             numAdded++;
                             updateQueue(win->body, inmates, numAdded);
@@ -186,17 +172,16 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                         else {
                             mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
                         }
+                        break;
                     }
                 }
                 break;
             case LUNATIC:
                 for (i = 0; i < strlen(map->inmates); i++){
                     if (map->inmates[i] == LUNATIC){
-                        i=strlen(map->inmates)+2;
-                        if (map->repMax >= 16) {
-                            mvwprintw(win->footer, 0, 40, "LUNATIC ADDED");
+                        if (map->repMax >= REP_LUNATIC) {
                             inmate = createInmate(input);
-                            map->repMax -= 16;
+                            map->repMax -= REP_LUNATIC;
                             enqueue(inmates, inmate);
                             numAdded++;
                             updateQueue(win->body, inmates, numAdded);
@@ -204,17 +189,16 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                         else {
                             mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
                         }
+                        break;
                     }
                 }
                 break;
             case FATTY:
                 for (i = 0; i < strlen(map->inmates); i++){
                     if (map->inmates[i] == FATTY){
-                        i=strlen(map->inmates)+2;
-                        if (map->repMax >= 60) {
-                            mvwprintw(win->footer, 0, 40, "FATTY ADDED");
+                        if (map->repMax >= REP_FATTY) {
                             inmate = createInmate(input);
-                            map->repMax -= 60;
+                            map->repMax -= REP_FATTY;
                             enqueue(inmates, inmate);
                             numAdded++;
                             updateQueue(win->body, inmates, numAdded);
@@ -222,32 +206,33 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                         else {
                             mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
                         }
+                        break;
                     }
                 }
                 break;
             case SPEEDY:
                 for (i = 0; i < strlen(map->inmates); i++){
                     if (map->inmates[i] == SPEEDY){
-                        i=strlen(map->inmates)+2;
-                        if (map->repMax >= 10) {
-                            mvwprintw(win->footer, 0, 40, "SPEEDY ADDED");
+                        if (map->repMax >= REP_SPEEDY) {
                             inmate = createInmate(input);
-                            map->repMax -= 10;
+                            map->repMax -= REP_SPEEDY;
                             enqueue(inmates, inmate);
                             numAdded++;
                             updateQueue(win->body, inmates, numAdded);
                         }
+                        else {
+                            mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
+                        }
+                        break;
                     }
                 }
                 break;
             case CUTIE:
                 for (i = 0; i < strlen(map->inmates); i++){
                     if (map->inmates[i] == CUTIE){
-                        i=strlen(map->inmates)+2;
-                        if (map->repMax >= 20) {
-                            mvwprintw(win->footer, 0, 40, "CUTIE ADDED");
+                        if (map->repMax >= REP_CUTIE) {
                             inmate = createInmate(input);
-                            map->repMax -= 20;
+                            map->repMax -= REP_CUTIE;
                             enqueue(inmates, inmate);
                             numAdded++;
                             updateQueue(win->body, inmates, numAdded);
@@ -255,17 +240,16 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                         else {
                             mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
                         }
+                        break;
                     }
                 }
                 break;
             case ATTORNEY:
                 for (i = 0; i < strlen(map->inmates); i++){
                     if (map->inmates[i] == ATTORNEY){
-                        i=strlen(map->inmates)+2;
-                        if (map->repMax >= 30) {
-                            mvwprintw(win->footer, 0, 40, "ATTORNEY ADDED");
+                        if (map->repMax >= REP_ATTORNEY) {
                             inmate = createInmate(input);
-                            map->repMax -= 30;
+                            map->repMax -= REP_ATTORNEY;
                             enqueue(inmates, inmate);
                             numAdded++;
                             updateQueue(win->body, inmates, numAdded);
@@ -273,17 +257,16 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                         else {
                             mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
                         }
+                        break;
                     }
                 }
                 break;
             case DOCTOR:
                 for (i = 0; i < strlen(map->inmates); i++){
                     if (map->inmates[i] == DOCTOR){
-                        i=strlen(map->inmates)+2;
-                        if (map->repMax >= 10) {
-                            mvwprintw(win->footer, 0, 40, "DOCTOR ADDED");
+                        if (map->repMax >= REP_DOCTOR) {
                             inmate = createInmate(input);
-                            map->repMax -= 10;
+                            map->repMax -= REP_DOCTOR;
                             enqueue(inmates, inmate);
                             numAdded++;
                             updateQueue(win->body, inmates, numAdded);
@@ -291,6 +274,7 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                         else {
                             mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
                         }
+                        break;
                     }
                 }
                 break;
@@ -313,7 +297,7 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
         for (y = 30; y < MAX_COLS - 5; y++) {
             mvwaddch(win->footer, 0, y, ACS_HLINE);
         }
-    } while (input != '\n' && numAdded < 5);
+    } while (input != '\n');
     for (y = 1; y < MAX_COLS - 5; y++) {
         mvwaddch(win->footer, 0, y, ACS_HLINE);
     }
@@ -380,7 +364,6 @@ void drawMap(WINDOW *body, struct Map *map) {
                     e=1;
                 if (x >0 && (map->overlay[y][x-1]=='|' || map->overlay[y][x-1]=='-' || map->overlay[y][x-1]=='+'|| map->overlay[y][x-1]=='#'))
                     w=1;
-
                 if (n==1 && s == 1 && e == 1 && w == 1){
                     mvwaddch(body,y,x+1,ACS_PLUS);
                 }
@@ -432,9 +415,7 @@ void drawLevel(struct Windows *windows, struct Map *map,
     char type;
 
     wclear(windows->footer);
-
     drawMap(windows->body, map);
-
     guardNode = getHead(guards);
     guard = (struct Guard *) guardNode->unit;
     coordinates = getCoordinate(guard->position);
@@ -447,7 +428,6 @@ void drawLevel(struct Windows *windows, struct Map *map,
         type = guard->type;
         mvwaddch(windows->body, coordinates[0], coordinates[1], type);
     }
-
     /* Draw Queue */
     mvwaddstr(windows->body, 4, MAX_COLS - 6, "QUEUE");
     mvwaddch(windows->body, 5, MAX_COLS - 6, ACS_ULCORNER);
@@ -455,7 +435,6 @@ void drawLevel(struct Windows *windows, struct Map *map,
     mvwaddch(windows->body, 11, MAX_COLS - 6, ACS_LLCORNER);
     mvwaddch(windows->body, 11, MAX_COLS - 2, ACS_LRCORNER);
     mvwaddch(windows->body, 6, MAX_COLS - 3, '.');
-
     for (y = 7; y < 11; y++)
         mvwaddch(windows->body, y, MAX_COLS - 3, ' ');
     for (y = 1; y < 6; y++)
@@ -468,10 +447,8 @@ void drawLevel(struct Windows *windows, struct Map *map,
         mvwaddch(windows->body, 6 + y, MAX_COLS - 6, ACS_VLINE);
         mvwaddch(windows->body, 6 + y, MAX_COLS - 2, ACS_VLINE);
     }
-
     /*Draws the header*/
     updateHeader(windows->header, map);
-
     /* Draw window borders around windows */
     box(windows->footer, 0, 0);
     mvwaddch(windows->footer, 0, 0, ACS_LTEE);
@@ -481,9 +458,7 @@ void drawLevel(struct Windows *windows, struct Map *map,
         mvwaddch(windows->body, y, 0, ACS_VLINE);
         mvwaddch(windows->body, y, MAX_COLS - 1, ACS_VLINE);
     }
-
     /*Populates footer*/
-
     strcpy(output, "");
     for (i = 0; i < strlen(map->inmates); i++) {
         if (map->inmates[i]==PROTAGONIST){
@@ -503,11 +478,9 @@ void drawLevel(struct Windows *windows, struct Map *map,
     mvwaddstr(windows->footer, 2, 15, output);
     mvwaddch(windows->footer, 2, MAX_COLS-1, ACS_VLINE);
     mvwaddch(windows->footer, 1, MAX_COLS-1, ACS_VLINE);
-
     wrefresh(windows->body);
     wrefresh(windows->header);
     wrefresh(windows->footer);
-
     return;
 }
 
@@ -554,9 +527,7 @@ void gameplayRefresh (WINDOW *body, struct Map *map, struct UnitList *guardList,
     }
     //set color back to black and white
     wattron(body,COLOR_PAIR(DEFAULT));
-    //refresh body
     wrefresh(body);
-    //free(coordinates);
     return;
 }
 
@@ -712,25 +683,34 @@ void drawText(struct Windows *windows, struct Dialog dialog,
 
 
 char *getInmateName(char ch) {
+    char *returnString=malloc(sizeof(char)*30);
     switch (ch) {
         case PROTAGONIST:
             return "[p]rotagonist";
         case HOMEBOY:
-            return "[h]omeboy(10)";
+            sprintf(returnString, "[h]omeboy(%d)",REP_HOMEBOY);
+            return returnString;
         case BRUISER:
-            return "[b]ruiser(16)";
+            sprintf(returnString, "[b]ruiser(%d)",REP_BRUISER);
+            return returnString;
         case LUNATIC:
-            return "[l]unatic(16)";
+            sprintf(returnString, "[l]unatic(%d)",REP_LUNATIC);
+            return returnString;
         case FATTY:
-            return "[f]atty(60)";
+            sprintf(returnString, "[f]atty(%d)",REP_FATTY);
+            return returnString;
         case SPEEDY:
-            return "[s]peedy(10)";
+            sprintf(returnString, "[s]peedy(%d)",REP_SPEEDY);
+            return returnString;
         case CUTIE:
-            return "[c]utie(20)";
+            sprintf(returnString, "[c]utie(%d)",REP_CUTIE);
+            return returnString;
         case ATTORNEY:
-            return "[a]ttorney(30)";
+            sprintf(returnString, "[a]ttorney(%d)",REP_ATTORNEY);
+            return returnString;
         case DOCTOR:
-            return "[d]octor(10)";
+            sprintf(returnString, "[d]octor(%d)",REP_DOCTOR);
+            return returnString;
         default:
             return "FAIL";
     }

@@ -19,6 +19,7 @@ int main(int argc, char **argv) {
         else if (!strcmp(argv[i], "-unitmove"))
             unitsMove(argv[2] ? argv[2] : NULL);
         else if (!strcmp(argv[i], "-color")) colorTest();
+//        else if (!strcmp(argv[i], "-logo")) logoTest();
         else if (!strcmp(argv[i], "-play")) unitsPlay(argv[2]);
         else printf("Unknown command (%s)\n", argv[i]);
     }
@@ -27,6 +28,11 @@ int main(int argc, char **argv) {
     return 0;
 
 }
+
+//void logoTest (){
+//    int maxLengh = 38;
+//    char line[maxLength];
+//}
 
 void printPath(struct Path *path) {
     struct TileNode *nextNode;

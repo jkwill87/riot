@@ -144,7 +144,7 @@ struct Inmate *createInmate(enum InmateType type) {
         case PROTAGONIST:
             unit->currentHealth = unit->maxHealth = 5;
             unit->speed = 2;
-            unit->rep = 0;
+            unit->rep = REP_PROTAGONIST;
             unit->panic = 0;
             unit->dead = FALSE;
             unit->reachedEnd = FALSE;
@@ -153,7 +153,7 @@ struct Inmate *createInmate(enum InmateType type) {
         case HOMEBOY:
             unit->currentHealth = unit->maxHealth = 10;
             unit->speed = 4;
-            unit->rep = 5;
+            unit->rep = REP_HOMEBOY;
             unit->panic = 2;
             unit->dead = FALSE;
             unit->reachedEnd = FALSE;
@@ -162,7 +162,7 @@ struct Inmate *createInmate(enum InmateType type) {
         case BRUISER:
             unit->currentHealth = unit->maxHealth = 16;
             unit->speed = 2;
-            unit->rep = 15;
+            unit->rep = REP_BRUISER;
             unit->panic = 6;
             unit->dead = FALSE;
             unit->reachedEnd = FALSE;
@@ -171,7 +171,7 @@ struct Inmate *createInmate(enum InmateType type) {
         case LUNATIC:
             unit->currentHealth = unit->maxHealth = 16;
             unit->speed = 4;
-            unit->rep = 10;
+            unit->rep = REP_LUNATIC;
             unit->panic = 8;
             unit->dead = FALSE;
             unit->reachedEnd = FALSE;
@@ -180,7 +180,7 @@ struct Inmate *createInmate(enum InmateType type) {
         case FATTY:
             unit->currentHealth = unit->maxHealth = 40;
             unit->speed = 1;
-            unit->rep = 10;
+            unit->rep = REP_FATTY;
             unit->panic = 4;
             unit->dead = FALSE;
             unit->reachedEnd = FALSE;
@@ -189,7 +189,7 @@ struct Inmate *createInmate(enum InmateType type) {
         case SPEEDY:
             unit->currentHealth = unit->maxHealth = 10;
             unit->speed = 8;
-            unit->rep = 20;
+            unit->rep = REP_SPEEDY;
             unit->panic = 2;
             unit->dead = FALSE;
             unit->reachedEnd = FALSE;
@@ -198,7 +198,7 @@ struct Inmate *createInmate(enum InmateType type) {
         case CUTIE:
             unit->currentHealth = unit->maxHealth = 20;
             unit->speed = 2;
-            unit->rep = 20;
+            unit->rep = REP_CUTIE;
             unit->panic = 1;
             unit->dead = FALSE;
             unit->reachedEnd = FALSE;
@@ -207,7 +207,7 @@ struct Inmate *createInmate(enum InmateType type) {
         case ATTORNEY:
             unit->currentHealth = unit->maxHealth = 30;
             unit->speed = 2;
-            unit->rep = 30;
+            unit->rep = REP_ATTORNEY;
             unit->panic = 2;
             unit->dead = FALSE;
             unit->reachedEnd = FALSE;
@@ -216,7 +216,7 @@ struct Inmate *createInmate(enum InmateType type) {
         case DOCTOR:
             unit->currentHealth = unit->maxHealth = 10;
             unit->speed = 2;
-            unit->rep = 40;
+            unit->rep = REP_DOCTOR;
             unit->panic = 2;
             unit->dead = FALSE;
             unit->reachedEnd = FALSE;
@@ -332,7 +332,7 @@ enum GameMode simulate(struct Windows *gameInterface,
             nextInmate = nextInmate->next;
         }
         inmateMove(inmateList, path);
-        guardAttack(guardList, inmateList, *map,*path);
+        //guardAttack(guardList, inmateList, *map,*path);
         nextInmate = getHead(inmateList);
         for (int i = 0; i < inmateList->count; i++) {
             /*Dequeues all units that are marked for deletion    vv SWITCHED FROM FALSE AND COMMENTED OUT LINES

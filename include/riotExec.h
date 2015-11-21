@@ -84,6 +84,18 @@ enum InmateType {/*
     DOCTOR = 'd'
 };
 
+enum InmateRep{
+    REP_PROTAGONIST = 0,
+    REP_HOMEBOY = 10,
+    REP_BRUISER = 15,
+    REP_LUNATIC = 10,
+    REP_FATTY = 10,
+    REP_SPEEDY = 20,
+    REP_CUTIE = 20,
+    REP_ATTORNEY = 30,
+    REP_DOCTOR = 40,
+};
+
 
 enum GuardType {/*
 
