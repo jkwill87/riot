@@ -118,7 +118,6 @@ void getPath(struct Path *path, struct Map map) {
                 position = (i * MAP_COLS) + j;
                 count = 0;
                 pushToPath(createTileNode(position, map.overlay[i][j]),path);
-                printf("Pushing to path at position: %d\n",position);
                 prevChecked[count] = position;
                 goto outer;
             }
@@ -138,9 +137,6 @@ struct Path *pathSolve(struct Map map, struct Path *path, int prevChecked[],
     i = (currentPosition - 1) / MAP_COLS;
     j = currentPosition - (MAP_COLS * i);
 
-    printf("\n\ni is: %d\n",i);
-    printf("j is: %d\n",j);
-    printf("Adding: %c\n",map.overlay[i][j]);
     beingChecked = ((i + 1) * MAP_COLS) + j;
 
     //Move down
