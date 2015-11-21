@@ -50,15 +50,37 @@ void printGuardList(struct UnitList *guardList) {
     guard = (struct Guard *) nextNode->unit;
     printf("\nGuard List Size: %d\n", guardList->count);
     printf("\n\n#### PRINTING GUARDS ####\n\n");
-    for (int i = 0; i < guardList->count - 1; i++) {
+    for (int i = 0; i < guardList->count; i++) {
         printf("Guard Type : %c\n", guard->type);
         printf("Location: %d\n", guard->position);
         printf("Damage: %d\n", guard->damage);
         printf("Range: %d\n", guard->range);
         printf("Cool Down: %d\n", guard->cooldown);
         printf("\n");
-        nextNode = nextNode->next;
+        if (nextNode->next != NULL){
+            nextNode = nextNode->next;
+        }
         guard = (struct Guard *) nextNode->unit;
+    }
+    printf("\n########################\n");
+}
+
+void printInmateList(struct UnitList *inmateList) {
+    struct UnitNode *nextNode;
+    struct Inmate *inmate;
+
+    nextNode = getHead(inmateList);
+    inmate = (struct Inmate *) nextNode->unit;
+    printf("\nInmate List Size: %d\n", inmateList->count);
+    printf("\n\n#### PRINTING INMATES ####\n\n");
+    for (int i = 0; i < inmateList->count; i++) {
+        printf("Inmate Type : %c\n", inmate->type);
+        printf("Location: %f\n", inmate->position);
+        printf("\n");
+        if (nextNode->next != NULL){
+            nextNode = nextNode->next;
+        }
+        inmate = (struct Inmate *) nextNode->unit;
     }
     printf("\n########################\n");
 }
@@ -127,23 +149,35 @@ void unitsMove(char *loadDir) {
 
     printPath(&path);
 
-    inmateUnit = createInmate(HOMEBOY);
-    inmateUnit->position = 693;
-    enqueue(inmates, inmateUnit);
-    printf("Adding an inmate to the list (%d)\n", inmates->count);
-    printf("Inmate position is: %f\n-----\n", inmateUnit->position);
+    // inmateUnit = createInmate(HOMEBOY);
+    // inmateUnit->position = 693;
+    // enqueue(inmates, inmateUnit);
+    // printf("Adding an inmate to the list (%d)\n", inmates->count);
+    // printf("Inmate position is: %f\n-----\n", inmateUnit->position);
+    for (int i=0;i<10;i++){
+        inmateUnit = createInmate(HOMEBOY);
+        inmateUnit->position = i*20;
+        enqueue(inmates, inmateUnit);
+        printf("Enqueued!\n");
+        printInmateList(inmates);
 
+    }
+    for (int i=0;i<4;i++){
+        removeUnit(inmates,5);
+        printf("Removed!\n");
+        printInmateList(inmates);
+    }
     /* for (int i = 0; i < 20; ++i) {
          inmateMove(inmates, path);
      }*/
     //simulate(&gameInterface,guards, inmates, path);
     putchar('\n');
 
-    while (inmates->count) {
+   /* while (inmates->count) {
         //printf("Removing units (%d)\n", inmates->count);
         rmUnit(dequeue(inmates));
     }
-    //putchar('\n');
+    //putchar('\n');*/
 
     destroyList(inmates);
 }

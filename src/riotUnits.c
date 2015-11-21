@@ -40,7 +40,6 @@ int getLength(struct UnitList *listIn) {
     return listIn ? listIn->count : (int) -1;
 }
 
-
 struct UnitNode *enqueue(struct UnitList *queue, void *unit) {
 
     struct UnitNode *newNode = malloc(sizeof(struct UnitNode));
@@ -83,6 +82,23 @@ struct UnitNode *dequeue(struct UnitList *queue) {
     return request;
 }
 
+void removeUnit(struct UnitList *list,int position){
+    struct UnitNode *nextNode,*temp;
+
+    if (list->count <= position){
+        printf("Error! Removing from an inexistent position!\n");
+        exit(1);
+    }
+    nextNode = getHead(list);
+    for (int i=0;i<position-1;i++){
+        nextNode = getNext(nextNode);
+    }
+    temp = nextNode->next;
+    nextNode->next = nextNode->next->next;
+    list->count--;
+    free(temp);
+
+}
 
 struct UnitNode *pop(struct UnitList *stack) {
 
@@ -297,13 +313,13 @@ bool simulate(struct Windows *gameInterface,
         nextInmate = getHead(inmateList);
 
         for (int i = 0; i < inmateList->count; i++) {
-/*Dequeues all units that are marked for deletion    vv SWITCHED FROM FALSE AND COMMENTED OUT LINES
-These are both units that are dead or that have reached the end of the map*/
+        /*Dequeues all units that are marked for deletion    vv SWITCHED FROM FALSE AND COMMENTED OUT LINES
+        These are both units that are dead or that have reached the end of the map*/
             if (((struct Inmate *) nextInmate->unit)->delUnit == TRUE){
-                /*NEED TO DO: 
-                eraseInmate(gameInterface->body,path,(struct Inmate *) nextInmate->unit)//this code exists
-                remove (inmateList, i); //needs to be written, removes an inmate fromthe middle of the list
-                */
+                //NEED TO DO: 
+                eraseInmate(gameInterface->body,path,(struct Inmate *) nextInmate->unit);
+                removeUnit (inmateList, i); //needs to be written, removes an inmate fromthe middle of the list
+                
                 }
                 nextInmate = nextInmate->next;
             }

@@ -128,6 +128,13 @@ ARGUMENTS: The list to be modified.
 POSTCONDITIONS: The front UnitNode is either removed from the passed UnitList
  and its pointer is returned, else NULL is returned.*/
 
+void removeUnit(struct UnitList *list,int position);/*
+
+DESCRIPTION: Removes the unit node at position.
+
+ARGUMENTS: List to be removed from (struct UnitList *list).
+           Position to be removed at (int position).
+*/
 
 struct UnitNode *pop(struct UnitList *stack);/*
 
