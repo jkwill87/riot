@@ -1,6 +1,5 @@
 #include <ctype.h>
 #include <time.h>
-#include <unistd.h>
 #include "riotUnits.h"
 #include "riotUI.h"
 
@@ -143,83 +142,65 @@ struct Inmate *createInmate(enum InmateType type) {
 
         case PROTAGONIST:
             unit->currentHealth = unit->maxHealth = 5;
-            unit->speed = 2;
+            unit->speed = 4;
             unit->rep = 0;
             unit->panic = 0;
-            unit->dead = FALSE;
-            unit->reachedEnd = FALSE;
             break;
 
         case HOMEBOY:
             unit->currentHealth = unit->maxHealth = 10;
-            unit->speed = 4;
+            unit->speed = 2;
             unit->rep = 5;
             unit->panic = 2;
-            unit->dead = FALSE;
-            unit->reachedEnd = FALSE;
             break;
 
         case BRUISER:
             unit->currentHealth = unit->maxHealth = 16;
-            unit->speed = 2;
+            unit->speed = 4;
             unit->rep = 15;
             unit->panic = 6;
-            unit->dead = FALSE;
-            unit->reachedEnd = FALSE;
             break;
 
         case LUNATIC:
             unit->currentHealth = unit->maxHealth = 16;
-            unit->speed = 4;
+            unit->speed = 2;
             unit->rep = 10;
             unit->panic = 8;
-            unit->dead = FALSE;
-            unit->reachedEnd = FALSE;
             break;
 
         case FATTY:
             unit->currentHealth = unit->maxHealth = 40;
-            unit->speed = 1;
+            unit->speed = 8;
             unit->rep = 10;
             unit->panic = 4;
-            unit->dead = FALSE;
-            unit->reachedEnd = FALSE;
             break;
 
         case SPEEDY:
             unit->currentHealth = unit->maxHealth = 10;
-            unit->speed = 8;
+            unit->speed = 1;
             unit->rep = 20;
             unit->panic = 2;
-            unit->dead = FALSE;
-            unit->reachedEnd = FALSE;
             break;
 
         case CUTIE:
             unit->currentHealth = unit->maxHealth = 20;
-            unit->speed = 2;
+            unit->speed = 4;
             unit->rep = 20;
             unit->panic = 1;
-            unit->dead = FALSE;
-            unit->reachedEnd = FALSE;
             break;
 
         case ATTORNEY:
             unit->currentHealth = unit->maxHealth = 30;
-            unit->speed = 2;
+            unit->speed = 4;
             unit->rep = 30;
             unit->panic = 2;
-            unit->dead = FALSE;
-            unit->reachedEnd = FALSE;
             break;
 
         case DOCTOR:
             unit->currentHealth = unit->maxHealth = 10;
-            unit->speed = 2;
+            unit->speed = 4;
             unit->rep = 40;
             unit->panic = 2;
-            unit->dead = FALSE;
-            unit->reachedEnd = FALSE;
             break;
 
         default:
@@ -312,55 +293,47 @@ struct Guard *createGuard(enum GuardType type) {
 }
 
 
-enum GameMode simulate(struct Windows *gameInterface,
-    struct UnitList *guardList, struct UnitList *inmateList,
-    struct Path *path, struct Map *map) {
-    int i;
-    struct UnitNode *nextInmate;
+
+enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
+                       struct UnitList *queued, struct Path *path,
+                       struct Map *map) {
+
+    struct UnitList deployed;
+    int elapsed = 1;
     struct timespec delay;
     enum GameMode winCondition = WIN; //TODO placeholder, revise
 
+    deployed.count = 0;
+
+    /* Set update interval frequency */
     delay.tv_sec = 0;
-    delay.tv_nsec = 50000000L;  // Half second in nano seconds
+    delay.tv_nsec = CYCLE;
 
-    //While inmates exist, keep simulating
-    while (inmateList->head != NULL) {
+    /* Deploy first unit */
+    enqueue(&deployed, dequeue(queued));
 
-        nextInmate = getHead(inmateList);
-        for (i = 0; i < inmateList->count; i++) {
-            //prevPos[i] = ((struct Inmate *) nextInmate->unit)->position;
-            nextInmate = nextInmate->next;
-        }
-        inmateMove(inmateList, path);
-        guardAttack(guardList, inmateList, *map,*path);
-        nextInmate = getHead(inmateList);
-        for (int i = 0; i < inmateList->count; i++) {
-            /*Dequeues all units that are marked for deletion    vv SWITCHED FROM FALSE AND COMMENTED OUT LINES
-            These are both units that are dead or that have reached the end of the map*/
-            if (((struct Inmate *) nextInmate->unit)->dead == TRUE) {
-                removeUnit(inmateList,
-                    i); //needs to be written, removes an inmate fromthe middle of the list
-            }
-            else if (((struct Inmate *) nextInmate->unit)->reachedEnd == TRUE) {
-                map->panicCur += ((struct Inmate *) nextInmate->unit)->panic;
-                removeUnit(inmateList, i);
-                updateGuardAccuracy(guardList, map->panicCur, map->panicMax);
-            }
-            if (nextInmate->next != NULL)
-                nextInmate = nextInmate->next; 
-        }
-        /*The only UI fucntion that Simulate needs to worry about*/
-        gameplayRefresh(gameInterface->body, map, guardList, inmateList, path);
-        //If you lose freeze for one second
-        if (inmateList->head == NULL) {
-            sleep(1);
-        }
-            //Otherwise keep pausing half a second
-        else {
-            nanosleep(&delay, NULL);
-        }
-    }
-    gameplayRefresh (gameInterface->body,map,guardList,inmateList,path);
+    /* Begin simulation loop; run while units left on game board */
+    do {
+
+        /* Deploy next unit */
+        if (queued->count && !(elapsed % REL_DELAY))
+            enqueue(&deployed, dequeue(queued));
+
+        /* Process inmate moves */
+        if(elapsed%2) inmateMove(&deployed, path);
+
+        /* Process guard attacks */
+//      else guardAttack(guards, &deployed);
+
+        /* Update display */
+        gameplayRefresh(gameInterface->body, map, guards, &deployed, path);
+
+        /* Sleep, increment elapsed time */
+        nanosleep(&delay, NULL);
+        elapsed++;
+
+    } while (deployed.count);
+
     return winCondition;
 }
 
@@ -415,7 +388,7 @@ void inmateMove(struct UnitList *inmates, struct Path *path) {
 
         } else if (tileN->next->type == '&'
                    && inmate->position == (int) lastPos + 1) {
-            inmate->reachedEnd = TRUE;
+//            inmate->reachedEnd = TRUE;
             inmate->position = tileN->location;
             inmateN = getNext(inmateN);
         }
@@ -430,7 +403,7 @@ void setDeadInmates(struct UnitList *inmateList) {
     nextInmate = getHead(inmateList);
     for (int i = 0; i < inmateList->count; i++) {
         if (((struct Inmate *) nextInmate->unit)->currentHealth <= 0) {
-            ((struct Inmate *) nextInmate->unit)->dead = true;
+//            ((struct Inmate *) nextInmate->unit)->dead = true;
         }
     }
 }
