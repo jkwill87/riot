@@ -193,14 +193,14 @@ enum GameMode simulate(struct Windows *win, struct UnitList *guardList,
              The path of the map*/
 
 
-void inmateMove(struct UnitList *inmateList, struct Path *path);/*
+void inmateMove(struct UnitList *inmates, struct Path *path);/*
 
 DESCRIPTION: Move inmate every turn by its speed/8.
 
 ARGUMENTS: The list of inmates (UnitList * inmateList).
            The path of the map (Path *path.) */
 
-void moveAnimation(struct UnitNode * nextInmate, struct TileNode *nextTile, int prevPos);
+void moveAnimation(struct UnitNode *inmateN, struct TileNode *tileN, int lastPos);
 
 void guardAttack(struct UnitList * guardList, struct UnitList *inmateList,struct Map map);/*
 
