@@ -199,6 +199,7 @@ DESCRIPTION: Move inmate every turn by its speed/8.
 ARGUMENTS: The list of inmates (UnitList * inmateList).
            The path of the map (Path *path.) */
 
+void moveAnimation(struct UnitNode * nextInmate, struct TileNode *nextTile, int prevPos);
 
 void guardAttack(struct UnitList * guardList, struct UnitList *inmateList);/*
 

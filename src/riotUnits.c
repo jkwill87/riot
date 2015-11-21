@@ -371,29 +371,72 @@ void inmateMove(struct UnitList *inmateList, struct Path *path) {
                 break;
             nextTile = nextTile->next;
         }
-        prevPos = ((struct Inmate *) nextInmate->unit)->position;
+
+        if ((struct Inmate *) nextInmate->prev == NULL) {
+            prevPos = ((struct Inmate *) nextInmate->unit)->position;
+            ((struct Inmate *) nextInmate->unit)->position =
+            ((struct Inmate *) nextInmate->unit)->position +
+            (float) ((struct Inmate *) nextInmate->unit)->speed / 8;
+            moveAnimation(nextInmate, nextTile, prevPos);
+        } else //{
+            //if ()
+        //}
+        nextInmate = getNext(nextInmate);
+    } while (getNext(nextInmate));
+}
+        /*prevPos = ((struct Inmate *) nextInmate->unit)->position;
         ((struct Inmate *) nextInmate->unit)->position =
         ((struct Inmate *) nextInmate->unit)->position +
         (float) ((struct Inmate *) nextInmate->unit)->speed / 8;
-        if (nextTile->next != NULL && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1 
-            && nextTile->next->type == '#' && ((struct Inmate *) nextInmate->unit)->doorSmash == 3) {
-            ((struct Inmate *) nextInmate->unit)->position = nextTile->next->location;
-            ((struct Inmate *) nextInmate->unit)->doorSmash = 0;
-        }                
-        else if (nextTile->next != NULL && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1 
-            && nextTile->next->type == '#' && ((struct Inmate *) nextInmate->unit)->doorSmash != 3) {
-            ((struct Inmate *) nextInmate->unit)->position = prevPos;
-            ((struct Inmate *) nextInmate->unit)->doorSmash++;
-        } 
-        else if (nextTile->next->type != '&' && (int) ((struct Inmate *) nextInmate->unit)->position ==
-            prevPos + 1)
-            ((struct Inmate *) nextInmate->unit)->position = nextTile->next->location;
-        else if (nextTile->next->type == '&'  && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1) {
-            ((struct Inmate *) nextInmate->unit)->delUnit = TRUE;
-            ((struct Inmate *) nextInmate->unit)->position = nextTile->location;            
+        if ((int)((struct Inmate *) nextInmate->unit)->position != (int) ((struct Inmate *) nextInmate->prev)->position) {
+            if (nextTile->next != NULL && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1 
+                && nextTile->next->type == '#' && ((struct Inmate *) nextInmate->unit)->doorSmash == 3) {
+                ((struct Inmate *) nextInmate->unit)->position = nextTile->next->location;
+                ((struct Inmate *) nextInmate->unit)->doorSmash = 0;
+            }                
+            else if (nextTile->next != NULL && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1 
+                && nextTile->next->type == '#' && ((struct Inmate *) nextInmate->unit)->doorSmash != 3) {
+                ((struct Inmate *) nextInmate->unit)->position = prevPos;
+                ((struct Inmate *) nextInmate->unit)->doorSmash++;
+            } 
+            else if (nextTile->next->type != '&' && (int) ((struct Inmate *) nextInmate->unit)->position ==
+                prevPos + 1)
+                ((struct Inmate *) nextInmate->unit)->position = nextTile->next->location;
+            else if (nextTile->next->type == '&'  && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1) {
+                ((struct Inmate *) nextInmate->unit)->delUnit = TRUE;
+                ((struct Inmate *) nextInmate->unit)->position = nextTile->location;            
+            }
+        } else {
+            ((struct Inmate *) nextInmate->unit)->position = (int)((struct Inmate *) nextInmate->unit)->position;
         }
         nextInmate = getNext(nextInmate);
     } while (getNext(nextInmate));
+}*/
+    
+void moveAnimation(struct UnitNode * nextInmate, struct TileNode *nextTile, int prevPos) {
+    //int prevPos = 0;
+    
+    /*prevPos = ((struct Inmate *) nextInmate->unit)->position;
+    ((struct Inmate *) nextInmate->unit)->position =
+    ((struct Inmate *) nextInmate->unit)->position +
+    (float) ((struct Inmate *) nextInmate->unit)->speed / 8;*/
+    if (nextTile->next != NULL && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1 
+        && nextTile->next->type == '#' && ((struct Inmate *) nextInmate->unit)->doorSmash == 3) {
+        ((struct Inmate *) nextInmate->unit)->position = nextTile->next->location;
+        ((struct Inmate *) nextInmate->unit)->doorSmash = 0;
+    }                
+    else if (nextTile->next != NULL && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1 
+        && nextTile->next->type == '#' && ((struct Inmate *) nextInmate->unit)->doorSmash != 3) {
+        ((struct Inmate *) nextInmate->unit)->position = prevPos;
+        ((struct Inmate *) nextInmate->unit)->doorSmash++;
+    } 
+    else if (nextTile->next->type != '&' && (int) ((struct Inmate *) nextInmate->unit)->position ==
+        prevPos + 1)
+        ((struct Inmate *) nextInmate->unit)->position = nextTile->next->location;
+    else if (nextTile->next->type == '&'  && (int) ((struct Inmate *) nextInmate->unit)->position == prevPos + 1) {
+        ((struct Inmate *) nextInmate->unit)->delUnit = TRUE;
+        ((struct Inmate *) nextInmate->unit)->position = nextTile->location;            
+    }
 }
 
 
