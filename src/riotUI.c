@@ -4,10 +4,8 @@ void uiInit(struct Windows *win) {
 
     int y, x;
 
-    initscr();
-    start_color();
-    init_pair(DEFAULT, COLOR_WHITE, COLOR_BLACK);
-
+    initscr(); // init the scr 
+    start_color(); // start color
     noecho(); // hide keypresses
     curs_set(FALSE); // hide cursor
 
@@ -111,6 +109,9 @@ int levelSelect(struct Windows *gameInterface, struct MapList *mapList,
             mvwprintw(menu, y + x, 21, "[/] LOCKED");
         }
     }
+
+    mvwaddstr(menu, MAX_ROWS - 4, 21, "[b]ack");
+
     wrefresh(menu);
 
     /* Prompt for user's level selection (until valid level selected) */
@@ -517,8 +518,7 @@ void gameplayRefresh (WINDOW *body, struct Map *map, struct UnitList *guardList,
     struct UnitNode *nextGuard;
     struct Inmate *inmate;
     struct Guard *guard;
-    int *coordinates = malloc(sizeof(int) * 2);
-
+    int *coordinates;
     //Initializes all colors
     init_pair(DEFAULT, COLOR_WHITE, COLOR_BLACK);
     init_pair(GREEN, GREEN, COLOR_BLACK);
@@ -526,17 +526,12 @@ void gameplayRefresh (WINDOW *body, struct Map *map, struct UnitList *guardList,
     init_pair(RED, RED, COLOR_BLACK);
     init_pair(PURPLE, PURPLE, COLOR_BLACK);
     init_pair(DAMAGED, COLOR_BLACK, DAMAGED);
-    init_pair(20, GREEN, DAMAGED);
-    init_pair(21, YELLOW, DAMAGED);
-    init_pair(22, RED, DAMAGED);
-    init_pair(23, PURPLE, DAMAGED);
-    init_pair(24, COLOR_WHITE, GREEN);
-    init_pair(25, COLOR_WHITE, YELLOW);
-    init_pair(26, COLOR_WHITE, RED);
+    init_pair(20, COLOR_BLACK, GREEN);
+    init_pair(21, COLOR_BLACK, YELLOW);
+    init_pair(22, COLOR_BLACK, RED);
     //set color black/white
     wattron(body,COLOR_PAIR(DEFAULT));
-    //redraw map
-    //redraw queuebox
+    //draw Guards
     nextGuard = getHead(guardList);
     for (i=0; i< getLength(guardList); i++){
         guard = (struct Guard*)nextGuard->unit;
@@ -561,8 +556,6 @@ void gameplayRefresh (WINDOW *body, struct Map *map, struct UnitList *guardList,
     wattron(body,COLOR_PAIR(DEFAULT));
     //refresh body
     wrefresh(body);
-    //refresh();
-    //return
     //free(coordinates);
     return;
 }
@@ -571,7 +564,6 @@ void gameplayRefresh (WINDOW *body, struct Map *map, struct UnitList *guardList,
 int getPrevPos (struct Path *path, struct Inmate *inmate){
     struct TileNode *currentTile;
     struct TileNode *nextTile;
-
     currentTile = path->first;
     if (currentTile->next == NULL)
         quit("No Path Found When Getting Prev Pos");
@@ -592,12 +584,12 @@ int guardColor (struct Guard *guard){
     cd = (float) guard->cooldown;
     cdr = (float) guard->cooldownRemaining;
     pcd = (cdr/cd) *100;
-    if (pcd > 20.0)
-        return(26);
+    if (pcd > 40.0)
+        return(22);
     else if (pcd > 1.0)
-        return (25);
+        return (21);
     else
-        return (24);
+        return (20);
 }
 
 int getColor (struct Inmate *inmate){
@@ -608,20 +600,12 @@ int getColor (struct Inmate *inmate){
     php = (hp / mhp) * 100;
     if (php >= 75.0) {
         setColor = GREEN;
-        //if inmate->beingAttacked == true
-            //setColor == 20
     } else if (php >= 50.0) {
         setColor = YELLOW;
-        //if inmate->beingAttacked == true
-            //setColor == 21
     } else if (php >= 25.0) {
         setColor = RED;
-        //if inmate->beingAttacked == true
-            //setColor == 22
     } else {
         setColor = PURPLE;
-        //if inmate->beingAttacked == true
-            //setColor == 23
     }
     return setColor;
 }
