@@ -426,7 +426,7 @@ void inmateMove(struct UnitList *inmates, struct Path *path) {
 }
 
 
-void setDeadInmates(struct UnitList *inmateList) {
+/*void setDeadInmates(struct UnitList *inmateList) {
     struct UnitNode *nextInmate;
 
     nextInmate = getHead(inmateList);
@@ -435,7 +435,7 @@ void setDeadInmates(struct UnitList *inmateList) {
             ((struct Inmate *) nextInmate->unit)->dead = true;
         }
     }
-}
+}*/
 
 void updateGuardAccuracy(struct UnitList *guardList, int currentPanic,
     int maximumPanic) {
@@ -489,7 +489,7 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,
         }
     }
 
-    setDeadInmates(inmateList);
+   // setDeadInmates(inmateList);
 }
 
 void guardAttackAOE(struct UnitNode *guardNode,
@@ -516,7 +516,7 @@ void guardAttackAOE(struct UnitNode *guardNode,
     }
 }
 
-struct UnitNode* getClosestInmateToExit(struct UnitList inmateList, int exitPosition){
+struct UnitNode* getClosestInmateToPosition(struct UnitList inmateList, int position){
     int i,distance,lowestDistance = MAP_COLS * MAP_ROWS + 1;
     struct UnitNode *nextUnit,*closestUnit;
     struct Inmate *nextInmate;
@@ -526,7 +526,7 @@ struct UnitNode* getClosestInmateToExit(struct UnitList inmateList, int exitPosi
 
 
     for (i=0;i<inmateList.count;i++){
-        distance = getDistance(exitPosition,nextInmate->position);
+        distance = getDistance(position,nextInmate->position);
         if (distance < lowestDistance){
             closestUnit = nextUnit;
         }
@@ -557,6 +557,7 @@ void guardAttackEnd(struct UnitNode *guardNode,
     struct UnitNode *nextUnit,*unitToAttack;
     struct Inmate *nextInmate;
     int i;
+    bool attacked = false;
 
     inRangeList.count = 0;
     inRangeList.head = NULL;
@@ -570,6 +571,7 @@ void guardAttackEnd(struct UnitNode *guardNode,
             //Get all the units in range and enqueue them into a list
             for (i=0;i<inmateList->count;i++){
                 if(inRange(nextUnit,guardNode)){
+                    attacked = true;
                     enqueue(&inRangeList,nextInmate);
                 }
                 if (getNext(nextUnit) != NULL){
@@ -584,13 +586,53 @@ void guardAttackEnd(struct UnitNode *guardNode,
     }
 
     //Get the closest inmate to exit and attack
-    unitToAttack = getClosestInmateToExit(inRangeList,exitPosition);
-    dealDamage(unitToAttack,guardNode);
+    if (attacked){
+        unitToAttack = getClosestInmateToPosition(inRangeList,exitPosition);
+        dealDamage(unitToAttack,guardNode);
+    }
 }
 
 void guardAttackProximity(struct UnitNode *guardNode,
     struct UnitList *inmateList) {
+    struct UnitList inRangeList;   
+    struct UnitNode *nextUnit,*unitToAttack;
+    struct Inmate *nextInmate;
+    int i;
+    bool attacked = false;
 
+    inRangeList.count = 0;
+    inRangeList.head = NULL;
+    inRangeList.tail = NULL;
+
+    nextUnit = getHead(inmateList);
+    nextInmate = nextUnit->unit;
+
+    if (((struct Guard *) guardNode->unit)->cooldownRemaining == 0) {
+        if (tryAttack(*guardNode)){
+            //Get all the units in range and enqueue them into a list
+            for (i=0;i<inmateList->count;i++){
+                if(inRange(nextUnit,guardNode)){
+                    enqueue(&inRangeList,nextInmate);
+                    attacked = true;
+                }
+                if (getNext(nextUnit) != NULL){
+                    nextUnit = getNext(nextUnit);
+                }
+            }
+        }
+        ((struct Guard *) guardNode->unit)->cooldownRemaining = ((struct Guard *) guardNode->unit)->cooldown;
+    }
+    else{
+        ((struct Guard *) guardNode->unit)->cooldownRemaining -= 1;
+    }
+    //Get the closest inmate to exit and attack
+    if (attacked){
+        #ifdef _DEBUGN
+        printf("In Range List Size: %d\n",inRangeList.count);
+        #endif
+        unitToAttack = getClosestInmateToPosition(inRangeList,((struct Guard*)guardNode->unit)->position);
+        dealDamage(unitToAttack,guardNode);
+    }
 }
 
 bool tryAttack(struct UnitNode guardNode) {

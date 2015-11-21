@@ -68,6 +68,8 @@ void updateGuardAccuracy(struct UnitList *guardList, int currentPanic, int maxim
 
 int getDistance(int positionFrom,int positionTo);
 
+struct UnitNode* getClosestInmateToPosition(struct UnitList inmateList, int position);
+
 void destroyList(struct UnitList *);/*
 
 DESCRIPTION: destroyList() is used to deallocate memory for a UnitList struct.
