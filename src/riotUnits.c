@@ -332,7 +332,7 @@ bool simulate(struct Windows *gameInterface,
             nextInmate = nextInmate->next;
         }
         inmateMove(inmateList, path);
-        //guardAttack(guardList, inmateList);
+        guardAttack(guardList, inmateList);
         nextInmate = getHead(inmateList);
         for (int i = 0; i < inmateList->count; i++) {
         /*Dequeues all units that are marked for deletion    vv SWITCHED FROM FALSE AND COMMENTED OUT LINES
@@ -382,15 +382,21 @@ void inmateMove(struct UnitList *inmateList, struct Path *path) {
             nextTile = nextTile->next;
         }
 
-        if ((struct Inmate *) nextInmate->prev == NULL) {
+        //if ((struct Inmate *) nextInmate->prev == NULL) {
             prevPos = ((struct Inmate *) nextInmate->unit)->position;
             ((struct Inmate *) nextInmate->unit)->position =
             ((struct Inmate *) nextInmate->unit)->position +
             (float) ((struct Inmate *) nextInmate->unit)->speed / 8;
             moveAnimation(nextInmate, nextTile, prevPos);
-        } else //{
-            //if ()
-        //}
+        /*} else {
+            prevPos = ((struct Inmate *) nextInmate->unit)->position;
+            ((struct Inmate *) nextInmate->unit)->position =
+            ((struct Inmate *) nextInmate->unit)->position +
+            (float) ((struct Inmate *) nextInmate->unit)->speed / 8;
+            if ((int)((struct Inmate *) nextInmate->unit)->position != (int) ((struct Inmate *) nextInmate->prev)->position) {
+                moveAnimation(nextInmate, nextTile, prevPos);
+            }
+        }*/
         nextInmate = getNext(nextInmate);
     } while (getNext(nextInmate));
 }
