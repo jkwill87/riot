@@ -364,13 +364,13 @@ void drawMap(WINDOW *body, struct Map *map) {
                 s=0;
                 e=0;
                 w=0;
-                if (y> 0 && (map->overlay[y-1][x]=='|' || map->overlay[y-1][x]=='-' || map->overlay[y-1][x]=='+'))
+                if (y> 0 && (map->overlay[y-1][x]=='|' || map->overlay[y-1][x]=='-' || map->overlay[y-1][x]=='+' || map->overlay[y-1][x]=='#'))
                     n=1;
-                if (map->overlay[y+1][x]=='|' || map->overlay[y+1][x]=='-' || map->overlay[y+1][x]=='+')
+                if (map->overlay[y+1][x]=='|' || map->overlay[y+1][x]=='-' || map->overlay[y+1][x]=='+'|| map->overlay[y+1][x]=='#')
                     s=1;
-                if (map->overlay[y][x+1]=='|' || map->overlay[y][x+1]=='-' || map->overlay[y][x+1]=='+')
+                if (map->overlay[y][x+1]=='|' || map->overlay[y][x+1]=='-' || map->overlay[y][x+1]=='+'|| map->overlay[y][x+1]=='#')
                     e=1;
-                if (x >0 && (map->overlay[y][x-1]=='|' || map->overlay[y][x-1]=='-' || map->overlay[y][x-1]=='+'))
+                if (x >0 && (map->overlay[y][x-1]=='|' || map->overlay[y][x-1]=='-' || map->overlay[y][x-1]=='+'|| map->overlay[y][x-1]=='#'))
                     w=1;
 
                 if (n==1 && s == 1 && e == 1 && w == 1){
@@ -441,6 +441,8 @@ void drawLevel(struct Windows *windows, struct Map *map,
     int i;
     int y;
 
+    wclear(windows->footer);
+
     drawMap(windows->body, map);
     drawGuards(windows->body, map, guards);
 
@@ -478,6 +480,7 @@ void drawLevel(struct Windows *windows, struct Map *map,
     }
 
     /*Populates footer*/
+
     strcpy(output, "");
     for (i = 0; i < strlen(map->inmates); i++) {
         if (map->inmates[i]==PROTAGONIST){
@@ -528,7 +531,7 @@ void gameplayRefresh (WINDOW *body, struct Map *map, struct UnitList *guardList,
     //redraw queuebox
 //    updateQueue(body,inmateList,getLength(inmateList));
     //redraw guardList
-//    drawGuards(body,map,guardList);
+    drawGuards(body,map,guardList);
     //redraw unitList //colors change here
     nextInmate = getHead(inmateList);
     for (i=0; i< getLength(inmateList); i++){
