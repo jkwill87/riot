@@ -292,7 +292,7 @@ void mapTest(char *loadDir) {
         getPath(&path, current);
         getGuards(&guardList, current);
        // printf("\n\nGuard list size after function %d\n\n");
-        guardAttack(&guardList,inmates,current,path);
+        guardAttack(&guardList,inmates,path);
         printf("LEVEL %d: \n\n", i);
 
         printf("Name: %s\n", current.name);
