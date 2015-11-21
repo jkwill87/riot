@@ -351,8 +351,61 @@ void updateQueue(WINDOW *body, struct UnitList *inmateList, int size) {
 
 void drawMap(WINDOW *body, struct Map *map) {
     int y;
-    for (y = 0; y < MAP_ROWS; y++)
-        mvwaddstr(body, y, 1, map->overlay[y]);
+    int x;
+    int n,s,e,w;
+    for (y = 0; y < MAP_ROWS; y++){
+        for (x = 0; x < MAP_COLS-1; x++){
+            if (map->overlay[y][x] == '|')
+                mvwaddch(body,y,x+1,ACS_VLINE);
+            else if (map->overlay[y][x] == '-')
+                mvwaddch(body,y,x+1,ACS_HLINE);
+            else if (map->overlay[y][x]== '+'){
+                n=0;
+                s=0;
+                e=0;
+                w=0;
+                if (y> 0 && (map->overlay[y-1][x]=='|' || map->overlay[y-1][x]=='-' || map->overlay[y-1][x]=='+'))
+                    n=1;
+                if (map->overlay[y+1][x]=='|' || map->overlay[y+1][x]=='-' || map->overlay[y+1][x]=='+')
+                    s=1;
+                if (map->overlay[y][x+1]=='|' || map->overlay[y][x+1]=='-' || map->overlay[y][x+1]=='+')
+                    e=1;
+                if (x >0 && (map->overlay[y][x-1]=='|' || map->overlay[y][x-1]=='-' || map->overlay[y][x-1]=='+'))
+                    w=1;
+
+                if (n==1 && s == 1 && e == 1 && w == 1){
+                    mvwaddch(body,y,x+1,ACS_PLUS);
+                }
+                else if (n == 1 && s == 1 && w == 1 && e ==0){
+                    mvwaddch(body,y,x+1,ACS_RTEE);
+                }
+                else if (n == 1 && s == 1 && e == 1 && w ==0){
+                    mvwaddch(body,y,x+1,ACS_LTEE);
+                }
+                else if (n == 1 && e == 1 && w == 1 && s ==0){
+                    mvwaddch(body,y,x+1,ACS_BTEE);   
+                }
+                else if (s == 1 && e == 1 && w == 1 && n ==0){
+                    mvwaddch(body,y,x+1,ACS_TTEE);
+                }
+                else if (n == 1 && w == 1 && e == 0 && s ==0){
+                    mvwaddch(body,y,x+1,ACS_LRCORNER);
+                }
+                else if (n == 1 && e == 1 && w == 0 && s ==0){
+                    mvwaddch(body,y,x+1,ACS_LLCORNER);
+                }
+                else if (s == 1 && w == 1 && e == 0 && n ==0){
+                    mvwaddch(body,y,x+1,ACS_URCORNER);
+                }
+                else if (s == 1 && e == 1 && w == 0 && n ==0){
+                    mvwaddch(body,y,x+1,ACS_ULCORNER);
+                }
+
+            }
+            else
+                mvwaddch(body,y,x+1,map->overlay[y][x]);
+        }
+    }
     for (y = 0; y < MAX_ROWS; y++) {
         mvwaddch(body, y, 0, ACS_VLINE);
         mvwaddch(body, y, MAX_COLS - 1, ACS_VLINE);
@@ -471,7 +524,7 @@ void gameplayRefresh (WINDOW *body, struct Map *map, struct UnitList *guardList,
     //set color black/white
     wattron(body,COLOR_PAIR(DEFAULT));
     //redraw map
-//    drawMap(body,map);
+    drawMap(body,map);
     //redraw queuebox
 //    updateQueue(body,inmateList,getLength(inmateList));
     //redraw guardList
