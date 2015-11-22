@@ -122,21 +122,18 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
     int input;
     int y;
     int i;
-    int numAdded = 0;
     static bool ifProt = FALSE;
     do {
         updateHeader(win->header, map);
         wrefresh(win->header);
         input = wgetch(win->body);
-
         switch (input) {
             case PROTAGONIST:
                 if (!ifProt) {
                     ifProt = TRUE;
                     inmate = createInmate(input);
                     enqueue(inmates, inmate);
-                    numAdded++;
-                    updateQueue(win->body, inmates, numAdded);
+                    updateQueue(win->body, inmates, getLength(inmates));
                 }
                 else {
                     mvwprintw(win->footer, 0, 40, "PROTAGONIST ALREADY PRESENT");
@@ -149,8 +146,7 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                             map->repMax -= REP_HOMEBOY;
                             inmate = createInmate(input);
                             enqueue(inmates, inmate);
-                            numAdded++;
-                            updateQueue(win->body, inmates, numAdded);
+                            updateQueue(win->body, inmates, getLength(inmates));
                         }
                         else {
                             mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
@@ -166,8 +162,7 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                             inmate = createInmate(input);
                             map->repMax -= REP_BRUISER;
                             enqueue(inmates, inmate);
-                            numAdded++;
-                            updateQueue(win->body, inmates, numAdded);
+                            updateQueue(win->body, inmates, getLength(inmates));
                         }
                         else {
                             mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
@@ -183,8 +178,7 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                             inmate = createInmate(input);
                             map->repMax -= REP_LUNATIC;
                             enqueue(inmates, inmate);
-                            numAdded++;
-                            updateQueue(win->body, inmates, numAdded);
+                            updateQueue(win->body, inmates, getLength(inmates));
                         }
                         else {
                             mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
@@ -200,8 +194,7 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                             inmate = createInmate(input);
                             map->repMax -= REP_FATTY;
                             enqueue(inmates, inmate);
-                            numAdded++;
-                            updateQueue(win->body, inmates, numAdded);
+                            updateQueue(win->body, inmates, getLength(inmates));
                         }
                         else {
                             mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
@@ -217,8 +210,7 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                             inmate = createInmate(input);
                             map->repMax -= REP_SPEEDY;
                             enqueue(inmates, inmate);
-                            numAdded++;
-                            updateQueue(win->body, inmates, numAdded);
+                            updateQueue(win->body, inmates, getLength(inmates));
                         }
                         else {
                             mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
@@ -234,8 +226,7 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                             inmate = createInmate(input);
                             map->repMax -= REP_CUTIE;
                             enqueue(inmates, inmate);
-                            numAdded++;
-                            updateQueue(win->body, inmates, numAdded);
+                            updateQueue(win->body, inmates, getLength(inmates));
                         }
                         else {
                             mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
@@ -251,8 +242,7 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                             inmate = createInmate(input);
                             map->repMax -= REP_ATTORNEY;
                             enqueue(inmates, inmate);
-                            numAdded++;
-                            updateQueue(win->body, inmates, numAdded);
+                            updateQueue(win->body, inmates, getLength(inmates));
                         }
                         else {
                             mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
@@ -268,8 +258,7 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                             inmate = createInmate(input);
                             map->repMax -= REP_DOCTOR;
                             enqueue(inmates, inmate);
-                            numAdded++;
-                            updateQueue(win->body, inmates, numAdded);
+                            updateQueue(win->body, inmates, getLength(inmates));
                         }
                         else {
                             mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
@@ -286,7 +275,17 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
             wgetch(win->body);
             break;
         }
-        if (input == '\n' && numAdded == 0) {
+        if (getLength(inmates) != 0 && (input == '\b' || input == 127 || input == 8)){
+            if (((struct Inmate*)getTail(inmates))->type == 'p') 
+                ifProt=FALSE;
+            pop(inmates);
+            updateQueue(win->body, inmates, getLength(inmates));
+        }
+        else {
+            mvwprintw(win->footer, 0, 30, "Please select at least one units");
+
+        }
+        if (input == '\n' && getLength(inmates) == 0) {
             mvwprintw(win->footer, 0, 30, "Please select at least one unit");
             input = ' ';
         }
