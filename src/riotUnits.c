@@ -72,7 +72,6 @@ struct UnitNode *enqueue(struct UnitList *queue, void *unit) {
 
 }
 
-
 void *dequeue(struct UnitList *queue) {
 
     struct UnitNode *tempNode;
@@ -114,7 +113,6 @@ void removeUnit(struct UnitList *list, int position) {
     }
     list->count--;
 }
-
 
 struct UnitNode *pop(struct UnitList *stack) {
 
@@ -377,7 +375,7 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
             enqueue(&deployed, dequeue(queued));
 
         /* Process inmate moves (every other pass) */
-        if (!(elapsed % 2)) inmateMove(&deployed, path);
+        if (!(elapsed % 2)) inmateMove(&deployed);
 
             /* Process guard attacks (every other pass) */
 //        else guardAttack(guards, &deployed, *path);
@@ -413,21 +411,17 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
     return winCondition;
 }
 
-void inmateMove(struct UnitList *inmates, struct Path *path) {
+void inmateMove(struct UnitList *inmates) {
 
     struct UnitNode *nextUnit,*otherUnit;
     struct Inmate *nextInmate,*otherInmate;
     bool moveUnit;
-    FILE *file;
-
-    file = fopen("temp.txt","a+");
-
+    
     nextUnit = getHead(inmates);
     nextInmate = nextUnit->unit; 
     nextInmate->position = nextInmate->currentTile->location;
     /* Iterate through list of inmates */
     for (int i=0;i<inmates->count;i++){
-        fprintf(file,"i: %d \nPosition before %d\n",i,nextInmate->position);
 
         moveUnit = true;
         //printf("POSITION OF INMATE: %d\n",nextInmate->);
@@ -457,19 +451,18 @@ void inmateMove(struct UnitList *inmates, struct Path *path) {
                         nextInmate->position = nextInmate->currentTile->location;    
                     }
                     break;
+                case '%':
                 case '.':
                     nextInmate->currentTile = nextInmate->currentTile->next;
                     nextInmate->position = nextInmate->currentTile->location;
                     break;
             }
         }
-        fprintf(file,"i: %d \nPosition after %d\n",i,nextInmate->position);
         if (getNext(nextUnit) != NULL){
             nextUnit = getNext(nextUnit);
             nextInmate = nextUnit->unit;
         }   
     }
-    fclose(file);
     return;
 }
 
