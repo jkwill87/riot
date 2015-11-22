@@ -362,6 +362,8 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
     int elapsed = 1;
     struct timespec delay;
     enum GameMode winCondition = WIN; //TODO placeholder, revise
+    FILE *file;
+    file = fopen("temp.txt","a+");
 
     deployed.count = 0;
 
@@ -391,7 +393,9 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
         /* Process guard attacks (every other pass) */
         else if (!(elapsed %5))
         {
+            updateGuardAccuracy(guards, map->panicCur, map->panicMax);
             guardAttack(guards, &deployed, *path);
+
         } 
 
         inmate = getHead(&deployed);
@@ -508,7 +512,7 @@ void updateGuardAccuracy(struct UnitList *guardList, int currentPanic,
     nextNode = getHead(guardList);
     nextGuard = (struct Guard *) nextNode->unit;
     for (int j = 0; j < guardList->count; j++) {
-        nextGuard->accuracy = (double) currentPanic / (double) maximumPanic;
+        nextGuard->accuracy = 1 - ((double) currentPanic / (double) maximumPanic);
         if (nextNode->next != NULL) {
             nextNode = nextNode->next;
         }
@@ -518,8 +522,8 @@ void updateGuardAccuracy(struct UnitList *guardList, int currentPanic,
 
 void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,struct Path path) {
     struct UnitNode *nextGuard;
-
     int exitPosition;
+
     exitPosition = path.last->location;
 
     nextGuard = getHead(guardList);
@@ -614,7 +618,7 @@ void guardAttackAOE(struct UnitNode *guardNode,
 }
 
 struct UnitNode* getClosestInmateToPosition(struct UnitList inmateList, int position){
-    int i,closestNum,distance,lowestDistance = MAP_COLS * MAP_ROWS + 1;
+    int i,distance,lowestDistance = MAP_COLS * MAP_ROWS + 1;
     struct UnitNode *nextUnit,*closestUnit;
     struct Inmate *nextInmate;
 
@@ -742,9 +746,7 @@ void guardAttackProximity(struct UnitNode *guardNode,
 
 bool tryAttack(struct UnitNode guardNode) {
     float missChance, guardAccuracy;
-    time_t t;
 
-    srand((unsigned) time(&t));
     guardAccuracy = ((struct Guard *) guardNode.unit)->accuracy;
     missChance = 100 - (guardAccuracy * 100);
 
