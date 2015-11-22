@@ -116,14 +116,19 @@ int levelSelect(struct Windows *gameInterface, struct MapList *mapList,
 
 
 void drawInmateSelection(struct Windows *win, struct Map *map,
-    struct UnitList *inmates, struct UnitList *guards) {
+    struct UnitList *inmates, struct UnitList *guards,
+    enum GameMode gameMode) {
 
     struct Inmate *inmate;
     struct UnitNode *node;
     int input;
     int y;
     int i;
+    updateQueue(win->body,inmates,getLength(inmates));
     static bool ifProt = FALSE;
+
+    if (gameMode != UNDECIDED) { ifProt = FALSE;}
+
     do {
         updateHeader(win->header, map);
         wrefresh(win->header);
@@ -543,6 +548,7 @@ void gameplayRefresh (WINDOW *body, struct Map *map, struct UnitList *guardList,
     }
     //set color back to black and white
     wattron(body,COLOR_PAIR(DEFAULT));
+    mvwaddch(body,0,0,ACS_VLINE);
     wrefresh(body);
     return;
 }
@@ -648,7 +654,6 @@ void eraseInmatePos(WINDOW *body, struct Path * path, float position, int level)
 
 int *getCoordinate(int position) {
     static int coordinates[2];
-
     coordinates[0] = ((position - 1) /
         MAP_COLS);    //Gives you the row, where the lowest row is 0
     coordinates[1] =

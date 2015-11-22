@@ -42,7 +42,7 @@ int levelSelect(struct Windows *gameInterface, struct MapList *mapList, int prog
              -The current map loaded (struct Map *map).
              -List of Inmates (struct UnitList *inmates).
              -List of Guards (struct UnitList *guards).*/
-void drawInmateSelection (struct Windows *win, struct Map *map, struct UnitList *inmates, struct UnitList *guards);
+void drawInmateSelection (struct Windows *win, struct Map *map, struct UnitList *inmates, struct UnitList *guards, enum GameMode gameMode);
 
 
 /*DESCRIPTION: Updates the text in the header bar on the screen. 

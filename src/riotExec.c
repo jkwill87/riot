@@ -1,15 +1,14 @@
 #include "riotExec.h"
 #include "riotUI.h"
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCDFAInspection"
+//#pragma clang diagnostic push
+//#pragma ide diagnostic ignored "OCDFAInspection"
 int main(int argc, char **argv) {
 
-    enum GameMode gameMode;
+    enum GameMode gameMode = MENU;
     struct Windows windows;
     struct MapList mapList;
-    struct Map *map = malloc(sizeof(struct Map));
-    struct Map currentMap;
+    struct Map currentMap, mapCopy;
     struct Dialog dialog[MAX_LEVELS];
     struct UnitList inmates, guards;
     struct UnitNode *unitNode;
@@ -23,79 +22,78 @@ int main(int argc, char **argv) {
     /* Create nCurses WINDOWs */
     uiInit(&windows);
 
-    /* Start with main menu */
-    gameMode = MENU;
 
-    /* Execute main game loop until user exits */
-    do {
 
-        switch (gameMode){
 
-            case MENU:
-                gameMode = menuMain(&windows);
-                continue;
+    while(gameMode != EXIT) {
 
-            case NEW:
-                level = 0;
-                break;
+        /* Start with main menu */
+        gameMode=menuMain(&windows);
+        if (gameMode == EXIT) { break;}
 
-            case CONTINUE:
-                level = levelSelect(&windows, &mapList, progress);
-                break;
 
-            default:
-                break;
-
+        /* Determine level to be loaded */
+        if(gameMode==NEW){level = 0;}
+        else {
+            level = levelSelect(&windows, &mapList, progress);
+            /*Checks if the user picked the [b]ack button*/
+            if (level == -1) { gameMode = MENU;}
         }
 
-        if(gameMode==EXIT) break;
-        if (level==-1) {
-            gameMode = MENU;
-            continue;
+        /*checks if the menu is current gamemode to skip back to the top of the loop*/
+        if (gameMode != MENU) {
+            /*checks if new level or if */
+            if(gameMode!=UNDECIDED) {
+                /* Select current map */
+                currentMap = mapList.level[level];
+                currentMap.panicCur = 0;
+
+                /* Display intro text */
+                drawText(&windows, dialog[level], NEW, &currentMap);
+
+                /* Initialize game elements */
+                getGuards(&guards, currentMap);
+                getPath(&path, currentMap);
+
+                /* Draw level */
+                drawLevel(&windows, &currentMap, &guards);
+
+                /* Set origin to path origin */
+                unitNode = getHead(&inmates);
+                for (int i = 0; i < inmates.count; i++) {
+                    ((struct Inmate *) unitNode->unit)->position = path.first->location;
+                    unitNode = unitNode->next;
+                }
+
+                /* Create snapshot of current map (deep copy) */
+                copyMap(&currentMap, &mapCopy);
+            }
+            do {
+
+                /* Prompt user for unit selection */
+                drawInmateSelection(&windows, &mapCopy, &inmates, &guards, gameMode);
+
+                /* Simulate unit interactions */
+                gameMode = simulate(&windows, &guards, &inmates, &path,
+                                    &mapCopy);
+                if (gameMode == WIN) {
+                    progress++;
+                    drawText(&windows, dialog[level], WIN, &mapCopy);
+                } else if (gameMode == LOSE) {
+                    drawText(&windows, dialog[level], LOSE, &mapCopy);
+                }
+
+            }while (gameMode==UNDECIDED);
+            gameMode=CONTINUE;
         }
-
-        /* Select current map */
-        currentMap = (mapList).level[level];
-        currentMap.panicCur = 0;
-        copyMap(&currentMap, map);
-
-        /* Display intro text */
-        drawText(&windows, dialog[level], gameMode, map);
-
-        /* Initialize game elements */
-        getGuards(&guards, *map);
-        getPath(&path, *map);
-
-        /* Draw level */
-        drawLevel(&windows, map, &guards);
-
-        /* Prompt user for unit selection */
-        drawInmateSelection(&windows, map, &inmates, &guards);
-
-        /* Set origin to path origin */
-        unitNode = getHead(&inmates);
-        for (int i = 0; i < inmates.count; i++) {
-            ((struct Inmate *) unitNode->unit)->position = path.first->location;
-            unitNode = unitNode->next;
-        }
-
-        /* Simulate unit interactions */
-        gameMode = simulate(&windows, &guards, &inmates, &path, &currentMap);
-        if (gameMode == WIN) progress++;
-
-        /* Display outro text */
-        drawText(&windows, dialog[level], gameMode, map);
-        gameMode = CONTINUE;
-
-    } while (level != EXIT);
-
+    }
 
    /* Free memory, exit */
     uiFree(&windows);
     quit("Thanks for playing.\n");
     return 0;
 }
-#pragma clang diagnostic pop
+//#pragma clang diagnostic pop
 
 
 void quit(char *message) {
