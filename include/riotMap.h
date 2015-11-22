@@ -34,6 +34,7 @@ struct TileNode {/*
 
     int location;
     char type;
+    int durability;
     struct TileNode *next;
 };
 

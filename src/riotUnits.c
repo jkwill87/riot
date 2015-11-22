@@ -140,6 +140,9 @@ struct Inmate *createInmate(enum InmateType type) {
 
     unit->type = type;
     unit->position = -1;
+    unit->dead = FALSE;
+    unit->reachedEnd = FALSE;
+
     switch (type) {
 
         case PROTAGONIST:
@@ -301,6 +304,7 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
                        struct Map *map) {
 
     struct UnitList deployed;
+    struct UnitNode *inmate;
     int elapsed = 1;
     struct timespec delay;
     enum GameMode winCondition = WIN; //TODO placeholder, revise
@@ -325,7 +329,25 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
         if(elapsed%2) inmateMove(&deployed, path);
 
         /* Process guard attacks */
-      else guardAttack(guards, &deployed,*path);
+        else guardAttack(guards, &deployed,*path);
+
+
+        inmate = getHead(queued);
+        for (int i = 0; i < queued->count; i++) {
+            /*Dequeues all units that are marked for deletion    vv SWITCHED FROM FALSE AND COMMENTED OUT LINES
+            These are both units that are dead or that have reached the end of the map*/
+            if (((struct Inmate *) inmate->unit)->dead == TRUE) {
+                removeUnit(queued,
+                    i); //needs to be written, removes an inmate fromthe middle of the list
+            }
+            else if (((struct Inmate *) inmate->unit)->reachedEnd == TRUE) {
+                map->panicCur += ((struct Inmate *) inmate->unit)->panic;
+                removeUnit(queued, i);
+                updateGuardAccuracy(guards, map->panicCur, map->panicMax);
+            }
+            if (inmate->next != NULL)
+                inmate = inmate->next;
+        }
 
         /* Update display */
         gameplayRefresh(gameInterface->body, map, guards, &deployed, path);
@@ -339,73 +361,95 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
     return winCondition;
 }
 
-/*Moves the units through the map and calls 'inmateRedraw to draw/erase the
- units*/
+
 void inmateMove(struct UnitList *inmates, struct Path *path) {
-    struct UnitNode *inmateN;
-    struct TileNode *tileN;
+    struct UnitNode *current, *other;
+    struct TileNode *currentT, *otherT;
     struct Inmate *inmate;
-    float lastPos;
+    char tileType;
+    int doorDurability;
+    int i;
 
     /* Start with first inmate in list */
-    inmateN = getHead(inmates);
+    current = getHead(inmates);
 
     /* Iterate through list of inmates */
     do {
 
-        inmate = inmateN->unit; //prevents having to do crazy casting
+
+        other = getHead(inmates);
+
+        /* Get relavent stats from structs */
+        currentT = path->first; //start with path origin
+        otherT = path->first; //start with path origin
+        inmate = current->unit; //prevents having to do crazy casting
+
 
         /* Find inmate's placement on path */
-        tileN = path->first; //starting with path origin
-        for (int i = 0; i < path->count; i++) {
-            if (tileN->location == (int) inmate->position) break;
-            tileN = tileN->next;
+        for (i = 0; i < path->count; i++) {
+            if (currentT->location == inmate->position) break;
+            currentT = currentT->next;
+        }
+        tileType = currentT->type;
+        doorDurability = currentT->durability;
+
+
+        /* Make sure that there are no overlapping units */
+        while((other=other->next)){
+
+            /* Find other unit's placement on path */
+            for (i = 0; i < path->count; i++) {
+                if (otherT->location ==
+                    ((struct Inmate*)other->unit)->position) break;
+                otherT = otherT->next;
+
+                if(inmate->position == otherT->location &&
+                   inmate!=other->unit)
+                    return;
+
+            }
         }
 
-        /* Save current position for later */
-        lastPos = ((struct Inmate *) inmateN->unit)->position;
+        /* Check for doors */
+        if(tileType=='#' && doorDurability) {
+            currentT->durability -= 1; //damage door, don't move
 
-        /* Move inmate based on its speed */
-        inmate->position += (float) inmate->speed / 8;
+        /* Check for exit */
+        } else if (tileType=='&'){
+            inmate->reachedEnd=true;
 
-        // TODO: document and revise cases below
-        if (tileN->next
-            && inmate->position == (int) lastPos + 1
-            && tileN->next->type == '#'
-            && inmate->doorSmash == 3) {
-            inmate->position = tileN->next->location;
-            inmate->doorSmash = 0;
-
-        } else if (tileN->next
-                   && (int) inmate->position == (int) lastPos + 1
-                   && tileN->next->type == '#'
-                   && inmate->doorSmash != 3) {
-            inmate->position = (int) lastPos;
-            inmate->doorSmash++;
+        /* Otherwise just move forward as usual */
+        } else {
+            inmate->position = currentT->next->location;
+        }
 
 
-        } else if (tileN->next->type != '&'
-                   && (int) inmate->position == (int) lastPos + 1) {
-            inmate->position = tileN->next->location;
-
-        } else if (tileN->next->type == '&'
-                   && inmate->position == (int) lastPos + 1) {
+//
+//
+//        if ( currentT->next->type == '#' ) {
+//            inmate->position = currentT->next->location;
+//
+//        } else if (currentT->next->type != '&') {
+//            inmate->position = currentT->next->location;
+//
+//        } else if (currentT->next->type == '&') {
 //            inmate->reachedEnd = TRUE;
-            inmate->position = tileN->location;
-            inmateN = getNext(inmateN);
-        }
+//            inmate->position = currentT->location;
+//            current = getNext(current);
+//        }
 
-    } while (getNext(inmateN));
+    } while ((current = getNext(current)));
+    return;
 }
 
 
-/*void setDeadInmates(struct UnitList *inmateList) {
-    struct UnitNode *nextInmate;
+/*void setDeadInmates(struct UnitList *queued) {
+    struct UnitNode *inmate;
 
-    nextInmate = getHead(inmateList);
-    for (int i = 0; i < inmateList->count; i++) {
-        if (((struct Inmate *) nextInmate->unit)->currentHealth <= 0) {
-//            ((struct Inmate *) nextInmate->unit)->dead = true;
+    inmate = getHead(queued);
+    for (int i = 0; i < queued->count; i++) {
+        if (((struct Inmate *) inmate->unit)->currentHealth <= 0) {
+//            ((struct Inmate *) inmate->unit)->dead = true;
         }
     }
 }*/
@@ -453,7 +497,7 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,struct 
         }
     }
 
-   // setDeadInmates(inmateList);
+   // setDeadInmates(queued);
 }
 
 void guardAttackAOE(struct UnitNode *guardNode,

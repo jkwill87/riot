@@ -24,13 +24,14 @@ struct Inmate {/*
  Inmate stores the stats related to inmate units.*/
 
     char type;
-    float position;
+    int position;
     int currentHealth;
     int maxHealth;
-    unsigned int speed;
-    unsigned int rep;
-    unsigned int panic;
-    unsigned int doorSmash;
+    int speed;
+    int rep;
+    int panic;
+    bool dead;
+    bool reachedEnd;
 };
 
 
@@ -40,10 +41,10 @@ struct Guard {/*
 
     char type;
     int position;
-    unsigned int damage;
-    unsigned int range;
-    unsigned int cooldown;
-    unsigned int cooldownRemaining;
+    int damage;
+    int range;
+    int cooldown;
+    int cooldownRemaining;
     enum AI ai;
     float accuracy;
 };
@@ -213,7 +214,6 @@ enum GameMode simulate(struct Windows *win, struct UnitList *guards,
 
 
 void inmateMove(struct UnitList *inmates, struct Path *path);/*
-
 DESCRIPTION: Move inmate every turn by its speed/8.
 
 ARGUMENTS: The list of inmates (UnitList * inmateList).

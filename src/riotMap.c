@@ -242,6 +242,7 @@ struct TileNode *createTileNode(int location, char type) {
     tileNode->next = NULL;
     tileNode->location = location;
     tileNode->type = type;
+    tileNode->durability = type=='#' ? 5 : 0;
 
     return tileNode;
 }

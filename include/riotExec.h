@@ -17,7 +17,6 @@
 #define HEADER 3
 #define FOOTER 4
 #define MAIN 17
-#define TICSPEED .25
 
 #define MAX_TEXT 500
 #define INMATE_TYPES 10
@@ -64,6 +63,7 @@ struct UnitList {/*
 
     struct UnitNode *head;
     struct UnitNode *tail;
+
     int count;
 };
 
