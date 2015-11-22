@@ -16,34 +16,83 @@ Whether it’s trying to sober up from the Drunk Tank or escaping the clutches o
 
  In-order to play RIOT! you will have to do following...
       1.	From the command line inside the root folder of the game, type and enter “make” in-order to compile the game.
+
       2.	Afterwards, type “./bin/riot” to run the game
+
       3.	Once the main menu is shown, you will be given the following options:
           i.	[n]ew game
           ii.	[c]ontinue
           iii.	[e]xit
-      Choose the options with the following letter inside the bracket. 
+      Choose the options with the following letter inside the bracket:
+
       New game sets the player inside the tutorial level so that they can learn how to play.
-      Continue allows the player to start wherever the left off or replay a level that’s been completed. They will not be          able to choose a level that they haven’t unlocked.
+
+      Continue allows the player to start wherever the left off or replay a level that’s been completed. They will not be able to choose a level that they haven’t unlocked.
+
       Exit exits RIOT!
+
       4.	Once a level is selected, the player will have to press any key continue to the game.
-      5.	Within the level, the available units will be displayed in the INMATES section below. The player can pick whom            they’d want to use and that will be placed in the queue according to the letter picked. 
-      6.	To select the inmate the player must have enough ‘rep’ to purchase them. The higher the rep, the more inmates you         can get.
-      7.	Once the player selects the inmates they want, they can either press enter to send them or fill up the queue and          that will automatically send them through.
-      8.	With every inmate that escapes, the panic will increase, causing the towers to lose accuracy. The higher the panic,       the easier it gets.
-      9.	If you complete the level, the player will be prompted with a message that continues the story, otherwise it will         prompt them to start it again.
+
+      5.	Within the level, the available units will be displayed in the INMATES section below. The player can pick whom they’d want to use and that will be placed in the queue according to the letter picked.
+
+      6.	To select the inmate the player must have enough ‘rep’ to purchase them. The higher the rep, the more inmates you can get.
+
+      7.	Once the player selects the inmates they want, they can either press enter to send them or fill up the queue and that will automatically send them through.
+
+      8.	With every inmate that escapes, the panic will increase, causing the towers to lose accuracy. The higher the panic, the easier it gets.
+
+      9.	If you complete the level, the player will be prompted with a message that continues the story, otherwise it will prompt them to start it again.
 
 
 3.	Design Changes
 
-- 8 levels instead of 9
-- tentative tick time (is 1/6th of a second in design doc)
-- because of terminal limitations, changes to colour have been made 
-- riotIO is not explicitly used
-- protagonist changes
+- There are now only 8 completable levels instead of 9, with the last level being the bonus Lunarmax level on the moon.
+- Tick or cycle speed is changed to one-half of a second; originally was 1/6th of a second, but the game was deemed too fast paced.
+  - delay.tv_sec = 0;
+    delay.tv_nsec = CYCLE;
+    ...
+    enqueue(&deployed, dequeue(queued));
+- Because of nCurses limitations, colours to indicate the inmates' health are changed to, in order from highest hp to almost dead: green, yellow, red, purple.
+  - Units with 100-75% of their initial health are green, with 74-50% are yellow, with 49-25% are orange, and lastly with 24-1% are red.
+  - init_pair(DEFAULT, COLOR_WHITE, COLOR_BLACK);
+    init_pair(GREEN, GREEN, COLOR_BLACK);
+    init_pair(YELLOW, YELLOW, COLOR_BLACK);
+    init_pair(RED, RED, COLOR_BLACK);
+    init_pair(PURPLE, PURPLE, COLOR_BLACK);
+    init_pair(DAMAGED, COLOR_BLACK, DAMAGED);
+    ...
+    for (i=0; i< getLength(inmateList); i++){
+        inmate = (struct Inmate*)nextInmate->unit;
+        wattron(body,COLOR_PAIR(getColor(inmate)));
+        coordinates = getCoordinate(inmate->position);
+        mvwaddch(body, coordinates[0], coordinates[1], inmate->type);
+        wattron(body,COLOR_PAIR(DEFAULT));
+        eraseInmatePos(body, path,getPrevPos(path,inmate));
+        nextInmate=nextInmate->next;
+- riotIO is not explicitly used (refer to 4. Incomplete Features)
+- The protagonist unit is now queued by pressing [P].  It was previously set to [R] as [P] is used for psychiatrist, but using the letter [P] is less confusing than [R].
+  - switch (input) {
+            case PROTAGONIST:
+                if (!ifProt) {
+                    ifProt = TRUE;
+                    inmate = createInmate(input);
+                    enqueue(inmates, inmate);
+                    updateQueue(win->body, inmates, getLength(inmates));
+                }
+                else {
+                    mvwprintw(win->footer, 0, 40, "PROTAGONIST ALREADY PRESENT");
+                }
+    ...
 
 
 4.	Incomplete Features
 
-
-
-
+- riotIO
+  - riotIO was scrapped because it would have been to small to warrant its own file.
+  - fileIO with writing and reading from the .riot files are handled in riotMap.
+  - User input is moved to riotUI where it is join with selecting units.
+- inmate profiles
+  - Not yet implemented because of time constraints.
+- varrying environmental hazards such as mud are not implemented
+  - obstacles are not introduced through the levels
+- Pressing f8 to quit is not yet implemented.
