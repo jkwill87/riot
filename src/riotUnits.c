@@ -657,7 +657,7 @@ struct UnitNode* getClosestInmateToPosition(struct UnitList inmateList, int posi
             nextInmate = nextUnit->unit;
         }
     }
-    
+
     return closestUnit;
 }
 
@@ -666,13 +666,18 @@ int getDistance(int positionFrom,int positionTo){
     int xDifference,yDifference;
     int fromY,toY;
 
+    /*Calculate the vertical value of the position from*/
     fromY = ((positionFrom - 1) / MAP_COLS);
+    /*Calculate the vertical value of the position to*/
     toY = ((positionTo - 1) / MAP_COLS);
+    /*Calculate the vertical difference between the positions*/
     yDifference = (fromY + 1) - (toY + 1);
+    /*Calculate the horizontal difference between the positions*/
     xDifference = abs(positionFrom - (fromY * MAP_COLS))
                  - abs(positionTo - (toY * MAP_COLS));
     yDifference = abs(yDifference);
     xDifference = abs(xDifference);
+    /*Return the total distance*/
     return xDifference + yDifference;
 
 }
@@ -692,8 +697,9 @@ void guardAttackEnd(struct UnitNode *guardNode,
     nextUnit = getHead(inmateList);
     nextInmate = nextUnit->unit;
 
-    //Get all the units in range and enqueue them into a list
+    /*Iterate through all the inmates in the list*/
     for (i=0;i<inmateList->count;i++){
+        /*Add all inmates in range of the guard to the inrange queue*/
         if(inRange(nextUnit,guardNode)){
             attacked = true;
             enqueue(&inRangeList,nextInmate);
@@ -702,12 +708,13 @@ void guardAttackEnd(struct UnitNode *guardNode,
             nextUnit = getNext(nextUnit);
         }
     }
-
+    /*Reset the cooldown*/
     if (((struct Guard *)guardNode->unit)->cooldownRemaining == 0){
-        ((struct Guard *) guardNode->unit)->cooldownRemaining = ((struct Guard *) guardNode->unit)->cooldown;
+        ((struct Guard *) guardNode->unit)->cooldownRemaining = 
+        ((struct Guard *) guardNode->unit)->cooldown;
     }
 
-    //Get the closest inmate to exit and attack
+    /*Get the closest inmate to the guard in the inrange queue and deal damage*/
     if (attacked){
         unitToAttack = getClosestInmateToPosition(inRangeList,exitPosition);
         dealDamage(unitToAttack,guardNode);
@@ -729,8 +736,9 @@ void guardAttackProximity(struct UnitNode *guardNode,
     nextUnit = getHead(inmateList);
     nextInmate = nextUnit->unit;
 
-    //Get all the units in range and enqueue them into a list
+    /*Iterate through all the inmates in the list*/
     for (i=0;i<inmateList->count;i++){
+        /*Add all inmates in range of the guard to the inrange queue*/
         if(inRange(nextUnit,guardNode)){
             enqueue(&inRangeList,nextInmate);
             attacked = true;
@@ -741,21 +749,25 @@ void guardAttackProximity(struct UnitNode *guardNode,
         }
     }
 
-   // printf("In range list size: %d\n",inRangeList.count);
-
+    /*Reset the cooldown*/
     if (((struct Guard *)guardNode->unit)->cooldownRemaining == 0){
         ((struct Guard *) guardNode->unit)->cooldownRemaining = 
         ((struct Guard *) guardNode->unit)->cooldown;
     }
 
-    //Get the closest inmate to exit and attack
+    /*Get the closest inmate to the last position in the path
+        inside inrange queue and deal damage*/
     if (attacked){
+
         #ifdef _DEBUGN
         printf("In Range List Size: %d\n",inRangeList.count);
         #endif
-        unitToAttack = getClosestInmateToPosition(inRangeList,((struct Guard*)guardNode->unit)->position);
+
+        unitToAttack = getClosestInmateToPosition(inRangeList,
+            ((struct Guard*)guardNode->unit)->position);
+
         dealDamage(unitToAttack,guardNode);
-        //Apply special abilities if guard attacking has special ability
+        /*Apply special ability debuff on the inmate if the guard attacking has special ability*/
         if (((struct Guard*)guardNode->unit)->type == PSYCH){
             ((struct Inmate*)unitToAttack->unit)->sleepCounter = EFFECT_PSYCH;
         }
@@ -768,6 +780,8 @@ void guardAttackProximity(struct UnitNode *guardNode,
 bool tryAttack(struct UnitNode guardNode) {
     float missChance, guardAccuracy;
 
+    /*Generate a number from 1-100, if the number lands higher than the missChance
+      than return true*/
     guardAccuracy = ((struct Guard *) guardNode.unit)->accuracy;
     missChance = 100 - (guardAccuracy * 100);
 
@@ -779,7 +793,7 @@ void dealDamage(struct UnitNode *inmateNode, struct UnitNode *guardNode) {
     int currentHealth;
     int damage;
 
-
+    /*Reduce the inmates dealth by the guards damage*/
     currentHealth = ((struct Inmate *) inmateNode->unit)->currentHealth;
     damage = ((struct Guard *) guardNode->unit)->damage;
     ((struct Inmate *) inmateNode->unit)->currentHealth =
@@ -799,9 +813,13 @@ bool inRange(struct UnitNode *inmate, struct UnitNode *guard) {
     guardPosition = ((struct Guard *) guard->unit)->position;
     range = ((struct Guard *) guard->unit)->range;
 
+    /*Calculate the vertical position of the inmate*/
     inmateY = (inmatePosition - 1) / MAP_COLS;
+    /*Calculate the vertical position of the guard*/
     guardY = (guardPosition - 1) / MAP_COLS;
+    /*Calculate vertical difference between the inmate and the guard*/
     yDifference = (inmateY + 1) - (guardY + 1);
+    /*Calculate the horizontal difference between the inmate and the guard*/
     xDifference = abs(guardPosition - (guardY * MAP_COLS)) -
                   abs(inmatePosition - (inmateY * MAP_COLS));
     yDifference = abs(yDifference);
@@ -819,12 +837,15 @@ bool inmateExistsInRange(struct UnitList inmateList,struct UnitNode guard){
     struct UnitNode* nextUnit;
 
     nextUnit = getHead(&inmateList);
+    /*Iterate through inmate list*/
     for (i=0;i<inmateList.count;i++){
         inmatePosition = ((struct Inmate*)nextUnit->unit)->position;
         guardPosition = ((struct Guard*)guard.unit)->position;
         range = ((struct Guard*)guard.unit)->range;
 
+        /*Calculate the y position of inmate*/
         inmateY = (inmatePosition - 1) / MAP_COLS;
+        /*Calculate the y position of*/
         guardY = (guardPosition - 1) / MAP_COLS;
         yDifference = (inmateY +1) - (guardY + 1);
         xDifference = abs(guardPosition - (guardY * MAP_COLS)) -
@@ -854,11 +875,13 @@ struct UnitList *getGuards(struct UnitList *guards, struct Map map) {
     guards->head = NULL;
     guards->tail = NULL;
 
-    /* Get guards */
+    /*Iterate through the map overlay*/
     for (i = 0; i < MAP_ROWS; i++) {
         for (j = 0; j < MAP_COLS; j++) {
             position = (i * MAP_COLS) + j;
             mapChar = toupper(map.overlay[i][j]);
+            /*If the map overlay character being parsed is an alpha character
+              than create a guard, considering only guards can be alpha characters*/
             if (isalpha(mapChar)) {
                 guard = createGuard(mapChar);
                 guard->position = position;
