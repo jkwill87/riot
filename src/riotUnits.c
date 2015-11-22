@@ -393,6 +393,8 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
         elapsed++;
 
     } while (deployed.count);
+
+    return winCondition;
 }
 
 void inmateMove(struct UnitList *inmates, struct Path *path) {
@@ -427,29 +429,29 @@ void inmateMove(struct UnitList *inmates, struct Path *path) {
         other = getHead(inmates);
         while(getNext(other) != NULL){
             if (((struct Inmate*)other->unit)->position == tileCheckPos && other != current){
-                return;
+                goto outer;
             }
             other = getNext(other);
         }
 
         if (currentT->next == NULL)
-            return;
+            continue;
         nextT=currentT->next;
         tileType = nextT->type;
         doorDurability = nextT->durability;
         /* Check for doors */
         if(tileType=='#' && doorDurability) {
             nextT->durability -= 1; //damage door, don't move
-            return;
+            continue;
         /* Check for exit */
         } else if (tileType=='&'){
             inmate->reachedEnd=true;
-            return;
+            continue;
         /* Otherwise just move forward as usual */
         } else {
             inmate->position = currentT->next->location;
         }
-
+        outer:;
     } while ((current = getNext(current)));
 
     return;
