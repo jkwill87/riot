@@ -434,7 +434,7 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,struct 
 
     nextGuard = getHead(guardList);
     for (int j=0;j<guardList->count;j++){
-        if (((struct Guard *) nextGuard->unit)->cooldownRemaining == 0) {
+        if (((struct Guard *)nextGuard->unit)->cooldownRemaining == 0) {
             if (tryAttack(*nextGuard)){
                 switch(((struct Guard*)nextGuard->unit)->ai){
                     case PROX:
@@ -450,11 +450,10 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,struct 
                         exit(1);
                         break;
                 }
-                ((struct Guard *) nextGuard->unit)->cooldownRemaining = ((struct Guard *) nextGuard->unit)->cooldown;
             }
         }
         else{
-            ((struct Guard *) nextGuard->unit)->cooldownRemaining -= 1;    
+            ((struct Guard *) nextGuard->unit)->cooldownRemaining -= 1;
         }
         if (getNext(nextGuard) != NULL){
             nextGuard = getNext(nextGuard);
@@ -477,6 +476,9 @@ void guardAttackAOE(struct UnitNode *guardNode,
         if (getNext(nextInmate) != NULL) {
             nextInmate = getNext(nextInmate);
         }
+    }
+    if (((struct Guard *)guardNode->unit)->cooldownRemaining == 0){
+        ((struct Guard *) guardNode->unit)->cooldownRemaining = ((struct Guard *) guardNode->unit)->cooldown;
     }
 }
 
@@ -541,6 +543,10 @@ void guardAttackEnd(struct UnitNode *guardNode,
         }
     }
 
+    if (((struct Guard *)guardNode->unit)->cooldownRemaining == 0){
+        ((struct Guard *) guardNode->unit)->cooldownRemaining = ((struct Guard *) guardNode->unit)->cooldown;
+    }
+
     //Get the closest inmate to exit and attack
     if (attacked){
         unitToAttack = getClosestInmateToPosition(inRangeList,exitPosition);
@@ -572,6 +578,10 @@ void guardAttackProximity(struct UnitNode *guardNode,
         if (getNext(nextUnit) != NULL){
             nextUnit = getNext(nextUnit);
         }
+    }
+
+    if (((struct Guard *)guardNode->unit)->cooldownRemaining == 0){
+        ((struct Guard *) guardNode->unit)->cooldownRemaining = ((struct Guard *) guardNode->unit)->cooldown;
     }
 
     //Get the closest inmate to exit and attack
