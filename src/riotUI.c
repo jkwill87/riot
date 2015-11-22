@@ -272,7 +272,7 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
             }
         }
         if (getLength(inmates) > 0 && (input == '\b' || input == 127 || input == 8)){
-            node = getTail(inmates);
+            node = getHead(inmates);
             inmate = (struct Inmate*)node->unit;
             if (inmate->type == 'p') 
                 ifProt=FALSE;
