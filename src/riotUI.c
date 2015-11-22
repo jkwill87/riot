@@ -537,7 +537,7 @@ void gameplayRefresh (WINDOW *body, struct Map *map, struct UnitList *guardList,
         coordinates = getCoordinate(inmate->position);
         mvwaddch(body, coordinates[0], coordinates[1], inmate->type);
         wattron(body,COLOR_PAIR(DEFAULT));
-        eraseInmatePos(body, path,getPrevPos(path,inmate),map->levelNo);
+        //eraseInmatePos(body, path,getPrevPos(path,inmate),map->levelNo);
         nextInmate=nextInmate->next;
     }
     //set color back to black and white

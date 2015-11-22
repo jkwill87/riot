@@ -5,6 +5,13 @@
 #include "riotUnits.h"
 #include "riotUI.h"
 
+void writeToFile(char *string){
+    FILE *file;
+
+    file = fopen("temp.txt","a+");
+
+    fprintf(file,"%s\n",string);
+}
 
 void destroyList(struct UnitList *list) {
 
@@ -411,12 +418,17 @@ void inmateMove(struct UnitList *inmates, struct Path *path) {
     struct UnitNode *nextUnit,*otherUnit;
     struct Inmate *nextInmate,*otherInmate;
     bool moveUnit;
+    FILE *file;
+
+    file = fopen("temp.txt","a+");
 
     nextUnit = getHead(inmates);
     nextInmate = nextUnit->unit; 
     nextInmate->position = nextInmate->currentTile->location;
     /* Iterate through list of inmates */
     for (int i=0;i<inmates->count;i++){
+        fprintf(file,"i: %d \nPosition before %d\n",i,nextInmate->position);
+
         moveUnit = true;
         //printf("POSITION OF INMATE: %d\n",nextInmate->);
         otherUnit = getHead(inmates);
@@ -437,7 +449,7 @@ void inmateMove(struct UnitList *inmates, struct Path *path) {
                     nextInmate->reachedEnd = true;
                     break;
                 case '#':
-                    if (nextInmate->currentTile->next->durability){
+                    if (nextInmate->currentTile->next->durability > 0){
                         nextInmate->currentTile->next->durability -= 1;
                     }
                     else{
@@ -451,12 +463,14 @@ void inmateMove(struct UnitList *inmates, struct Path *path) {
                     break;
             }
         }
+        fprintf(file,"i: %d \nPosition after %d\n",i,nextInmate->position);
         if (getNext(nextUnit) != NULL){
             nextUnit = getNext(nextUnit);
             nextInmate = nextUnit->unit;
         }   
     }
-
+    fclose(file);
+    getch();
     return;
 }
 
