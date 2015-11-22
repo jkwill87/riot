@@ -11,7 +11,7 @@
 enum Effect{
     EFFECT_LUNCH = 12,
     EFFECT_PSYCH = 6,
-    EFFECT_DOGS = 2,
+    EFFECT_DOGS = 1,
 };
 
 struct UnitNode {/*
@@ -37,9 +37,9 @@ struct Inmate {
     int maxSpeed;
     int rep;
     int panic;
-    int doubleDamageCounter;
     int slowedCounter;
     int sleepCounter;
+    bool doubleDamage;
     bool dead;
     bool reachedEnd;
     struct TileNode *currentTile;

@@ -180,7 +180,7 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 4;
             unit->maxSpeed = unit->speed;
             unit->panic = 0;
-            unit->doubleDamageCounter = 0;
+            unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
             break;
@@ -191,7 +191,7 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 2;
             unit->maxSpeed = unit->speed;
             unit->panic = 2;
-            unit->doubleDamageCounter = 0;
+            unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
             break;
@@ -202,7 +202,7 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 4;
             unit->maxSpeed = unit->speed;
             unit->panic = 6;
-            unit->doubleDamageCounter = 0;
+            unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
             break;
@@ -213,7 +213,7 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 2;
             unit->maxSpeed = unit->speed;
             unit->panic = 8;
-            unit->doubleDamageCounter = 0;
+            unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
             break;
@@ -224,7 +224,7 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 8;
             unit->maxSpeed = unit->speed;
             unit->panic = 4;
-            unit->doubleDamageCounter = 0;
+            unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
             break;
@@ -236,7 +236,7 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 1;
             unit->maxSpeed = unit->speed;
             unit->panic = 2;
-            unit->doubleDamageCounter = 0;
+            unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
             break;
@@ -247,7 +247,7 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 4;
             unit->maxSpeed = unit->speed;
             unit->panic = 1;
-            unit->doubleDamageCounter = 0;
+            unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
             break;
@@ -258,7 +258,7 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 4;
             unit->maxSpeed = unit->speed;
             unit->panic = 2;
-            unit->doubleDamageCounter = 0;
+            unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
             break;
@@ -269,7 +269,7 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 4;
             unit->maxSpeed = unit->speed;
             unit->panic = 2;
-            unit->doubleDamageCounter = 0;
+            unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
             break;
@@ -446,7 +446,7 @@ void inmateMove(struct UnitList *inmates, int elapsed) {
 
     struct UnitNode *nextUnit,*otherUnit;
     struct Inmate *nextInmate,*otherInmate;
-    bool moveUnit;
+    bool moveUnit,inmateSlowed;
     
     nextUnit = getHead(inmates);
     nextInmate = nextUnit->unit; 
@@ -455,9 +455,21 @@ void inmateMove(struct UnitList *inmates, int elapsed) {
     /* Iterate through list of inmates */
     for (int i=0;i<inmates->count;i++){
         moveUnit = true;
+        inmateSlowed = false;
 
         otherUnit = getHead(inmates);
         otherInmate = otherUnit->unit;
+
+        /*If the inmate is asleep than do not move and decrement the counter*/
+        if (nextInmate->sleepCounter > 0){
+            nextInmate->sleepCounter -= 1;
+            moveUnit = false;
+        }
+        /*If the inmate is slowed than decrement slowed counter*/
+        if (nextInmate->slowedCounter > 0){
+            nextInmate->slowedCounter -= 1;
+            inmateSlowed = true;
+        }
         /*Iterate through list of inamtes that are being compared*/
         for (int j=0;j<inmates->count;j++){
             /*If another inmate exists with the location of the tile the current
@@ -494,7 +506,9 @@ void inmateMove(struct UnitList *inmates, int elapsed) {
                   next tile and set the inmates position to that tiles location*/
                 case '%':
                 case '.':
-                    if(!(elapsed%nextInmate->speed)) {
+                    /*Check for the inmate being slowed, if the inmate is being slowed
+                       than increase the wait time to move*/
+                    if(!(elapsed%(nextInmate->speed + (nextInmate->speed*inmateSlowed*2)))) {
                         nextInmate->currentTile = nextInmate->currentTile->next;
                         nextInmate->position = nextInmate->currentTile->location;
                     }
@@ -728,6 +742,8 @@ void guardAttackProximity(struct UnitNode *guardNode,
     struct Inmate *nextInmate;
     int i;
     bool attacked = false;
+    FILE *file;
+    file = fopen("temp.txt","a+");
 
     inRangeList.count = 0;
     inRangeList.head = NULL;
@@ -751,7 +767,7 @@ void guardAttackProximity(struct UnitNode *guardNode,
 
     /*Reset the cooldown*/
     if (((struct Guard *)guardNode->unit)->cooldownRemaining == 0){
-        ((struct Guard *) guardNode->unit)->cooldownRemaining = 
+        ((struct Guard *) guardNode->unit)->cooldownRemaining =  
         ((struct Guard *) guardNode->unit)->cooldown;
     }
 
@@ -770,11 +786,14 @@ void guardAttackProximity(struct UnitNode *guardNode,
         /*Apply special ability debuff on the inmate if the guard attacking has special ability*/
         if (((struct Guard*)guardNode->unit)->type == PSYCH){
             ((struct Inmate*)unitToAttack->unit)->sleepCounter = EFFECT_PSYCH;
+            fprintf(file,"Psychologist effect enabled! Sleep counter: %d\n",
+                ((struct Inmate*)unitToAttack->unit)->sleepCounter);
         }
         else if(((struct Guard*)guardNode->unit)->type == DOGS){
-            ((struct Inmate*)unitToAttack->unit)->sleepCounter = EFFECT_DOGS;
+            ((struct Inmate*)unitToAttack->unit)->doubleDamage = EFFECT_DOGS;
         }
     }
+    fclose(file);
 }
 
 bool tryAttack(struct UnitNode guardNode) {
