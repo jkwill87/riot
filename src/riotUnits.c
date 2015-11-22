@@ -94,11 +94,13 @@ void removeUnit(struct UnitList *list, int position) {
     if (position == 0) {
         free(list->head);
         list->head = NULL;
+        list->tail = NULL;
     }
     else {
         for (int i = 0; i < position - 1; i++) {
             nextNode = getNext(nextNode);
         }
+
         temp = nextNode->next;
         nextNode->next = nextNode->next->next;
         free(temp);
@@ -421,21 +423,24 @@ void inmateMove(struct UnitList *inmates, struct Path *path) {
         tileCheckPos = 900;
         /* Find inmate's placement on path */
         for (i = 0; i < path->count; i++) {
-            if (currentT->location == ((struct Inmate*)current->unit)->position) break;
+            if (currentT->location == ((struct Inmate*)current->unit)->position){
+                tileCheckPos = currentT->next->location;
+                break;
+            }
             currentT = currentT->next;
         }
-        tileCheckPos = currentT->next->location;
         /* Make sure that there are no overlapping units */
         other = getHead(inmates);
         while(getNext(other) != NULL){
             if (((struct Inmate*)other->unit)->position == tileCheckPos && other != current){
+                //printf("EQUALS!\n");
                 goto outer;
             }
             other = getNext(other);
         }
 
-        if (currentT->next == NULL)
-            continue;
+        // if (currentT->next == NULL)
+        //     continue;
         nextT=currentT->next;
         tileType = nextT->type;
         doorDurability = nextT->durability;
