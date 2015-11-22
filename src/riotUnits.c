@@ -470,7 +470,6 @@ void inmateMove(struct UnitList *inmates, struct Path *path) {
         }   
     }
     fclose(file);
-    getch();
     return;
 }
 

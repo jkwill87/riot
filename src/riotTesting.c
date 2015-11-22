@@ -81,7 +81,7 @@ void printInmateList(struct UnitList *inmateList) {
     printf("\n\n#### PRINTING INMATES ####\n\n");
     for (int i = 0; i < inmateList->count; i++) {
         printf("Inmate Type : %c\n", inmate->type);
-        printf("Location: %f\n", inmate->position);
+        printf("Location: %d\n", inmate->position);
         printf("\n");
         if (nextNode->next != NULL){
             nextNode = nextNode->next;
@@ -358,7 +358,7 @@ void printInmate(struct Inmate *inmate) {
             break;
     }
 
-    printf("pos:\t%f\n", inmate->position);
+    printf("pos:\t%d\n", inmate->position);
     printf("curHP:\t%d\n", inmate->currentHealth);
     printf("maxHP:\t%d\n", inmate->maxHealth);
     printf("speed:\t%d\n", inmate->speed);
