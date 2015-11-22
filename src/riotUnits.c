@@ -467,8 +467,6 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,struct 
             ((struct Guard *) nextGuard->unit)->cooldownRemaining -= 1;
         }
 
-        setDeadInmates(inmateList);
-
         #ifdef _DEBUBN
         printf("Cooldown after decrement is: %d\n",((struct Guard *)nextGuard->unit)->cooldownRemaining);
         #endif
@@ -478,7 +476,7 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,struct 
         }
     }
 
-   // setDeadInmates(inmateList);
+    setDeadInmates(inmateList);
 }
 
 void guardAttackAOE(struct UnitNode *guardNode,
