@@ -214,6 +214,8 @@ ARGUMENTS: List to be removed from (struct UnitList *list).
            Position to be removed at (int position).
 */
 
+struct UnitNode *moveTo(int position, struct UnitList *list);           
+
 struct UnitNode *pop(struct UnitList *stack);/*
 
 DESCRIPTION: pop() will remove the back UnitNode of the passed UnitList.

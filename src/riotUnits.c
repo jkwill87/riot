@@ -91,27 +91,46 @@ void *dequeue(struct UnitList *queue) {
 }
 
 void removeUnit(struct UnitList *list, int position) {
-    struct UnitNode *nextNode, *temp;
+    struct UnitNode *temp, *target;
 
     if (list->count <= position || list->count <= 0) {
         exit(1);
     }
-    nextNode = getHead(list);
+    //nextNode = getHead(list);
     if (position == 0) {
-        free(list->head);
-        list->head = NULL;
-        list->tail = NULL;
-    }
-    else {
-        for (int i = 0; i < position - 1; i++) {
-            nextNode = getNext(nextNode);
+        if (list->head->next != NULL) {
+            temp = list->head;
+            list->head = list->head->next;
+            list->head->prev = NULL;
+            free(temp);
+        } else {
+            list->head = NULL;
+            list->tail = NULL;
         }
-
-        temp = nextNode->next;
-        nextNode->next = nextNode->next->next;
+    } else if (position  == list->count - 1) {
+        temp = list->tail;
+        list->tail = list->tail->prev;
+        list->tail->next = NULL;
+        free(temp);
+    } else {
+        target = moveTo(position - 1, list);
+        temp = target->next;
+        target->next = target->next->next;
+        target->next->prev = target;
         free(temp);
     }
     list->count--;
+}
+
+struct UnitNode *moveTo(int position, struct UnitList *list) {
+    struct UnitNode *target;
+    target = list->head;
+    for (int i = 0; i < position - 1; i++) {
+        if (target->next != NULL){
+            target = target->next;
+        }
+    }
+    return target;
 }
 
 struct UnitNode *pop(struct UnitList *stack) {
@@ -378,7 +397,7 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
         if (!(elapsed % 2)) inmateMove(&deployed);
 
             /* Process guard attacks (every other pass) */
-//        else guardAttack(guards, &deployed, *path);
+        else guardAttack(guards, &deployed, *path);
 
         inmate = getHead(&deployed);
         for (int i = 0; i < deployed.count; i++) {
