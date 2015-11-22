@@ -1,4 +1,3 @@
-
 #ifndef RIOT_UNITS
 #define RIOT_UNITS
 
@@ -61,247 +60,184 @@ struct Guard {/*
     float accuracy;
 };
 
+void writeToFile(char *string);
 
-/* Linked UnitList Operations */  
-bool inmateExistsInRange(struct UnitList inmateList,struct UnitNode guard);/*
+/*DESCRIPTION: Deallocate memory for a UnitList struct.
+  ARGUMENTS: -A Pointer to the UnitList to be destroyed (struct UnitList *list).
+  POSTCONDITIONS: Each node listed within the UnitList is destroyed and the
+  memory used for it is returned to the calling OS.*/
+void destroyList(struct UnitList *);
 
-DESCRIPTION: Returns a boolean based on if an inmate exists within a guards range.
 
-ARGUMENTS: List of units (struct UnitList inmateList).
-           Guard whos range is to be compared (struct UnitNode guard).
- */
-void guardAttackProximity(struct UnitNode *guardNode,
-    struct UnitList *inmateList);/*
+/*DESCRIPTION: Get a pointer to the next UnitNode stored within the UnitList.
+  ARGUMENTS: The UnitList to be querried (struct UnitList *list).
+  POSTCONDITIONS: Will return a pointer to the UnitNode, else NULL.*/
+struct UnitNode *getNext(struct UnitNode *list);
 
-DESCRIPTION: Guard attacks the inmate closest to it.
 
-ARGUMENTS: Guard that is attacking the inmate(struct UnitNode *guardNode).
-           Inmate list that the inmates are found in (struct UnitList *inmateList).
-*/
-void guardAttackAOE(struct UnitNode *guardNode,
-    struct UnitList *inmateList);/*
+/*DESCRIPTION: Get a pointer to the first UnitNode stored within the UnitList.
+  ARGUMENTS: The UnitList to be querried (struct UnitList *).
+  POSTCONDITIONS: Will return a pointer to the UnitNode, else NULL.*/
+struct UnitNode *getHead(struct UnitList *);
 
-DESCRIPTION: Guard attacks all inmates within its range.
 
-ARGUMENTS: Guard that is attacking the inmates (struct UnitNode *guardNode).
-           Inmate list that the inmates are found in(struct UnitList *inmateList).
-*/
-void guardAttackEnd(struct UnitNode *guardNode,
-    struct UnitList *inmateList, int exitPosition);/*
+/*DESCRIPTION: Get a pointer to the last UnitNode stored within the UnitList.
+  ARGUMENTS: -The UnitList to be querried (struct UnitList *). 
+  POSTCONDITIONS: Will return a pointer to the UnitNode, else NULL.*/
+struct UnitNode *getTail(struct UnitList *);
 
-DESCRIPTION: Guard attacks the unit closest to the exit of the map.
 
-ARGUMENTS: Guard that is attacking the inmate(struct UnitNode *guardNode).
-           Inmate list that the inmates are found in(struct UnitList *inmateList).
-*/
+/*DESCRIPTION: Get the number of nodes containted within a UnitList.
+  ARGUMENTS: The UnitList to be examined (struct UnitList *).
+  POSTCONDITIONS: Will return a int value corresponding to the number of
+  UnitNodes contained withing the UnitList*/
+int getLength(struct UnitList *);
+
+
+/*DESCRIPTION: Will store any data type (Guard or Unit) at the back of a UnitList/GuardList.
+  ARGUMENTS: -The list to be extended (struct UnitList *queue)
+             -A pointer to the data to be added (void *unit).
+  POSTCONDITIONS: Will store either the newly created UnitNode containing the
+  unit within it's data member or NULL if not possible.*/
+struct UnitNode *enqueue(struct UnitList *queue, void *unit);
+
+
+/*DESCRIPTION: Remove the front UnitNode of the passed UnitList. 
+  Memory is not freed by this function.
+  ARGUMENTS: -The list to be modified (struct UnitList *queue).
+  POSTCONDITIONS: The front UnitNode is either removed from the passed UnitList
+  and its pointer is returned, else NULL is returned.*/
+void *dequeue(struct UnitList *queue);
+
+
+/*DESCRIPTION: Removes the unit node at position.
+  ARGUMENTS: -The unit to be removed from the list (struct UnitList *list).
+             -Position to be removed at (int position).*/
+void removeUnit(struct UnitList *list, int position);
+
+
+/*DESCRIPTION: Moves the list node to the targeted node to be removed
+  ARGUMENTS: -Position of the node to be removed (int position).
+             -List of units (struct UnitList *list).*/
+struct UnitNode *moveTo(int position, struct UnitList *list);
+
+
+/*DESCRIPTION: Remove the back UnitNode of the passed UnitList.
+  Memory is not freed by this function.
+  ARGUMENTS: The list to be modified (struct UnitList *stack).
+  POSTCONDITIONS: The back UnitNode is either removed from the passed UnitList
+  and its pointer is returned, else NULL is returned.*/
+struct UnitNode *pop(struct UnitList *stack);
+
+
+/*DESCRIPTION: Initializes a new inmate with its associated base stats.
+  ARGUMENTS: -An InmateType enum associated with the Inmate to be initiated (enum InmateType type).
+  PRECONDITIONS: The enum value is a valid inmate type.
+  POSTCONDITIONS: Memory is allocated for a new Inmate struct.*/
+struct Inmate *createInmate(enum InmateType type);
+
+
+/*DESCRIPTION: Initializes a new guard with its associated base stats
+  ARGUMENTS: -An GuardType enum associated with the Guard to be initiated (enum GuardType type).
+  PRECONDITIONS: The enum value is a valid guard type.
+  POSTCONDITIONS: Memory is allocated for a new Guard struct.*/
+struct Guard *createGuard(enum GuardType type);
+
+
+/*DESCRIPTION: Simulates all unit interactions and drawing for a period of time.
+  ARGUMENTS: -The win interface (struct Windows *win)
+             -List of guards and the list of inmates (struct UnitList *guards)
+             -List of units in the wave (struct UnitList *queued)
+             -The path of the map (struct Path *path)
+             -The map that is being played (struct Map *map)*/
+enum GameMode simulate(struct Windows *win, struct UnitList *guards,  
+  struct UnitList *queued, struct Path *path, struct Map *map);
+
+
+/*DESCRIPTION: Handles the movement of the units on the screen.
+  ARGUMENTS: -The list of inmates (UnitList * inmateList).
+             -The path of the map (Path *path.) */
+void inmateMove(struct UnitList *inmates, int elapsed);
+
+
+/*DESCRIPTION: Returns a boolean based on if an inmate exists within a guards range.
+  ARGUMENTS: -List of units (struct UnitList inmateList)*/
 void setDeadInmates(struct UnitList *inmateList);
 
-bool tryAttack(struct UnitNode guardNode);/*
 
-DESCRIPTION: Returns a boolean based on if the guard missed or not, this depends on the 
-             current ingame panic.
+/*DESCRIPTION: Updates all of the guards accuracy based on the panic.
+  ARGUMENTS: -Guard list to be updated(struct UnitList *guardList).
+             -Current game panic (int currentPanic).
+             -Maximum game panic (int maximumPanic).*/
+void updateGuardAccuracy(struct UnitList *guardList, int currentPanic, int maximumPanic);
 
-ARGUMENTS: Guard that is trying to attack (struct UnitNode guardNode).
-*/
-void updateGuardAccuracy(struct UnitList *guardList, int currentPanic, int maximumPanic);/*
 
-DESCRIPTION: Updates all of the guards accuracy based on the panic.
+/*DESCRIPTION: Has every guard attack an inmate within its range.
+  ARGUMENTS: -List of guards (struct UnitList * guardList)
+             -List of the units (struct UnitList *inmateList) 
+             -Path of the map (struct Path path)*/
+void guardAttack(struct UnitList * guardList, struct UnitList *inmateList, struct Path path);
 
-ARGUMENTS: Guard list to be updated(struct UnitList *guardList).
-           Current game panic (int currentPanic).
-           Maximum game panic (int maximumPanic).
-*/
 
-int getDistance(int positionFrom,int positionTo);/*
+/*DESCRIPTION: Guard attacks all inmates within its range.
+  ARGUMENTS: -Specific guard attacking the units (struct UnitNode *guardNode).
+             -List of units (struct UnitList *inmateList).*/
+void guardAttackAOE(struct UnitNode *guardNode, struct UnitList *inmateList);
 
-DESCRIPTION: Returns the distance between two positions.
 
-ARGUMENTS: Position to calculate from (int positionFrom).
-           Position to calculate to (int positionTo).
-*/
+/*DESCRIPTION: Returns the UnitNode closest to position.
+  ARGUMENTS: -Inmate List that the closest inmate will be chosen from (struct UnitList inmateList).
+             -Position to calculate the distance of the inmate from (int position).*/
+struct UnitNode* getClosestInmateToPosition(struct UnitList inmateList, int position);
 
-struct UnitNode* getClosestInmateToPosition(struct UnitList inmateList, int position);/*
 
-DESCRIPTION: Returns the UnitNode closest to position.
+/*DESCRIPTION: Returns the distance between two positions.
+  ARGUMENTS: -Position to calculate from (int positionFrom).
+             -Position to calculate to (int positionTo).*/
+int getDistance(int positionFrom, int positionTo);
 
-ARGUMENTS: Inmate List that the closest inmate will be chosen from (struct UnitList inmateList).
-           Position to calculate the distance of the inmate from (int position).
-*/
 
-void destroyList(struct UnitList *);/*
+/*DESCRIPTION: Guard attacks the unit closest to the exit of the map.
+  ARGUMENTS: -Guard that is attacking the inmate(struct UnitNode *guardNode).
+             -Inmate list that the inmates are found in(struct UnitList *inmateList). 
+             -The furthest distance that the guard can attack the units*/
+void guardAttackEnd(struct UnitNode *guardNode, struct UnitList *inmateList, int exitPosition);
 
-DESCRIPTION: destroyList() is used to deallocate memory for a UnitList struct.
 
-ARGUMENTS: A Pointer to the UnitList to be destroyed.
+/*DESCRIPTION: Guard attacks the inmate closest to it.
+  ARGUMENTS: -Guard that is attacking the inmate(struct UnitNode *guardNode).
+             -Inmate list that the inmates are found in (struct UnitList *inmateList).*/
+void guardAttackProximity(struct UnitNode *guardNode, struct UnitList *inmateList);
 
-POSTCONDITIONS: Each node listed within the UnitList is destroyed and the
- memory used for it is returned to the calling OS.*/
 
+/*DESCRIPTION: Returns a boolean based on if the guard missed or not, this depends on the 
+current ingame panic.
+  ARGUMENTS: -Guard that is trying to attack (struct UnitNode guardNode).*/
+bool tryAttack(struct UnitNode guardNode);
 
-int getLength(struct UnitList *);/*
 
-DESCRIPTION: getLength() is used to get the number of nodes containted within
- a UnitList.
+/*DESCRIPTION: Decrements the inmates health by the guards damage during an attack
+  ARGUMENTS: -Inmate that is being dealt damage (struct UnitNode *inmateNode).
+             -Guard that is dealing damage (struct UnitNode *guardNode).*/
+void dealDamage(struct UnitNode * inmateNode, struct UnitNode * guardNode);
 
-ARGUMENTS: The UnitList to be examined.
 
-POSTCONDITIONS: Will return a int value corresponding to the number of
- UnitNodes contained withing the UnitList*/
+/*DESCRIPTION: Returns a boolean based on if the inmate is within the guards range
+  ARGUMENTS: -Inmate that is being checked if within range of guard (UnitNode *inmate).
+             -Guard that is comparing with the inmate position (struct UnitNode *guard).*/
+bool inRange(struct UnitNode *inmate, struct UnitNode *guard);
 
 
-bool isEmpty(struct UnitList *);/*
+/*DESCRIPTION: Returns a boolean based on if an inmate exists within a guards range.
+  ARGUMENTS: -List of units (struct UnitList inmateList).
+             -Guard whos range is to be compared (struct UnitNode guard). */
+bool inmateExistsInRange(struct UnitList inmateList, struct UnitNode guard);
 
-DESCRIPTION: isEmpty() is used to determine whether a UnitList has been
- initialized and is capable of storing UnitNodes.
 
-ARGUMENTS: The UnitList to be examined.
-
-PRECONDITIONS: The position is within the size of the list.
-
-POSTCONDITIONS: Will return TRUE is empty, otherwide FALSE.*/
-
-
-struct UnitNode *getHead(struct UnitList *);/*
-
-DESCRIPTION: getHead() is used to get a pointer to the first UnitNode stored
- within the UnitList.
-
-ARGUMENTS: The UnitList to be querried.
-
-POSTCONDITIONS: Will return a pointer to the UnitNode, else NULL.*/
-
-
-struct UnitNode *getTail(struct UnitList *);/*
-
-DESCRIPTION: getTail() is used to get a pointer to the last UnitNode stored
- within the UnitList.
-
-ARGUMENTS: The UnitList to be querried.
-
-POSTCONDITIONS: Will return a pointer to the UnitNode, else NULL.*/
-
-
-/* Linked UnitList Interfaces */
-
-struct UnitNode *enqueue(struct UnitList *queue, void *unit);/*
-
-DESCRIPTION: enqueue() will store any data type (presumably either an Inmate
- or Guard type) at the back of a UnitList.
-
-ARGUMENTS: The list to be extended and a pointer to the data to be added.
-
-POSTCONDITIONS: Will store either the newly created UnitStore cointaing the
- unit within it's data member or NULL if not possible.*/
-
-
-void *dequeue(struct UnitList *queue);/*
-
-DESCRIPTION: dequeue() will remove the front UnitNode of the passed UnitList.
- Memory is not freed by this funtion-- either its returned UnitNode will need
- to be freed by rmUnit or enqueued in a seperate UnitList which can later be
- destroyed.
-
-ARGUMENTS: The list to be modified.
-
-POSTCONDITIONS: The front UnitNode is either removed from the passed UnitList
- and its pointer is returned, else NULL is returned.*/
-
-void removeUnit(struct UnitList *list,int position);/*
-
-DESCRIPTION: Removes the unit node at position.
-
-ARGUMENTS: List to be removed from (struct UnitList *list).
-           Position to be removed at (int position).
-*/
-
-struct UnitNode *moveTo(int position, struct UnitList *list);           
-
-struct UnitNode *pop(struct UnitList *stack);/*
-
-DESCRIPTION: pop() will remove the back UnitNode of the passed UnitList.
- Memory is not freed by this funtion-- either its returned UnitNode will need
- to be freed by rmUnit or enqueued in a seperate UnitList which can later be
- destroyed.
-
-ARGUMENTS: The list to be modified.
-
-POSTCONDITIONS: The back UnitNode is either removed from the passed UnitList
- and its pointer is returned, else NULL is returned.*/
-
-
-struct Inmate *createInmate(enum InmateType type);/*
-
-DESCRIPTION: Creates an inmate and initializes it
-
-ARGUMENTS: The inmate type to be assigned to the inmate that is being created (enum InmateType type);
-*/
-
-
-void rmUnit(struct UnitNode* target);/*
-
-DESCRIPTION: inmateRm() is used to remove a unit from the game.
-
-ARGUMENTS: struct UnitNode *inmateList is the list of inmates present in
-the game, this argument should be changed to a header node once one is
-present.
-
-PRECONDITIONS: The position is within the size of the list.
-
-POSTCONDITIONS: The inmate at position has been removed.*/
-
-
-struct Inmate *createInmate(enum InmateType type);/*
-
-DESCRIPTION: createInmate() is used initialize a new inmate with its
- associated base stats.
-
-ARGUMENTS: an InmateType enum associated with the Inmate to be initiated.
-
-PRECONDITIONS: The enum value is a valid inmate type.
-
-POSTCONDITIONS: Memory is allocated for a new Inmate struct.*/
-
-
-enum GameMode simulate(struct Windows *win, struct UnitList *guards,
-    struct UnitList *queued, struct Path *path, struct Map *map); /*
-
-  DESCRIPTION: Simulates all unit interactions and drawing for a period of time
-  
-  ARGUMENTS: The win interface
-             List of guards and the list of inmates
-             The path of the map*/
-
-
-void inmateMove(struct UnitList *inmates, int elapsed);/*
-DESCRIPTION: Move inmate every turn by its speed/8.
-
-ARGUMENTS: The list of inmates (UnitList * inmateList).
-           The path of the map (Path *path.) */
-
-void moveAnimation(struct UnitNode *inmateN, struct TileNode *tileN, int lastPos);
-
-void guardAttack(struct UnitList * guardList, struct UnitList *inmateList, struct Path path);/*
-
-DESCRIPTION: Has every guard attack an inmate within its range.
-
-ARGUMENTS: The list of guards and the list of inmates */
-
-
-bool inRange(struct UnitNode *inmate,struct UnitNode *guard);/*
-
-DESCRIPTION: Returns a boolean based on if the inmate is within the guards range
-
-ARGUMENTS: Size of the the map path horizontally (int rowSize).
-           Inmate that is being checked if within range of guard(UnitNode *inmate).
-           Guard that is comparing with the inmate position.*/
-
-
-void dealDamage(struct UnitNode * inmateNode,struct UnitNode * guardNode);/*
-
-DESCRIPTION: Decrements the inmates health by the guards damage during an attack
-
-ARGUMENTS: Inmate that is being dealt damage (struct UnitNode *inmateNode).
-           Guard that is dealing damage (struct UnitNode *guardNode).*/
+/*DESCRIPTION: Parses the map and and finds all the guards to put them into the guard list
+  ARGUMENTS: -List of guards (struct UnitList *guards).
+             -The map that is being loaded in (struct Map map).*/
+struct UnitList *getGuards(struct UnitList *guards, struct Map map);
 
 
 #endif //RIOT_UNITS
