@@ -88,8 +88,10 @@ DESCRIPTION: gets the color based on the units health and attack state
 
 */
 
+void redrawPath (WINDOW *body, struct Path *path, int level);
 
-void eraseInmatePos(WINDOW *body, struct Path * path, float position);/*
+
+void eraseInmatePos(WINDOW *body, struct Path * path, float position, int level);/*
 
 DESCRIPTION: Erases a unit off the screen and restores tile
 

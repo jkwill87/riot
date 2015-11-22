@@ -7,7 +7,7 @@
 #define MAP_SIZE 1545
 #define MAX_LEVELS 10
 #define REGEX_EXT "(\\.)?[0-9](.riot)$"
-
+#define BONUS_LEVEL 8
 
 /* Data Types */
 

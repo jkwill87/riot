@@ -372,7 +372,7 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
 
 void inmateMove(struct UnitList *inmates, struct Path *path) {
     struct UnitNode *current, *other;
-    struct TileNode *currentT, *otherT;
+    struct TileNode *currentT, *otherT, *nextT;
     struct Inmate *inmate;
     char tileType;
     int doorDurability;
@@ -392,14 +392,12 @@ void inmateMove(struct UnitList *inmates, struct Path *path) {
         otherT = path->first; //start with path origin
         inmate = current->unit; //prevents having to do crazy casting
 
-
         /* Find inmate's placement on path */
         for (i = 0; i < path->count; i++) {
             if (currentT->location == inmate->position) break;
             currentT = currentT->next;
         }
-        tileType = currentT->type;
-        doorDurability = currentT->durability;
+
 
 
         /* Make sure that there are no overlapping units */
@@ -418,14 +416,19 @@ void inmateMove(struct UnitList *inmates, struct Path *path) {
             }
         }
 
+        if (currentT->next == NULL)
+            return;
+        nextT=currentT->next;
+        tileType = nextT->type;
+        doorDurability = nextT->durability;
         /* Check for doors */
         if(tileType=='#' && doorDurability) {
-            currentT->durability -= 1; //damage door, don't move
-
+            nextT->durability -= 1; //damage door, don't move
+            return;
         /* Check for exit */
         } else if (tileType=='&'){
             inmate->reachedEnd=true;
-
+            return;
         /* Otherwise just move forward as usual */
         } else {
             inmate->position = currentT->next->location;

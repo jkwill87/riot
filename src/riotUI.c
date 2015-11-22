@@ -281,7 +281,7 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
             pop(inmates);
             updateQueue(win->body, inmates, getLength(inmates));
         }
-        else {
+        else if (input == '\b' || input == 127 || input == 8){
             mvwprintw(win->footer, 0, 30, "Please select at least one units");
         }
         if (input == '\n' && getLength(inmates) == 0) {
@@ -310,7 +310,7 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
     for (y = 1; y < MAX_COLS - 5; y++) {
         mvwaddch(win->body, MAP_ROWS, y, ' ');
     }
-    //wrefresh(win->footer);
+    wrefresh(win->footer);
     wrefresh(win->body);
 }
 
@@ -402,8 +402,8 @@ void drawMap(WINDOW *body, struct Map *map) {
                     mvwaddch(body,y,x+1,ACS_ULCORNER);
                 }
             }
-            else if (map->overlay[y][x]=='%')
-                mvwaddch(body,y,x+1,ACS_CKBOARD);
+            else if (map->levelNo == BONUS_LEVEL && map->overlay[y][x]=='%')
+                mvwaddch(body,y,x+1,ACS_BULLET);
             else if (map->overlay[y][x]=='.')
                 mvwaddch(body,y,x+1,ACS_BULLET);
             else
@@ -518,6 +518,7 @@ void gameplayRefresh (WINDOW *body, struct Map *map, struct UnitList *guardList,
     init_pair(22, COLOR_BLACK, RED);
     //set color black/white
     wattron(body,COLOR_PAIR(DEFAULT));
+    redrawPath(body,path,map->levelNo);
     //draw Guards
     nextGuard = getHead(guardList);
     for (i=0; i< getLength(guardList); i++){
@@ -536,13 +537,33 @@ void gameplayRefresh (WINDOW *body, struct Map *map, struct UnitList *guardList,
         coordinates = getCoordinate(inmate->position);
         mvwaddch(body, coordinates[0], coordinates[1], inmate->type);
         wattron(body,COLOR_PAIR(DEFAULT));
-        eraseInmatePos(body, path,getPrevPos(path,inmate));
+        eraseInmatePos(body, path,getPrevPos(path,inmate),map->levelNo);
         nextInmate=nextInmate->next;
     }
     //set color back to black and white
     wattron(body,COLOR_PAIR(DEFAULT));
     wrefresh(body);
     return;
+}
+
+
+void redrawPath (WINDOW *body, struct Path *path, int level){
+    struct TileNode *nextTile = path->first;
+    int * coordinates;
+    if (nextTile->next == NULL)
+        quit("No Path Found When Getting Rdrawing path");
+    while (1){
+        if(nextTile->next == NULL)
+            return;
+        coordinates = getCoordinate (nextTile->location);
+        if(nextTile->type == '.')
+            mvwaddch(body,coordinates[0],coordinates[1],ACS_BULLET);
+        else if (level == BONUS_LEVEL && nextTile->type == '%')
+            mvwaddch(body,coordinates[0],coordinates[1],ACS_BULLET);
+        else 
+            mvwaddch(body,coordinates[0],coordinates[1],nextTile->type);
+        nextTile= nextTile->next;
+    } 
 }
 
 
@@ -596,7 +617,7 @@ int getColor (struct Inmate *inmate){
 }
 
 
-void eraseInmatePos(WINDOW *body, struct Path * path, float position) {
+void eraseInmatePos(WINDOW *body, struct Path * path, float position, int level) {
     struct TileNode * nextTile;
     nextTile = path->first;
     char ch;
@@ -610,7 +631,13 @@ void eraseInmatePos(WINDOW *body, struct Path * path, float position) {
                 nextTile->type='.';
             ch = nextTile->type;
             coordinates = getCoordinate(position);
-            mvwaddch(body, coordinates[0], coordinates[1], ch);
+            if (ch == '.')
+                mvwaddch(body, coordinates[0],coordinates[1],ACS_BULLET);
+            else if (level == BONUS_LEVEL && ch == '%'){
+                mvwaddch(body, coordinates[0],coordinates[1],ACS_BULLET);
+            }
+            else
+                mvwaddch(body, coordinates[0],coordinates[1],ch);
             break;
         }
         nextTile = nextTile->next;
