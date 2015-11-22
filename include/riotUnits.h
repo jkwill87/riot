@@ -7,6 +7,7 @@
 
 #define CYCLE 50000000L;
 #define REL_DELAY 5
+#define HEALCOOLDOWN 12
 
 enum Effect{
     EFFECT_LUNCH = 12,
@@ -39,6 +40,8 @@ struct Inmate {
     int panic;
     int slowedCounter;
     int sleepCounter;
+    int healCooldown;
+    bool healer;
     bool doubleDamage;
     bool dead;
     bool reachedEnd;

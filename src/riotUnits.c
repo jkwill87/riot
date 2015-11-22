@@ -183,6 +183,8 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
+            unit->healCooldown = 0;
+            unit->healer = false;
             break;
 
         case HOMEBOY:
@@ -194,6 +196,8 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
+            unit->healCooldown = 0;
+            unit->healer = false;
             break;
 
         case BRUISER:
@@ -205,6 +209,8 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
+            unit->healCooldown = 0;
+            unit->healer = false;
             break;
 
         case LUNATIC:
@@ -216,6 +222,8 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
+            unit->healCooldown = 0;
+            unit->healer = false;
             break;
 
         case FATTY:
@@ -227,6 +235,8 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
+            unit->healCooldown = 0;
+            unit->healer = false;
             break;
 
         case SPEEDY:
@@ -239,6 +249,8 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
+            unit->healCooldown = 0;
+            unit->healer = false;
             break;
 
         case CUTIE:
@@ -250,6 +262,8 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
+            unit->healCooldown = 0;
+            unit->healer = false;
             break;
 
         case ATTORNEY:
@@ -261,6 +275,8 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
+            unit->healCooldown = 0;
+            unit->healer = false;
             break;
 
         case DOCTOR:
@@ -272,6 +288,8 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
+            unit->healCooldown = 0;
+            unit->healer = true;
             break;
 
         default:
@@ -459,7 +477,10 @@ void inmateMove(struct UnitList *inmates, int elapsed) {
 
         otherUnit = getHead(inmates);
         otherInmate = otherUnit->unit;
-
+        /*If the unit is a healer and the cooldown is greater than 0 than decrement it*/
+        if (nextInmate->healCooldown > 0 && nextInmate->healer == true){
+            nextInmate->healCooldown -= 1;
+        }
         /*If the inmate is asleep than do not move and decrement the counter*/
         if (nextInmate->sleepCounter > 0){
             nextInmate->sleepCounter -= 1;
@@ -476,6 +497,13 @@ void inmateMove(struct UnitList *inmates, int elapsed) {
               inmate is going to move to, set move to false and break*/
             if (nextInmate->currentTile->next->location == otherInmate->currentTile->location){
                 moveUnit = false;
+                /*If next inmate is a doctor and cooldown is 0 than heal the unit in front*/
+                if (nextInmate->healer == true && nextInmate->healCooldown == 0){
+                    otherInmate->currentHealth += 10;
+                    if (otherInmate->currentHealth > otherInmate->maxHealth){
+                        otherInmate->currentHealth = otherInmate->maxHealth;
+                    }
+                }
                 break;
             }
             if (getNext(otherUnit) != NULL){
@@ -742,8 +770,6 @@ void guardAttackProximity(struct UnitNode *guardNode,
     struct Inmate *nextInmate;
     int i;
     bool attacked = false;
-    FILE *file;
-    file = fopen("temp.txt","a+");
 
     inRangeList.count = 0;
     inRangeList.head = NULL;
@@ -786,14 +812,11 @@ void guardAttackProximity(struct UnitNode *guardNode,
         /*Apply special ability debuff on the inmate if the guard attacking has special ability*/
         if (((struct Guard*)guardNode->unit)->type == PSYCH){
             ((struct Inmate*)unitToAttack->unit)->sleepCounter = EFFECT_PSYCH;
-            fprintf(file,"Psychologist effect enabled! Sleep counter: %d\n",
-                ((struct Inmate*)unitToAttack->unit)->sleepCounter);
         }
         else if(((struct Guard*)guardNode->unit)->type == DOGS){
             ((struct Inmate*)unitToAttack->unit)->doubleDamage = EFFECT_DOGS;
         }
     }
-    fclose(file);
 }
 
 bool tryAttack(struct UnitNode guardNode) {
