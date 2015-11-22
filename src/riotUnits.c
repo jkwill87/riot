@@ -484,10 +484,15 @@ void inmateMove(struct UnitList *inmates, int elapsed) {
 void setDeadInmates(struct UnitList *inmateList) {
     struct UnitNode *nextInmate;
 
-    nextInmate = getHead(inmateList);
+    if (getHead(inmateList) != NULL){
+        nextInmate = getHead(inmateList);
+    }
     for (int i = 0; i < inmateList->count; i++) {
         if (((struct Inmate *) nextInmate->unit)->currentHealth <= 0) {
             removeUnit(inmateList,i);
+        }
+        if (getNext(nextInmate) != NULL){
+            nextInmate = nextInmate->next;
         }
     }
 }
