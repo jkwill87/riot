@@ -93,10 +93,13 @@ void *dequeue(struct UnitList *queue) {
 void removeUnit(struct UnitList *list, int position) {
     struct UnitNode *temp, *target;
 
+    /*If a remove is requested from a position not within
+      the list, exit the program */
     if (list->count <= position || list->count <= 0) {
         exit(1);
     }
-    //nextNode = getHead(list);
+
+    /*Remove head from list and free memory*/
     if (position == 0) {
         if (list->head->next != NULL) {
             temp = list->head;
@@ -107,11 +110,14 @@ void removeUnit(struct UnitList *list, int position) {
             list->head = NULL;
             list->tail = NULL;
         }
+    /*Remove tail from list and free memory*/
     } else if (position  == list->count - 1) {
         temp = list->tail;
         list->tail = list->tail->prev;
         list->tail->next = NULL;
         free(temp);
+    /*Remove node from list that is not the head or tail
+       and free memory*/
     } else {
         target = moveTo(position - 1, list);
         temp = target->next;
@@ -125,11 +131,14 @@ void removeUnit(struct UnitList *list, int position) {
 struct UnitNode *moveTo(int position, struct UnitList *list) {
     struct UnitNode *target;
     target = list->head;
+
+    /*Return node at position within a list*/
     for (int i = 0; i < position - 1; i++) {
         if (target->next != NULL){
             target = target->next;
         }
     }
+
     return target;
 }
 
@@ -137,6 +146,7 @@ struct UnitNode *pop(struct UnitList *stack) {
 
     struct UnitNode *tempNode, *request = NULL;
 
+    /*Remove top of stack*/
     if (stack->count) {
         tempNode = stack->head->next;
         request = stack->head;
@@ -160,6 +170,8 @@ struct Inmate *createInmate(enum InmateType type) {
     unit->dead = FALSE;
     unit->reachedEnd = FALSE;
 
+    /*Create inmate based on the type that is passed in to the 
+      function and initialize its values, than return the Inmate*/
     switch (type) {
 
         case PROTAGONIST:
@@ -277,6 +289,9 @@ struct Guard *createGuard(enum GuardType type) {
 
     guard->type = type;
     guard->position = -1;
+
+    /*Create Guard based on the type that is passed in to the 
+      function and initialize its values, than return the Guard*/
 
     switch (type) {
 
@@ -436,14 +451,17 @@ void inmateMove(struct UnitList *inmates, int elapsed) {
     nextUnit = getHead(inmates);
     nextInmate = nextUnit->unit; 
     nextInmate->position = nextInmate->currentTile->location;
+
     /* Iterate through list of inmates */
     for (int i=0;i<inmates->count;i++){
-
         moveUnit = true;
-        //printf("POSITION OF INMATE: %d\n",nextInmate->);
+
         otherUnit = getHead(inmates);
         otherInmate = otherUnit->unit;
+        /*Iterate through list of inamtes that are being compared*/
         for (int j=0;j<inmates->count;j++){
+            /*If another inmate exists with the location of the tile the current
+              inmate is going to move to, set move to false and break*/
             if (nextInmate->currentTile->next->location == otherInmate->currentTile->location){
                 moveUnit = false;
                 break;
@@ -453,12 +471,16 @@ void inmateMove(struct UnitList *inmates, int elapsed) {
                 otherInmate = otherUnit->unit;
             }
         }
+        /*If move was not set to false than perform moving logic*/
         if (moveUnit){
 
             switch(nextInmate->currentTile->next->type){
+                /*If the tile being moved to is the final tile in the path
+                  than set reached end to true*/
                 case '&':
                     nextInmate->reachedEnd = true;
                     break;
+                /*If the tile being moved to is a door than damage the door*/
                 case '#':
                     if (nextInmate->currentTile->next->durability > 0){
                         nextInmate->currentTile->next->durability -= 1;
@@ -468,6 +490,8 @@ void inmateMove(struct UnitList *inmates, int elapsed) {
                         nextInmate->position = nextInmate->currentTile->location;    
                     }
                     break;
+                /*If the tile being to is a movable tile type than move to the
+                  next tile and set the inmates position to that tiles location*/
                 case '%':
                 case '.':
                     if(!(elapsed%nextInmate->speed)) {
@@ -492,9 +516,11 @@ void setDeadInmates(struct UnitList *inmateList) {
     if (getHead(inmateList) != NULL){
         nextInmate = getHead(inmateList);
     }
+    /*Iterate through inmates and remove all dead inmates*/
     for (int i = 0; i < inmateList->count; i++) {
         if (((struct Inmate *) nextInmate->unit)->currentHealth <= 0) {
-            removeUnit(inmateList,i);
+          //  removeUnit(inmateList,i);
+            ((struct Inmate*)nextInmate->unit)->dead = true;
         }
         if (getNext(nextInmate) != NULL){
             nextInmate = nextInmate->next;
@@ -509,6 +535,8 @@ void updateGuardAccuracy(struct UnitList *guardList, int currentPanic,
 
     nextNode = getHead(guardList);
     nextGuard = (struct Guard *) nextNode->unit;
+    /*Iterate through guards and update every guards accuracy to the inverse
+      of the percentage of panic present*/
     for (int j = 0; j < guardList->count; j++) {
         nextGuard->accuracy = 1 - ((double) currentPanic / (double) maximumPanic);
         if (nextNode->next != NULL) {
@@ -523,8 +551,8 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,struct 
     int exitPosition;
 
     exitPosition = path.last->location;
-
     nextGuard = getHead(guardList);
+
     for (int j=0;j<guardList->count;j++){
 
         #ifdef _DEBUGN
@@ -537,42 +565,30 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,struct 
         printf("Cooldown before decrement is: %d\n",((struct Guard *)nextGuard->unit)->cooldownRemaining);
         #endif
 
-        //if cooldown is 0 attack and perform special abilities
-        if (((struct Guard *)nextGuard->unit)->cooldownRemaining == 0 && inmateExistsInRange(*inmateList,*nextGuard)) {
+        /*If cooldown is 0 than attack and perform special abilities on inmates*/
+        if (((struct Guard *)nextGuard->unit)->cooldownRemaining == 0 &&
+         inmateExistsInRange(*inmateList,*nextGuard)) {
+
+            /*Attempts to attack based on current guard accuracy*/
             if (tryAttack(*nextGuard)){
-                //Perform attack
+                /*Apply different attack types based on the guards attack type*/
                 switch(((struct Guard*)nextGuard->unit)->ai){
+                    /*Attack closest inmate to guard that is in range*/
                     case PROX:
-                        // printf("PROX \n Guard Type: %c\n",
-                        //      ((struct Guard*)nextGuard->unit)->type);
                         guardAttackProximity(nextGuard,inmateList);
                         break;
+                    /*Attack all inmates within the guards range*/
                     case AOE:
-                        // printf("AOE \n Guard Position: %d\n",
-                        //     ((struct Guard*)nextGuard->unit)->position);
                         guardAttackAOE(nextGuard,inmateList);
                         break;
+                    /*Attack the inmate that is within range and closest to the end of
+                      the path*/
                     case END:
-                        //printf("END \n Guard Type: %c\n",
-                        //    ((struct Guard*)nextGuard->unit)->type);
                         guardAttackEnd(nextGuard,inmateList,exitPosition);
                         break;
                     default:
                         exit(1);
                         break;
-                }
-                //Perform special abilities
-                switch(((struct Guard*)nextGuard->unit)->type){
-                    case DOGS:
-                        //Double further damage once
-                        break;
-                    case LUNCH:
-                        //Slow down speed by half for 12 cycles.
-                        break;
-                    case PSYCH:
-                        //Inmates sleep for 6 cycles.
-                        break;
-
                 }
             }
         }
@@ -588,7 +604,7 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,struct 
             nextGuard = getNext(nextGuard);
         }
     }
-
+    /*Set all inmates that are below 1 health to dead*/
     setDeadInmates(inmateList);
 }
 
@@ -598,10 +614,13 @@ void guardAttackAOE(struct UnitNode *guardNode,
     struct UnitNode *nextInmate;
 
     nextInmate = getHead(inmateList);
+    /*Iterate through all inmates*/
     for (i = 0; i < inmateList->count; i++) {
+        /*If the inmates position is within the range of the guard*/
         if (inRange(nextInmate, guardNode)) {
+            /*Deal damage to the inmate*/
             dealDamage(nextInmate, guardNode);
-            //Apply special ability if it is a lunch lady
+            /*If the guard is a lunch lady than apply the lunch lady debuff*/
             if (((struct Guard*)guardNode->unit)->type == LUNCH){
                 ((struct Inmate*)nextInmate->unit)->slowedCounter = EFFECT_LUNCH;
             }
@@ -610,8 +629,10 @@ void guardAttackAOE(struct UnitNode *guardNode,
             nextInmate = getNext(nextInmate);
         }
     }
+    /*Reset cooldown*/
     if (((struct Guard *)guardNode->unit)->cooldownRemaining == 0){
-        ((struct Guard *) guardNode->unit)->cooldownRemaining = ((struct Guard *) guardNode->unit)->cooldown;
+        ((struct Guard *) guardNode->unit)->cooldownRemaining = 
+        ((struct Guard *) guardNode->unit)->cooldown;
     }
 }
 
@@ -623,9 +644,11 @@ struct UnitNode* getClosestInmateToPosition(struct UnitList inmateList, int posi
     nextUnit = getHead(&inmateList);
     nextInmate = nextUnit->unit;
 
-
+    /*Iterate through inmates*/
     for (i=0;i<inmateList.count;i++){
+        /*Get the distance of the current inmate*/
         distance = (getDistance(position,nextInmate->position));
+        /*Get the closest unit*/
         if (distance < lowestDistance){
             closestUnit = nextUnit;
         }
@@ -634,7 +657,7 @@ struct UnitNode* getClosestInmateToPosition(struct UnitList inmateList, int posi
             nextInmate = nextUnit->unit;
         }
     }
-
+    
     return closestUnit;
 }
 
