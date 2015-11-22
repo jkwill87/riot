@@ -434,6 +434,17 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,struct 
 
     nextGuard = getHead(guardList);
     for (int j=0;j<guardList->count;j++){
+
+        #ifdef _DEBUGN
+        if (inmateExistsInRange(*inmateList,*nextGuard)){
+            printf("Inmate exists in range!\n");
+        }
+        else{
+            printf("No inmates exist in range!\n");
+        }
+        printf("Cooldown before decrement is: %d\n",((struct Guard *)nextGuard->unit)->cooldownRemaining);
+        #endif
+        
         if (((struct Guard *)nextGuard->unit)->cooldownRemaining == 0 && inmateExistsInRange(*inmateList,*nextGuard)) {
             if (tryAttack(*nextGuard)){
                 switch(((struct Guard*)nextGuard->unit)->ai){
@@ -452,9 +463,14 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,struct 
                 }
             }
         }
-        else{
+        else if (((struct Guard *)nextGuard->unit)->cooldownRemaining != 0){
             ((struct Guard *) nextGuard->unit)->cooldownRemaining -= 1;
         }
+
+        #ifdef _DEBUBN
+        printf("Cooldown after decrement is: %d\n",((struct Guard *)nextGuard->unit)->cooldownRemaining);
+        #endif
+
         if (getNext(nextGuard) != NULL){
             nextGuard = getNext(nextGuard);
         }

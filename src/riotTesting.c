@@ -281,16 +281,16 @@ void mapTest(char *loadDir) {
         inmate->position = rand() % (MAP_ROWS*MAP_COLS);
         enqueue(inmates,inmate);
     }*/
-    inmate = createInmate('s');
+    /*inmate = createInmate('s');
     inmate->position = rand() % (MAP_ROWS*MAP_COLS);
-    enqueue(inmates,inmate);
-    inmate = createInmate('s');
-    inmate->position = rand() % (MAP_ROWS*MAP_COLS);
-    enqueue(inmates,inmate);
+    enqueue(inmates,inmate);*/
     for (int i = 4; i < 5; i++) {
         current = testList->level[i];
         getPath(&path, current);
         getGuards(&guardList, current);
+        inmate = createInmate('s');
+        inmate->position = ((struct Guard*)getHead(&guardList)->unit)->position + 2;
+        enqueue(inmates,inmate);
        // printf("\n\nGuard list size after function %d\n\n");
         guardAttack(&guardList,inmates,path);
         printf("LEVEL %d: \n\n", i);
