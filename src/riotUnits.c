@@ -151,13 +151,6 @@ struct UnitNode *pop(struct UnitList *stack) {
 }
 
 
-void rmUnit(struct UnitNode *target) {
-    free(target->unit);
-    free(target);
-    return;
-}
-
-
 struct Inmate *createInmate(enum InmateType type) {
 
     struct Inmate *unit = malloc(sizeof(struct Inmate));
@@ -228,7 +221,7 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->currentHealth = unit->maxHealth = 10;
             unit->rep = REP_SPEEDY;
             unit->rep = 20;
-            unit->speed = 8;
+            unit->speed = 1;
             unit->maxSpeed = unit->speed;
             unit->panic = 2;
             unit->doubleDamageCounter = 0;
@@ -394,9 +387,9 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
             enqueue(&deployed, dequeue(queued));
 
         /* Process inmate moves (every other pass) */
-        if (!(elapsed % 2)) inmateMove(&deployed);
+        if (!(elapsed % 2)) inmateMove(&deployed, elapsed);
 
-            /* Process guard attacks (every other pass) */
+        /* Process guard attacks (every other pass) */
         else guardAttack(guards, &deployed, *path);
 
         inmate = getHead(&deployed);
@@ -407,15 +400,14 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
                 removeUnit(&deployed, i);
             }
 
-                /* Remove exited inmates from the board */
-            else if (((struct Inmate *) inmate->unit)->reachedEnd) {
+            /* Remove exited inmates from the board */
+            if (((struct Inmate *) inmate->unit)->reachedEnd) {
                 map->panicCur += ((struct Inmate *) inmate->unit)->panic;
                 removeUnit(&deployed, i);
                 updateGuardAccuracy(guards, map->panicCur, map->panicMax);
             }
 
-            if (inmate->next != NULL)
-                inmate = inmate->next;
+            if (inmate->next) inmate = inmate->next;
         }
 
         /* Update display */
@@ -430,7 +422,7 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
     return winCondition;
 }
 
-void inmateMove(struct UnitList *inmates) {
+void inmateMove(struct UnitList *inmates, int elapsed) {
 
     struct UnitNode *nextUnit,*otherUnit;
     struct Inmate *nextInmate,*otherInmate;
@@ -457,6 +449,7 @@ void inmateMove(struct UnitList *inmates) {
             }
         }
         if (moveUnit){
+
             switch(nextInmate->currentTile->next->type){
                 case '&':
                     nextInmate->reachedEnd = true;
@@ -472,9 +465,12 @@ void inmateMove(struct UnitList *inmates) {
                     break;
                 case '%':
                 case '.':
-                    nextInmate->currentTile = nextInmate->currentTile->next;
-                    nextInmate->position = nextInmate->currentTile->location;
+                    if(!(elapsed%nextInmate->speed)) {
+                        nextInmate->currentTile = nextInmate->currentTile->next;
+                        nextInmate->position = nextInmate->currentTile->location;
+                    }
                     break;
+                default: quit("Attempted move to undefined tile");
             }
         }
         if (getNext(nextUnit) != NULL){
