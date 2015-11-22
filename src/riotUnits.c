@@ -399,16 +399,16 @@ void inmateMove(struct UnitList *inmates, struct Path *path) {
 }
 
 
-/*void setDeadInmates(struct UnitList *inmateList) {
+void setDeadInmates(struct UnitList *inmateList) {
     struct UnitNode *nextInmate;
 
     nextInmate = getHead(inmateList);
     for (int i = 0; i < inmateList->count; i++) {
         if (((struct Inmate *) nextInmate->unit)->currentHealth <= 0) {
-//            ((struct Inmate *) nextInmate->unit)->dead = true;
+            removeUnit(inmateList,i);
         }
     }
-}*/
+}
 
 void updateGuardAccuracy(struct UnitList *guardList, int currentPanic,
     int maximumPanic) {
@@ -444,7 +444,7 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,struct 
         }
         printf("Cooldown before decrement is: %d\n",((struct Guard *)nextGuard->unit)->cooldownRemaining);
         #endif
-        
+
         if (((struct Guard *)nextGuard->unit)->cooldownRemaining == 0 && inmateExistsInRange(*inmateList,*nextGuard)) {
             if (tryAttack(*nextGuard)){
                 switch(((struct Guard*)nextGuard->unit)->ai){
@@ -466,6 +466,8 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,struct 
         else if (((struct Guard *)nextGuard->unit)->cooldownRemaining != 0){
             ((struct Guard *) nextGuard->unit)->cooldownRemaining -= 1;
         }
+
+        setDeadInmates(inmateList);
 
         #ifdef _DEBUBN
         printf("Cooldown after decrement is: %d\n",((struct Guard *)nextGuard->unit)->cooldownRemaining);
