@@ -298,8 +298,6 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
         if (map->repMax < 10) {
             mvwprintw(win->footer, 0, 20, "INSUFICIENT FUNDS");
             wrefresh(win->footer);
-            wgetch(win->body);
-            wgetch(win->body);
         }
         wrefresh(win->footer);
         for (y = 20; y < MAX_COLS - 5; y++) {
@@ -312,7 +310,7 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
     for (y = 1; y < MAX_COLS - 5; y++) {
         mvwaddch(win->body, MAP_ROWS, y, ' ');
     }
-    wrefresh(win->footer);
+    //wrefresh(win->footer);
     wrefresh(win->body);
 }
 
@@ -404,6 +402,10 @@ void drawMap(WINDOW *body, struct Map *map) {
                     mvwaddch(body,y,x+1,ACS_ULCORNER);
                 }
             }
+            else if (map->overlay[y][x]=='%')
+                mvwaddch(body,y,x+1,ACS_CKBOARD);
+            else if (map->overlay[y][x]=='.')
+                mvwaddch(body,y,x+1,ACS_BULLET);
             else
                 mvwaddch(body,y,x+1,map->overlay[y][x]);
         }
@@ -613,10 +615,6 @@ void eraseInmatePos(WINDOW *body, struct Path * path, float position) {
         }
         nextTile = nextTile->next;
     }
-}
-
-void eraseInmate(WINDOW *body, struct Path *path,struct Inmate *inmate){
-    eraseInmatePos(body, path, inmate->position);
 }
 
 
