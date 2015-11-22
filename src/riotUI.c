@@ -119,6 +119,7 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
     struct UnitList *inmates, struct UnitList *guards) {
 
     struct Inmate *inmate;
+    struct UnitNode *node;
     int input;
     int y;
     int i;
@@ -127,151 +128,156 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
         updateHeader(win->header, map);
         wrefresh(win->header);
         input = wgetch(win->body);
-        switch (input) {
-            case PROTAGONIST:
-                if (!ifProt) {
-                    ifProt = TRUE;
-                    inmate = createInmate(input);
-                    enqueue(inmates, inmate);
-                    updateQueue(win->body, inmates, getLength(inmates));
-                }
-                else {
-                    mvwprintw(win->footer, 0, 40, "PROTAGONIST ALREADY PRESENT");
-                }
-                break;
-            case HOMEBOY:
-                for (i = 0; i < strlen(map->inmates); i++){
-                    if (map->inmates[i] == HOMEBOY){
-                        if (map->repMax >= REP_HOMEBOY) {
-                            map->repMax -= REP_HOMEBOY;
-                            inmate = createInmate(input);
-                            enqueue(inmates, inmate);
-                            updateQueue(win->body, inmates, getLength(inmates));
-                        }
-                        else {
-                            mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
-                        }
-                        break;
+        if (getLength(inmates) <5){
+            switch (input) {
+                case PROTAGONIST:
+                    if (!ifProt) {
+                        ifProt = TRUE;
+                        inmate = createInmate(input);
+                        enqueue(inmates, inmate);
+                        updateQueue(win->body, inmates, getLength(inmates));
                     }
-                }
-                break;
-            case BRUISER:
-                for (i = 0; i < strlen(map->inmates); i++){
-                    if (map->inmates[i] == BRUISER){
-                        if (map->repMax >= REP_BRUISER) {
-                            inmate = createInmate(input);
-                            map->repMax -= REP_BRUISER;
-                            enqueue(inmates, inmate);
-                            updateQueue(win->body, inmates, getLength(inmates));
-                        }
-                        else {
-                            mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
-                        }
-                        break;
+                    else {
+                        mvwprintw(win->footer, 0, 40, "PROTAGONIST ALREADY PRESENT");
                     }
-                }
-                break;
-            case LUNATIC:
-                for (i = 0; i < strlen(map->inmates); i++){
-                    if (map->inmates[i] == LUNATIC){
-                        if (map->repMax >= REP_LUNATIC) {
-                            inmate = createInmate(input);
-                            map->repMax -= REP_LUNATIC;
-                            enqueue(inmates, inmate);
-                            updateQueue(win->body, inmates, getLength(inmates));
+                    break;
+                case HOMEBOY:
+                    for (i = 0; i < strlen(map->inmates); i++){
+                        if (map->inmates[i] == HOMEBOY){
+                            if (map->repMax >= REP_HOMEBOY) {
+                                map->repMax -= REP_HOMEBOY;
+                                inmate = createInmate(input);
+                                enqueue(inmates, inmate);
+                                updateQueue(win->body, inmates, getLength(inmates));
+                            }
+                            else {
+                                mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
+                            }
+                            break;
                         }
-                        else {
-                            mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
-                        }
-                        break;
                     }
-                }
-                break;
-            case FATTY:
-                for (i = 0; i < strlen(map->inmates); i++){
-                    if (map->inmates[i] == FATTY){
-                        if (map->repMax >= REP_FATTY) {
-                            inmate = createInmate(input);
-                            map->repMax -= REP_FATTY;
-                            enqueue(inmates, inmate);
-                            updateQueue(win->body, inmates, getLength(inmates));
+                    break;
+                case BRUISER:
+                    for (i = 0; i < strlen(map->inmates); i++){
+                        if (map->inmates[i] == BRUISER){
+                            if (map->repMax >= REP_BRUISER) {
+                                inmate = createInmate(input);
+                                map->repMax -= REP_BRUISER;
+                                enqueue(inmates, inmate);
+                                updateQueue(win->body, inmates, getLength(inmates));
+                            }
+                            else {
+                                mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
+                            }
+                            break;
                         }
-                        else {
-                            mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
-                        }
-                        break;
                     }
-                }
-                break;
-            case SPEEDY:
-                for (i = 0; i < strlen(map->inmates); i++){
-                    if (map->inmates[i] == SPEEDY){
-                        if (map->repMax >= REP_SPEEDY) {
-                            inmate = createInmate(input);
-                            map->repMax -= REP_SPEEDY;
-                            enqueue(inmates, inmate);
-                            updateQueue(win->body, inmates, getLength(inmates));
+                    break;
+                case LUNATIC:
+                    for (i = 0; i < strlen(map->inmates); i++){
+                        if (map->inmates[i] == LUNATIC){
+                            if (map->repMax >= REP_LUNATIC) {
+                                inmate = createInmate(input);
+                                map->repMax -= REP_LUNATIC;
+                                enqueue(inmates, inmate);
+                                updateQueue(win->body, inmates, getLength(inmates));
+                            }
+                            else {
+                                mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
+                            }
+                            break;
                         }
-                        else {
-                            mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
-                        }
-                        break;
                     }
-                }
-                break;
-            case CUTIE:
-                for (i = 0; i < strlen(map->inmates); i++){
-                    if (map->inmates[i] == CUTIE){
-                        if (map->repMax >= REP_CUTIE) {
-                            inmate = createInmate(input);
-                            map->repMax -= REP_CUTIE;
-                            enqueue(inmates, inmate);
-                            updateQueue(win->body, inmates, getLength(inmates));
+                    break;
+                case FATTY:
+                    for (i = 0; i < strlen(map->inmates); i++){
+                        if (map->inmates[i] == FATTY){
+                            if (map->repMax >= REP_FATTY) {
+                                inmate = createInmate(input);
+                                map->repMax -= REP_FATTY;
+                                enqueue(inmates, inmate);
+                                updateQueue(win->body, inmates, getLength(inmates));
+                            }
+                            else {
+                                mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
+                            }
+                            break;
                         }
-                        else {
-                            mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
-                        }
-                        break;
                     }
-                }
-                break;
-            case ATTORNEY:
-                for (i = 0; i < strlen(map->inmates); i++){
-                    if (map->inmates[i] == ATTORNEY){
-                        if (map->repMax >= REP_ATTORNEY) {
-                            inmate = createInmate(input);
-                            map->repMax -= REP_ATTORNEY;
-                            enqueue(inmates, inmate);
-                            updateQueue(win->body, inmates, getLength(inmates));
+                    break;
+                case SPEEDY:
+                    for (i = 0; i < strlen(map->inmates); i++){
+                        if (map->inmates[i] == SPEEDY){
+                            if (map->repMax >= REP_SPEEDY) {
+                                inmate = createInmate(input);
+                                map->repMax -= REP_SPEEDY;
+                                enqueue(inmates, inmate);
+                                updateQueue(win->body, inmates, getLength(inmates));
+                            }
+                            else {
+                                mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
+                            }
+                            break;
                         }
-                        else {
-                            mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
-                        }
-                        break;
                     }
-                }
-                break;
-            case DOCTOR:
-                for (i = 0; i < strlen(map->inmates); i++){
-                    if (map->inmates[i] == DOCTOR){
-                        if (map->repMax >= REP_DOCTOR) {
-                            inmate = createInmate(input);
-                            map->repMax -= REP_DOCTOR;
-                            enqueue(inmates, inmate);
-                            updateQueue(win->body, inmates, getLength(inmates));
+                    break;
+                case CUTIE:
+                    for (i = 0; i < strlen(map->inmates); i++){
+                        if (map->inmates[i] == CUTIE){
+                            if (map->repMax >= REP_CUTIE) {
+                                inmate = createInmate(input);
+                                map->repMax -= REP_CUTIE;
+                                enqueue(inmates, inmate);
+                                updateQueue(win->body, inmates, getLength(inmates));
+                            }
+                            else {
+                                mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
+                            }
+                            break;
                         }
-                        else {
-                            mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
-                        }
-                        break;
                     }
-                }
-                break;
+                    break;
+                case ATTORNEY:
+                    for (i = 0; i < strlen(map->inmates); i++){
+                        if (map->inmates[i] == ATTORNEY){
+                            if (map->repMax >= REP_ATTORNEY) {
+                                inmate = createInmate(input);
+                                map->repMax -= REP_ATTORNEY;
+                                enqueue(inmates, inmate);
+                                updateQueue(win->body, inmates, getLength(inmates));
+                            }
+                            else {
+                                mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                case DOCTOR:
+                    for (i = 0; i < strlen(map->inmates); i++){
+                        if (map->inmates[i] == DOCTOR){
+                            if (map->repMax >= REP_DOCTOR) {
+                                inmate = createInmate(input);
+                                map->repMax -= REP_DOCTOR;
+                                enqueue(inmates, inmate);
+                                updateQueue(win->body, inmates, getLength(inmates));
+                            }
+                            else {
+                                mvwprintw(win->footer, 0, 40, "INSUFICIENT FUNDS");
+                            }
+                            break;
+                        }
+                    }
+                    break;
+            }
         }
-        if (getLength(inmates) != 0 && (input == '\b' || input == 127 || input == 8)){
-            if (((struct Inmate*)getTail(inmates))->type == 'p') 
+        if (getLength(inmates) > 0 && (input == '\b' || input == 127 || input == 8)){
+            node = getTail(inmates);
+            inmate = (struct Inmate*)node->unit;
+            if (inmate->type == 'p') 
                 ifProt=FALSE;
-            //mvwaddch(((struct Inmate*)getTail(inmates)->type))
+            map->repMax += inmate->rep;
+            wrefresh(win->body);
             pop(inmates);
             updateQueue(win->body, inmates, getLength(inmates));
         }
@@ -285,15 +291,18 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
         else if (input == '\n') {
             break;
         }
+        if (getLength(inmates) >= 5){
+            mvwprintw(win->footer, 0, 30, "Queue full");
+
+        }
         if (map->repMax < 10) {
             mvwprintw(win->footer, 0, 20, "INSUFICIENT FUNDS");
             wrefresh(win->footer);
             wgetch(win->body);
             wgetch(win->body);
-            break;
         }
         wrefresh(win->footer);
-        for (y = 30; y < MAX_COLS - 5; y++) {
+        for (y = 20; y < MAX_COLS - 5; y++) {
             mvwaddch(win->footer, 0, y, ACS_HLINE);
         }
     } while (input != '\n');
