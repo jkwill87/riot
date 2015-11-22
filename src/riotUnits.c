@@ -21,7 +21,6 @@ void destroyList(struct UnitList *list) {
     return;
 }
 
-
 struct UnitNode *getNext(struct UnitNode *list) {
     return list ? list->next : NULL;
 }
@@ -35,7 +34,6 @@ struct UnitNode *getHead(struct UnitList *listIn) {
 struct UnitNode *getTail(struct UnitList *listIn) {
     return listIn ? listIn->tail : NULL;
 }
-
 
 int getLength(struct UnitList *listIn) {
     return listIn ? listIn->count : (int) -1;
@@ -146,6 +144,7 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->currentHealth = unit->maxHealth = 5;
             unit->rep = REP_PROTAGONIST;
             unit->speed = 4;
+            unit->maxSpeed = unit->speed;
             unit->panic = 0;
             break;
 
@@ -153,6 +152,7 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->currentHealth = unit->maxHealth = 10;
             unit->rep = REP_HOMEBOY;
             unit->speed = 2;
+            unit->maxSpeed = unit->speed;
             unit->panic = 2;
             break;
 
@@ -160,6 +160,7 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->currentHealth = unit->maxHealth = 16;
             unit->rep = REP_BRUISER;
             unit->speed = 4;
+            unit->maxSpeed = unit->speed;
             unit->panic = 6;
             break;
 
@@ -167,6 +168,7 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->currentHealth = unit->maxHealth = 16;
             unit->rep = REP_LUNATIC;
             unit->speed = 2;
+            unit->maxSpeed = unit->speed;
             unit->panic = 8;
             break;
 
@@ -174,6 +176,7 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->currentHealth = unit->maxHealth = 40;
             unit->rep = REP_FATTY;
             unit->speed = 8;
+            unit->maxSpeed = unit->speed;
             unit->panic = 4;
             break;
 
@@ -181,6 +184,8 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->currentHealth = unit->maxHealth = 10;
             unit->rep = REP_SPEEDY;
             unit->rep = 20;
+            unit->speed = 8;
+            unit->maxSpeed = unit->speed;
             unit->panic = 2;
             break;
 
@@ -188,6 +193,7 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->currentHealth = unit->maxHealth = 20;
             unit->rep = REP_CUTIE;
             unit->speed = 4;
+            unit->maxSpeed = unit->speed;
             unit->panic = 1;
             break;
 
@@ -195,6 +201,7 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->currentHealth = unit->maxHealth = 30;
             unit->rep = REP_ATTORNEY;
             unit->speed = 4;
+            unit->maxSpeed = unit->speed;
             unit->panic = 2;
             break;
 
@@ -202,6 +209,7 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->currentHealth = unit->maxHealth = 10;
             unit->rep = REP_DOCTOR;
             unit->speed = 4;
+            unit->maxSpeed = unit->speed;
             unit->panic = 2;
             break;
 

@@ -28,6 +28,7 @@ struct Inmate {/*
     int currentHealth;
     int maxHealth;
     unsigned int speed;
+    unsigned int maxSpeed;
     unsigned int rep;
     unsigned int panic;
     unsigned int doorSmash;
