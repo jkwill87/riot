@@ -19,15 +19,17 @@ UnitNode stores the information related to inmate units.*/
 };
 
 
-struct Inmate {/*
+struct Inmate {
+    /*
 
- Inmate stores the stats related to inmate units.*/
+     Inmate stores the stats related to inmate units.*/
 
     char type;
     int position;
     int currentHealth;
     int maxHealth;
     int speed;
+    int maxSpeed;
     int rep;
     int panic;
     bool dead;
@@ -50,26 +52,71 @@ struct Guard {/*
 };
 
 
-/* Linked UnitList Operations */
+/* Linked UnitList Operations */  
+bool inmateExistsInRange(struct UnitList inmateList,struct UnitNode guard);/*
 
+DESCRIPTION: Returns a boolean based on if an inmate exists within a guards range.
+
+ARGUMENTS: List of units (struct UnitList inmateList).
+           Guard whos range is to be compared (struct UnitNode guard).
+ */
 void guardAttackProximity(struct UnitNode *guardNode,
-    struct UnitList *inmateList);
+    struct UnitList *inmateList);/*
 
+DESCRIPTION: Guard attacks the inmate closest to it.
+
+ARGUMENTS: Guard that is attacking the inmate(struct UnitNode *guardNode).
+           Inmate list that the inmates are found in (struct UnitList *inmateList).
+*/
 void guardAttackAOE(struct UnitNode *guardNode,
-    struct UnitList *inmateList);
+    struct UnitList *inmateList);/*
 
+DESCRIPTION: Guard attacks all inmates within its range.
+
+ARGUMENTS: Guard that is attacking the inmates (struct UnitNode *guardNode).
+           Inmate list that the inmates are found in(struct UnitList *inmateList).
+*/
 void guardAttackEnd(struct UnitNode *guardNode,
-    struct UnitList *inmateList, int exitPosition);
+    struct UnitList *inmateList, int exitPosition);/*
 
+DESCRIPTION: Guard attacks the unit closest to the exit of the map.
+
+ARGUMENTS: Guard that is attacking the inmate(struct UnitNode *guardNode).
+           Inmate list that the inmates are found in(struct UnitList *inmateList).
+*/
 void setDeadInmates(struct UnitList *inmateList);
 
-bool tryAttack(struct UnitNode guardNode);
+bool tryAttack(struct UnitNode guardNode);/*
 
-void updateGuardAccuracy(struct UnitList *guardList, int currentPanic, int maximumPanic);
+DESCRIPTION: Returns a boolean based on if the guard missed or not, this depends on the 
+             current ingame panic.
 
-int getDistance(int positionFrom,int positionTo);
+ARGUMENTS: Guard that is trying to attack (struct UnitNode guardNode).
+*/
+void updateGuardAccuracy(struct UnitList *guardList, int currentPanic, int maximumPanic);/*
 
-struct UnitNode* getClosestInmateToPosition(struct UnitList inmateList, int position);
+DESCRIPTION: Updates all of the guards accuracy based on the panic.
+
+ARGUMENTS: Guard list to be updated(struct UnitList *guardList).
+           Current game panic (int currentPanic).
+           Maximum game panic (int maximumPanic).
+*/
+
+int getDistance(int positionFrom,int positionTo);/*
+
+DESCRIPTION: Returns the distance between two positions.
+
+ARGUMENTS: Position to calculate from (int positionFrom).
+           Position to calculate to (int positionTo).
+*/
+
+struct UnitNode* getClosestInmateToPosition(struct UnitList inmateList, int position);/*
+
+DESCRIPTION: Returns the UnitNode closest to position.
+
+ARGUMENTS: Inmate List that the closest inmate will be chosen from (struct UnitList inmateList).
+           Position to calculate the distance of the inmate from (int position).
+*/
 
 void destroyList(struct UnitList *);/*
 

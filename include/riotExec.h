@@ -84,17 +84,29 @@ enum InmateType {/*
     DOCTOR = 'd'
 };
 
+enum InmateRep{
+    REP_PROTAGONIST = 0,
+    REP_HOMEBOY = 10,
+    REP_BRUISER = 15,
+    REP_LUNATIC = 10,
+    REP_FATTY = 10,
+    REP_SPEEDY = 20,
+    REP_CUTIE = 20,
+    REP_ATTORNEY = 30,
+    REP_DOCTOR = 40,
+};
+
 
 enum GuardType {/*
 
  GuardType provides a mnemonic for guard unit types.*/
 
     GUARD = 'G',
-    DOGS = 'D',
-    LUNCH = 'L', //lunch lady
-    PSYCH = 'P', //psychiatrist
-    SHARP = 'S', //sharpshooter
-    WARDEN = 'W',
+    DOGS = 'D', //Double further damage (health/2)
+    LUNCH = 'L', //lunch lady   //Inmates speed/2 for 12 cycles
+    PSYCH = 'P', //psychiatrist    //Inmate to slee for 6 cycles
+    SHARP = 'S', //sharpshooter   
+    WARDEN = 'W', 
     CYBORG = 'C'
 };
 

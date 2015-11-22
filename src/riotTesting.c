@@ -19,6 +19,7 @@ int main(int argc, char **argv) {
         else if (!strcmp(argv[i], "-unitmove"))
             unitsMove(argv[2] ? argv[2] : NULL);
         else if (!strcmp(argv[i], "-color")) colorTest();
+//        else if (!strcmp(argv[i], "-logo")) logoTest();
         else if (!strcmp(argv[i], "-play")) unitsPlay(argv[2]);
         else printf("Unknown command (%s)\n", argv[i]);
     }
@@ -27,6 +28,11 @@ int main(int argc, char **argv) {
     return 0;
 
 }
+
+//void logoTest (){
+//    int maxLengh = 38;
+//    char line[maxLength];
+//}
 
 void printPath(struct Path *path) {
     struct TileNode *nextNode;
@@ -275,16 +281,16 @@ void mapTest(char *loadDir) {
         inmate->position = rand() % (MAP_ROWS*MAP_COLS);
         enqueue(inmates,inmate);
     }*/
-    inmate = createInmate('s');
+    /*inmate = createInmate('s');
     inmate->position = rand() % (MAP_ROWS*MAP_COLS);
-    enqueue(inmates,inmate);
-    inmate = createInmate('s');
-    inmate->position = rand() % (MAP_ROWS*MAP_COLS);
-    enqueue(inmates,inmate);
+    enqueue(inmates,inmate);*/
     for (int i = 4; i < 5; i++) {
         current = testList->level[i];
         getPath(&path, current);
         getGuards(&guardList, current);
+        inmate = createInmate('s');
+        inmate->position = ((struct Guard*)getHead(&guardList)->unit)->position + 2;
+        enqueue(inmates,inmate);
        // printf("\n\nGuard list size after function %d\n\n");
         guardAttack(&guardList,inmates,path);
         printf("LEVEL %d: \n\n", i);

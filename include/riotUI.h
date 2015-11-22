@@ -89,11 +89,6 @@ DESCRIPTION: gets the color based on the units health and attack state
 */
 
 
-void eraseInmate(WINDOW *body, struct Path * path, struct Inmate *inmate);/*
-
-DESCRIPTION: this is an interface for Simulation in riotUnits */
-
-
 void eraseInmatePos(WINDOW *body, struct Path * path, float position);/*
 
 DESCRIPTION: Erases a unit off the screen and restores tile
