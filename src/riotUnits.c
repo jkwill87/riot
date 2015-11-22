@@ -453,8 +453,10 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,struct 
         printf("Cooldown before decrement is: %d\n",((struct Guard *)nextGuard->unit)->cooldownRemaining);
         #endif
 
+        //if cooldown is 0 attack and perform special abilities
         if (((struct Guard *)nextGuard->unit)->cooldownRemaining == 0 && inmateExistsInRange(*inmateList,*nextGuard)) {
             if (tryAttack(*nextGuard)){
+                //Perform attack
                 switch(((struct Guard*)nextGuard->unit)->ai){
                     case PROX:
                         guardAttackProximity(nextGuard,inmateList);
@@ -468,6 +470,19 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,struct 
                     default:
                         exit(1);
                         break;
+                }
+                //Perform special abilities
+                switch(((struct Guard*)nextGuard->unit)->type){
+                    case DOGS:
+                        //Double further damage once
+                        break;
+                    case LUNCH:
+                        //Slow down speed by half for 12 cycles.
+                        break;
+                    case PSYCH:
+                        //Inmates sleep for 6 cycles.
+                        break;
+
                 }
             }
         }
