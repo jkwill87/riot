@@ -149,6 +149,9 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 4;
             unit->maxSpeed = unit->speed;
             unit->panic = 0;
+            unit->doubleDamageCounter = 0;
+            unit->slowedCounter = 0;
+            unit->sleepCounter = 0;
             break;
 
         case HOMEBOY:
@@ -157,6 +160,9 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 2;
             unit->maxSpeed = unit->speed;
             unit->panic = 2;
+            unit->doubleDamageCounter = 0;
+            unit->slowedCounter = 0;
+            unit->sleepCounter = 0;
             break;
 
         case BRUISER:
@@ -165,6 +171,9 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 4;
             unit->maxSpeed = unit->speed;
             unit->panic = 6;
+            unit->doubleDamageCounter = 0;
+            unit->slowedCounter = 0;
+            unit->sleepCounter = 0;
             break;
 
         case LUNATIC:
@@ -173,6 +182,9 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 2;
             unit->maxSpeed = unit->speed;
             unit->panic = 8;
+            unit->doubleDamageCounter = 0;
+            unit->slowedCounter = 0;
+            unit->sleepCounter = 0;
             break;
 
         case FATTY:
@@ -181,6 +193,9 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 8;
             unit->maxSpeed = unit->speed;
             unit->panic = 4;
+            Unit->doubleDamageCounter = 0;
+            unit->slowedCounter = 0;
+            unit->sleepCounter = 0;
             break;
 
         case SPEEDY:
@@ -190,6 +205,9 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 8;
             unit->maxSpeed = unit->speed;
             unit->panic = 2;
+            unit->doubleDamageCounter = 0;
+            unit->slowedCounter = 0;
+            unit->sleepCounter = 0;
             break;
 
         case CUTIE:
@@ -198,6 +216,9 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 4;
             unit->maxSpeed = unit->speed;
             unit->panic = 1;
+            unit->doubleDamageCounter = 0;
+            unit->slowedCounter = 0;
+            unit->sleepCounter = 0;
             break;
 
         case ATTORNEY:
@@ -206,6 +227,9 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 4;
             unit->maxSpeed = unit->speed;
             unit->panic = 2;
+            unit->doubleDamageCounter = 0;
+            unit->slowedCounter = 0;
+            unit->sleepCounter = 0;
             break;
 
         case DOCTOR:
@@ -214,6 +238,9 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->speed = 4;
             unit->maxSpeed = unit->speed;
             unit->panic = 2;
+            unit->doubleDamageCounter = 0;
+            unit->slowedCounter = 0;
+            unit->sleepCounter = 0;
             break;
 
         default:

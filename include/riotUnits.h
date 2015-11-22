@@ -32,6 +32,9 @@ struct Inmate {
     int maxSpeed;
     int rep;
     int panic;
+    int doubleDamageCounter;
+    int slowedCounter;
+    int sleepCounter;
     bool dead;
     bool reachedEnd;
 };
