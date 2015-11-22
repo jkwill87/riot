@@ -450,16 +450,13 @@ void inmateMove(struct UnitList *inmates, struct Path *path) {
     return;
 }
 
+void setDeadInmates(struct UnitList *inmateList) {
+    struct UnitNode *nextInmate;
 
-
-void setDeadInmates(struct UnitList *queued) {
-    struct UnitNode *inmate;
-
-    inmate = getHead(queued);
-    for (int i = 0; i < queued->count; i++) {
-        if (((struct Inmate *) inmate->unit)->currentHealth <= 0) {
-//            ((struct Inmate *) inmate->unit)->dead = true;
-
+    nextInmate = getHead(inmateList);
+    for (int i = 0; i < inmateList->count; i++) {
+        if (((struct Inmate *) nextInmate->unit)->currentHealth <= 0) {
+            removeUnit(inmateList,i);
         }
     }
 }
