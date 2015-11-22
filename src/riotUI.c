@@ -321,12 +321,13 @@ void updateHeader(WINDOW *header, struct Map *map) {
     mvwprintw(header, 1, 1, "Level %d: %s", map->levelNo,
         map->name); // Display Level
     mvwprintw(header, 1, MAX_COLS - 24, "Panic:%d%%",
-        map->panicMax); // Display Panic
+        (int)(((double)map->panicCur/(double)map->panicMax)*100)); // Display Panic
     mvwprintw(header, 1, MAX_COLS - 11, "Rep:%d",
         map->repMax); // Display Rep
     mvwaddstr(header, 0, 1, "riot");
     mvwaddch (header, 2, 0, ACS_LTEE);
     mvwaddch (header, 2, MAX_COLS - 1, ACS_RTEE);
+    wrefresh(header);
 }
 
 

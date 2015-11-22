@@ -381,8 +381,7 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
 
     /* Begin simulation loop; run while units left on game board */
     do {
-
-        /* Deploy next unit */
+       /* Deploy next unit */
         if (queued->count && !(elapsed % REL_DELAY))
             enqueue(&deployed, dequeue(queued));
 
@@ -408,6 +407,7 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
                 map->panicCur += ((struct Inmate *) inmate->unit)->panic;
                 removeUnit(&deployed, i);
                 updateGuardAccuracy(guards, map->panicCur, map->panicMax);
+                updateHeader(gameInterface->header,map);
             }
 
             if (inmate->next) inmate = inmate->next;
