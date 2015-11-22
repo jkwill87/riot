@@ -43,6 +43,7 @@ struct Inmate {
     int sleepCounter;
     bool dead;
     bool reachedEnd;
+    struct TileNode *currentTile;
 };
 
 

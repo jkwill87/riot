@@ -341,7 +341,7 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
                        struct Map *map) {
 
     struct UnitList deployed;
-    struct UnitNode *inmate;
+    struct UnitNode *inmate,*nextUnit;
     int elapsed = 1;
     struct timespec delay;
     enum GameMode winCondition = WIN; //TODO placeholder, revise
@@ -353,6 +353,13 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
     delay.tv_nsec = CYCLE;
 
     /* Deploy first unit */
+    nextUnit = getHead(queued);
+    for (int i=0;i<queued->count;i++){
+        ((struct Inmate*)nextUnit->unit)->currentTile = path->first;
+        if (getNext(nextUnit) != NULL){
+            nextUnit = getNext(nextUnit);
+        }
+    }
     enqueue(&deployed, dequeue(queued));
 
     /* Begin simulation loop; run while units left on game board */
@@ -400,64 +407,55 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
 }
 
 void inmateMove(struct UnitList *inmates, struct Path *path) {
-    struct UnitNode *current, *other;
-    struct TileNode *currentT, *otherT, *nextT;
-    struct Inmate *inmate;
-    char tileType;
-    int doorDurability;
-    int tileCheckPos;
-    int i;
-    bool done = true;
-    int nextCounter = 900;
 
-    /* Start with first inmate in list */
-    current = getHead(inmates);
+    struct UnitNode *nextUnit,*otherUnit;
+    struct Inmate *nextInmate,*otherInmate;
+    bool moveUnit;
 
+    nextUnit = getHead(inmates);
+    nextInmate = nextUnit->unit; 
+    nextInmate->position = nextInmate->currentTile->location;
     /* Iterate through list of inmates */
-    do {
-        //printf("Size of inmates list is: %d\n",inmates->count);
-        /* Get relavent stats from structs */
-        currentT = path->first; //start with path origin
-        otherT = path->first; //start with path origin
-        inmate = current->unit; //prevents having to do crazy casting
-        tileCheckPos = 900;
-        /* Find inmate's placement on path */
-        for (i = 0; i < path->count; i++) {
-            if (currentT->location == ((struct Inmate*)current->unit)->position){
-                tileCheckPos = currentT->next->location;
+    for (int i=0;i<inmates->count;i++){
+        moveUnit = true;
+        //printf("POSITION OF INMATE: %d\n",nextInmate->);
+        otherUnit = getHead(inmates);
+        otherInmate = otherUnit->unit;
+        for (int j=0;j<inmates->count;j++){
+            if (nextInmate->currentTile->next->location == otherInmate->currentTile->location){
+                moveUnit = false;
                 break;
             }
-            currentT = currentT->next;
-        }
-        /* Make sure that there are no overlapping units */
-        other = getHead(inmates);
-        while(getNext(other) != NULL){
-            if (((struct Inmate*)other->unit)->position == tileCheckPos && other != current){
-                //printf("EQUALS!\n");
-                goto outer;
+            if (getNext(otherUnit) != NULL){
+                otherUnit = getNext(otherUnit);
+                otherInmate = otherUnit->unit;
             }
-            other = getNext(other);
         }
-
-        // if (currentT->next == NULL)
-        //     continue;
-        nextT=currentT->next;
-        tileType = nextT->type;
-        doorDurability = nextT->durability;
-        /* Check for doors */
-        if(tileType=='#' && doorDurability) {
-            nextT->durability -= 1; //damage door, don't move
-            continue;
-        /* Check for exit */
-        } else if (tileType=='&'){
-            inmate->reachedEnd=true;
-            continue;
-        /* Otherwise just move forward as usual */
-        } else {
-            inmate->position = currentT->next->location;
+        if (moveUnit){
+            switch(nextInmate->currentTile->next->type){
+                case '&':
+                    nextInmate->reachedEnd = true;
+                    break;
+                case '#':
+                    if (nextInmate->currentTile->next->durability){
+                        nextInmate->currentTile->next->durability -= 1;
+                    }
+                    else{
+                        nextInmate->currentTile = nextInmate->currentTile->next;
+                        nextInmate->position = nextInmate->currentTile->location;    
+                    }
+                    break;
+                case '.':
+                    nextInmate->currentTile = nextInmate->currentTile->next;
+                    nextInmate->position = nextInmate->currentTile->location;
+                    break;
+            }
         }
-        outer:;
-    } while ((current = getNext(current)));
+        if (getNext(nextUnit) != NULL){
+            nextUnit = getNext(nextUnit);
+            nextInmate = nextUnit->unit;
+        }   
+    }
 
     return;
 }
