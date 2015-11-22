@@ -360,26 +360,27 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
         if (queued->count && !(elapsed % REL_DELAY))
             enqueue(&deployed, dequeue(queued));
 
-        /* Process inmate moves */
-        if(elapsed%2) inmateMove(&deployed, path);
+        /* Process inmate moves (every other pass) */
+        if (!(elapsed % 2)) inmateMove(&deployed, path);
 
-        /* Process guard attacks */
-        else guardAttack(guards, &deployed,*path);
+            /* Process guard attacks (every other pass) */
+//        else guardAttack(guards, &deployed, *path);
 
+        inmate = getHead(&deployed);
+        for (int i = 0; i < deployed.count; i++) {
 
-        inmate = getHead(queued);
-        for (int i = 0; i < queued->count; i++) {
-            /*Dequeues all units that are marked for deletion    vv SWITCHED FROM FALSE AND COMMENTED OUT LINES
-            These are both units that are dead or that have reached the end of the map*/
-            if (((struct Inmate *) inmate->unit)->dead == TRUE) {
-                removeUnit(queued,
-                    i); //needs to be written, removes an inmate fromthe middle of the list
+            /* Remove dead inmates from the board */
+            if (((struct Inmate *) inmate->unit)->dead) {
+                removeUnit(&deployed, i);
             }
-            else if (((struct Inmate *) inmate->unit)->reachedEnd == TRUE) {
+
+                /* Remove exited inmates from the board */
+            else if (((struct Inmate *) inmate->unit)->reachedEnd) {
                 map->panicCur += ((struct Inmate *) inmate->unit)->panic;
-                removeUnit(queued, i);
+                removeUnit(&deployed, i);
                 updateGuardAccuracy(guards, map->panicCur, map->panicMax);
             }
+
             if (inmate->next != NULL)
                 inmate = inmate->next;
         }
@@ -392,8 +393,6 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
         elapsed++;
 
     } while (deployed.count);
-
-    return winCondition;
 }
 
 void inmateMove(struct UnitList *inmates, struct Path *path) {
