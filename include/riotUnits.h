@@ -9,6 +9,12 @@
 #define CYCLE 50000000L;
 #define REL_DELAY 5
 
+enum Effect{
+    EFFECT_LUNCH = 12,
+    EFFECT_PSYCH = 6,
+    EFFECT_DOGS = 2,
+};
+
 struct UnitNode {/*
 
 UnitNode stores the information related to inmate units.*/
