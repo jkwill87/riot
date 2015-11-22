@@ -268,28 +268,28 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                 }
                 break;
         }
-        if (map->repMax < 10) {
-            mvwprintw(win->footer, 0, 20, "INSUFICIENT FUNDS");
-            wrefresh(win->footer);
-            wgetch(win->body);
-            wgetch(win->body);
-            break;
-        }
         if (getLength(inmates) != 0 && (input == '\b' || input == 127 || input == 8)){
             if (((struct Inmate*)getTail(inmates))->type == 'p') 
                 ifProt=FALSE;
+            //mvwaddch(((struct Inmate*)getTail(inmates)->type))
             pop(inmates);
             updateQueue(win->body, inmates, getLength(inmates));
         }
         else {
             mvwprintw(win->footer, 0, 30, "Please select at least one units");
-
         }
         if (input == '\n' && getLength(inmates) == 0) {
             mvwprintw(win->footer, 0, 30, "Please select at least one unit");
             input = ' ';
         }
         else if (input == '\n') {
+            break;
+        }
+        if (map->repMax < 10) {
+            mvwprintw(win->footer, 0, 20, "INSUFICIENT FUNDS");
+            wrefresh(win->footer);
+            wgetch(win->body);
+            wgetch(win->body);
             break;
         }
         wrefresh(win->footer);
@@ -336,6 +336,10 @@ void updateQueue(WINDOW *body, struct UnitList *inmateList, int size) {
     }
     if (size < 5){
         mvwaddch(body, 6+i, MAX_COLS - 3, '.');
+        i++;
+        for (;i <5; i++){
+            mvwaddch(body, 6+i, MAX_COLS -3, ' ');
+        }
     }
 }
 
