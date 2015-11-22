@@ -387,10 +387,13 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
             enqueue(&deployed, dequeue(queued));
 
         /* Process inmate moves (every other pass) */
-        if (!(elapsed % 2)) inmateMove(&deployed, elapsed);
+        if (!(elapsed % 4)) inmateMove(&deployed, elapsed);
 
         /* Process guard attacks (every other pass) */
-        else guardAttack(guards, &deployed, *path);
+        else if (!(elapsed %5))
+        {
+            guardAttack(guards, &deployed, *path);
+        } 
 
         inmate = getHead(&deployed);
         for (int i = 0; i < deployed.count; i++) {
@@ -538,12 +541,18 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,struct 
                 //Perform attack
                 switch(((struct Guard*)nextGuard->unit)->ai){
                     case PROX:
+                        // printf("PROX \n Guard Type: %c\n",
+                        //      ((struct Guard*)nextGuard->unit)->type);
                         guardAttackProximity(nextGuard,inmateList);
                         break;
                     case AOE:
+                        // printf("AOE \n Guard Position: %d\n",
+                        //     ((struct Guard*)nextGuard->unit)->position);
                         guardAttackAOE(nextGuard,inmateList);
                         break;
                     case END:
+                        //printf("END \n Guard Type: %c\n",
+                        //    ((struct Guard*)nextGuard->unit)->type);
                         guardAttackEnd(nextGuard,inmateList,exitPosition);
                         break;
                     default:
@@ -605,7 +614,7 @@ void guardAttackAOE(struct UnitNode *guardNode,
 }
 
 struct UnitNode* getClosestInmateToPosition(struct UnitList inmateList, int position){
-    int i,distance,lowestDistance = MAP_COLS * MAP_ROWS + 1;
+    int i,closestNum,distance,lowestDistance = MAP_COLS * MAP_ROWS + 1;
     struct UnitNode *nextUnit,*closestUnit;
     struct Inmate *nextInmate;
 
@@ -614,12 +623,13 @@ struct UnitNode* getClosestInmateToPosition(struct UnitList inmateList, int posi
 
 
     for (i=0;i<inmateList.count;i++){
-        distance = getDistance(position,nextInmate->position);
+        distance = (getDistance(position,nextInmate->position));
         if (distance < lowestDistance){
             closestUnit = nextUnit;
         }
         if (getNext(nextUnit) != NULL){
             nextUnit = getNext(nextUnit);
+            nextInmate = nextUnit->unit;
         }
     }
 
@@ -629,10 +639,13 @@ struct UnitNode* getClosestInmateToPosition(struct UnitList inmateList, int posi
 int getDistance(int positionFrom,int positionTo){
 
     int xDifference,yDifference;
+    int fromY,toY;
 
-    yDifference = (((positionFrom - 1) / MAP_COLS) + 1) - (((positionTo - 1) / MAP_COLS) + 1);
-    xDifference = abs(positionFrom - ((((positionFrom - 1) / MAP_COLS) + 1) * MAP_COLS))
-                 - abs(positionTo - ((((positionTo - 1) / MAP_COLS) + 1) * MAP_COLS));
+    fromY = ((positionFrom - 1) / MAP_COLS);
+    toY = ((positionTo - 1) / MAP_COLS);
+    yDifference = (fromY + 1) - (toY + 1);
+    xDifference = abs(positionFrom - (fromY * MAP_COLS))
+                 - abs(positionTo - (toY * MAP_COLS));
     yDifference = abs(yDifference);
     xDifference = abs(xDifference);
     return xDifference + yDifference;
@@ -699,11 +712,15 @@ void guardAttackProximity(struct UnitNode *guardNode,
         }
         if (getNext(nextUnit) != NULL){
             nextUnit = getNext(nextUnit);
+            nextInmate = nextUnit->unit;
         }
     }
 
+   // printf("In range list size: %d\n",inRangeList.count);
+
     if (((struct Guard *)guardNode->unit)->cooldownRemaining == 0){
-        ((struct Guard *) guardNode->unit)->cooldownRemaining = ((struct Guard *) guardNode->unit)->cooldown;
+        ((struct Guard *) guardNode->unit)->cooldownRemaining = 
+        ((struct Guard *) guardNode->unit)->cooldown;
     }
 
     //Get the closest inmate to exit and attack
@@ -786,7 +803,7 @@ bool inmateExistsInRange(struct UnitList inmateList,struct UnitNode guard){
 
         inmateY = (inmatePosition - 1) / MAP_COLS;
         guardY = (guardPosition - 1) / MAP_COLS;
-        yDifference = (inmateY + 1) - (guardY + 1);
+        yDifference = (inmateY +1) - (guardY + 1);
         xDifference = abs(guardPosition - (guardY * MAP_COLS)) -
                       abs(inmatePosition - (inmateY * MAP_COLS));
         yDifference = abs(yDifference);
