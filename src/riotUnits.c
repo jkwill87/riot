@@ -362,8 +362,6 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
     int elapsed = 1;
     struct timespec delay;
     enum GameMode winCondition = WIN; //TODO placeholder, revise
-    FILE *file;
-    file = fopen("temp.txt","a+");
 
     deployed.count = 0;
 
