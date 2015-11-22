@@ -396,51 +396,41 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
     return winCondition;
 }
 
-
 void inmateMove(struct UnitList *inmates, struct Path *path) {
     struct UnitNode *current, *other;
     struct TileNode *currentT, *otherT, *nextT;
     struct Inmate *inmate;
     char tileType;
     int doorDurability;
+    int tileCheckPos;
     int i;
+    bool done = true;
+    int nextCounter = 900;
 
     /* Start with first inmate in list */
     current = getHead(inmates);
 
     /* Iterate through list of inmates */
     do {
-
-
-        other = getHead(inmates);
-
+        //printf("Size of inmates list is: %d\n",inmates->count);
         /* Get relavent stats from structs */
         currentT = path->first; //start with path origin
         otherT = path->first; //start with path origin
         inmate = current->unit; //prevents having to do crazy casting
-
+        tileCheckPos = 900;
         /* Find inmate's placement on path */
         for (i = 0; i < path->count; i++) {
-            if (currentT->location == inmate->position) break;
+            if (currentT->location == ((struct Inmate*)current->unit)->position) break;
             currentT = currentT->next;
         }
-
-
-
+        tileCheckPos = currentT->next->location;
         /* Make sure that there are no overlapping units */
-        while((other=other->next)){
-
-            /* Find other unit's placement on path */
-            for (i = 0; i < path->count; i++) {
-                if (otherT->location ==
-                    ((struct Inmate*)other->unit)->position) break;
-                otherT = otherT->next;
-
-                if(inmate->position == otherT->location &&
-                   inmate!=other->unit)
-                    return;
-
+        other = getHead(inmates);
+        while(getNext(other) != NULL){
+            if (((struct Inmate*)other->unit)->position == tileCheckPos && other != current){
+                return;
             }
+            other = getNext(other);
         }
 
         if (currentT->next == NULL)
@@ -461,22 +451,8 @@ void inmateMove(struct UnitList *inmates, struct Path *path) {
             inmate->position = currentT->next->location;
         }
 
-
-//
-//
-//        if ( currentT->next->type == '#' ) {
-//            inmate->position = currentT->next->location;
-//
-//        } else if (currentT->next->type != '&') {
-//            inmate->position = currentT->next->location;
-//
-//        } else if (currentT->next->type == '&') {
-//            inmate->reachedEnd = TRUE;
-//            inmate->position = currentT->location;
-//            current = getNext(current);
-//        }
-
     } while ((current = getNext(current)));
+
     return;
 }
 
