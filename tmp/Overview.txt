@@ -10,6 +10,66 @@ Whether it’s trying to sober up from the Drunk Tank or escaping the clutches o
 
 
 1.2.	Technical Features
+ 
+  1.2.3. Graphical Interfaces 
+  
+  RIOT! is rendered through a text based graphics library called ncurses.
+
+    1.2.3.1. Main Menu
+    In the Main Menu a single ncurses windows is used to present the title and menu options to the user using a series of print statements. 
+
+    1.2.3.2 Intro Screen
+    A function is used to retrieve intro text from corresponding map file based on selected level and displayed using the same method as the main menu
+
+    1.2.3.3 Game Screen
+    In the game screen the ncurses window is divided into 3 bordered windows (Header, Body, Footer).
+
+      1.2.3.3.1 Header
+      A function is used to read in the name, panic and rep given for a corresponding level number and is printed to the header window. These values are redrawn as panic/rep changes
+
+      1.2.3.3.2 Body
+
+      A function reads a 2D array of type char and prints each character to the screen where each character represents a seperate game component.  
+
+    Objects:
+      "." - Inmate path
+      "#" - Door
+      "%" - Mud
+      "$" - Starting Position of path
+      "&" - Ending position of path
+      "-". "|", "+" - Border walls
+    Inmates:
+      "h" - homeboy
+      "b" - bruiser
+      "l" - lunatic
+      "c" - cutie
+      "d" - doctor
+      "f" - fatty
+      "s" - speedy
+      "a" - attorney
+      "p" - protagonist
+    Guards:
+      "G" - guard
+      "D" - Dog
+      "L" - Lunch Lady 
+      "P" - psychiatrist
+      "S" - Sharpshooter
+      "W" - Warden
+      "C" - Cyborg 
+
+    Colour of inmates are used to signal their remaining hitpoints:
+      Green = 100% - 75%
+      Yellow = 74% - 50%
+      Red = 49% - 25%
+      Purple = 25<
+
+      A qeueue containing 5 slots is drawn on the right side of the game window. This is used to show Inmate inventory and is updated as units are qeueue'd and deqeueue'd
+
+      1.2.3.3.3 Footer
+      An array of type char for a corresponding level is passed into a function. The array is then printed into the footer window which represents the inmates available for the current level.
+
+    1.2.3.4
+    Upon exit of the game the ncurses window is closed and the original terminal is restored to its previous state. "Thank you for playing" and an "Exiting" message are then printed to the command line
 
 
 2.	Instructions
