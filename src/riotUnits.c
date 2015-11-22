@@ -434,7 +434,7 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,struct 
 
     nextGuard = getHead(guardList);
     for (int j=0;j<guardList->count;j++){
-        if (((struct Guard *)nextGuard->unit)->cooldownRemaining == 0) {
+        if (((struct Guard *)nextGuard->unit)->cooldownRemaining == 0 && inmateExistsInRange(*inmateList,*nextGuard)) {
             if (tryAttack(*nextGuard)){
                 switch(((struct Guard*)nextGuard->unit)->ai){
                     case PROX:
@@ -642,6 +642,37 @@ bool inRange(struct UnitNode *inmate, struct UnitNode *guard) {
     return range >= totalDifference;
 }
 
+bool inmateExistsInRange(struct UnitList inmateList,struct UnitNode guard){
+    int inmatePosition,guardPosition, range;
+    int xDifference, yDifference;
+    int inmateY, guardY,totalDifference;
+    int i;
+    struct UnitNode* nextUnit;
+
+    nextUnit = getHead(&inmateList);
+    for (i=0;i<inmateList.count;i++){
+        inmatePosition = ((struct Inmate*)nextUnit->unit)->position;
+        guardPosition = ((struct Guard*)guard.unit)->position;
+        range = ((struct Guard*)guard.unit)->range;
+
+        inmateY = (inmatePosition - 1) / MAP_COLS;
+        guardY = (guardPosition - 1) / MAP_COLS;
+        yDifference = (inmateY + 1) - (guardY + 1);
+        xDifference = abs(guardPosition - (guardY * MAP_COLS)) -
+                      abs(inmatePosition - (inmateY * MAP_COLS));
+        yDifference = abs(yDifference);
+        xDifference = abs(xDifference);
+        totalDifference = xDifference + yDifference;
+        if (totalDifference <= range){
+            return true;
+        }
+        if (getNext(nextUnit) != NULL){
+            nextUnit = getNext(nextUnit);
+        }
+    }
+
+    return false;
+}
 
 struct UnitList *getGuards(struct UnitList *guards, struct Map map) {
 

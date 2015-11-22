@@ -49,7 +49,8 @@ struct Guard {/*
 };
 
 
-/* Linked UnitList Operations */
+/* Linked UnitList Operations */  
+bool inmateExistsInRange(struct UnitList inmateList,struct UnitNode guard);
 
 void guardAttackProximity(struct UnitNode *guardNode,
     struct UnitList *inmateList);
