@@ -75,7 +75,7 @@ int main(int argc, char **argv) {
 
                 /* Simulate unit interactions */
                 gameMode = simulate(&windows, &guards, &inmates, &path,
-                                    &mapCopy);
+                                      &mapCopy);
                 if (gameMode == WIN) {
                     progress++;
                     drawText(&windows, dialog[level], WIN, &mapCopy);

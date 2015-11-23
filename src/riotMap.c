@@ -276,6 +276,7 @@ void copyMap (struct Map *initialMap, struct Map *dupeMap){
     for(y=0; y<INMATE_TYPES; y++){
         dupeMap->inmates[y]= initialMap->inmates[y];
     }
+    dupeMap->panicCur=0;
     dupeMap->panicMax= initialMap->panicMax;
     dupeMap->repMax= initialMap->repMax;
 

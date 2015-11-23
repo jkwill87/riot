@@ -323,7 +323,7 @@ struct Guard *createGuard(enum GuardType type) {
             break;
 
         case DOGS:
-            guard->damage = 4;
+            guard->damage = 2;
             guard->range = 4;
             guard->cooldown = 6;
             guard->cooldownRemaining = 0;//guard->cooldown;
@@ -360,8 +360,8 @@ struct Guard *createGuard(enum GuardType type) {
 
         case WARDEN:
             guard->damage = 100;
-            guard->range = 8;
-            guard->cooldown = 20;
+            guard->range = 4;
+            guard->cooldown = 60;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = PROX;
             guard->accuracy = 1;
@@ -370,7 +370,7 @@ struct Guard *createGuard(enum GuardType type) {
         case CYBORG:
             guard->damage = 12;
             guard->range = 8;
-            guard->cooldown = 2;
+            guard->cooldown = 8;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = PROX;
             guard->accuracy = 1;
@@ -413,13 +413,13 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
 
     /* Begin simulation loop; run while units left on game board */
     do {
-
-       /* Deploy next unit */
-        if (queued->count && !(elapsed % REL_DELAY))
-            enqueue(&deployed, dequeue(queued));
-
         /* Process inmate moves (every other pass) */
         if (!(elapsed % 4)) inmateMove(&deployed, elapsed);
+
+       /* Deploy next unit */
+        if (queued->count >0 && !((elapsed) % (REL_DELAY*4))){
+            enqueue(&deployed, dequeue(queued));
+        }
 
         /* Process guard attacks (every other pass) */
         /*else*/ if (!(elapsed %5))
@@ -427,6 +427,8 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
             updateGuardAccuracy(guards, map->panicCur, map->panicMax);
             guardAttack(guards, &deployed, *path);
         } 
+
+
 
         inmate = getHead(&deployed);
         for (int i = 0; i < deployed.count; i++) {
@@ -437,7 +439,6 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
                     winCondition=LOSE;
                 removeUnit(&deployed, i);
             }
-
             /* Remove exited inmates from the board */
             if (((struct Inmate *) inmate->unit)->reachedEnd) {
                 if (((struct Inmate*) inmate->unit)->type == 'p')
@@ -447,7 +448,6 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
                 updateGuardAccuracy(guards, map->panicCur, map->panicMax);
                 updateHeader(gameInterface->header,map);
             }
-
             if (inmate->next) inmate = inmate->next;
         }
 
@@ -456,6 +456,9 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
         /* Sleep, increment elapsed time */
         nanosleep(&delay, NULL);
         elapsed++;
+
+        wrefresh(gameInterface->body);
+     //   getchar();
     } while (deployed.count > 0);
 
     return winCondition;
