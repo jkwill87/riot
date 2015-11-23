@@ -22,9 +22,6 @@ int main(int argc, char **argv) {
     /* Create nCurses WINDOWs */
     uiInit(&windows);
 
-
-
-
     while(gameMode != EXIT) {
 
         /* Start with main menu */
