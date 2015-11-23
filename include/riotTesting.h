@@ -27,8 +27,8 @@ void colorDumpTest ();
 
 
 /* DESCRIPTION: Tests the map
- * ARGUMENTS: The location of the directory */
-void mapTest(char *loadDir);/*
+*  ARGUMENTS: The location of the directory */
+void mapTest(char *loadDir);
 
 
 void writeToFile(char *message);/*
