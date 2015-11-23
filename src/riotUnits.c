@@ -325,7 +325,7 @@ struct Guard *createGuard(enum GuardType type) {
         case DOGS:
             guard->damage = 1;
             guard->range = 4;
-            guard->cooldown = 4;
+            guard->cooldown = 2;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = AOE;
             guard->accuracy = 1;
