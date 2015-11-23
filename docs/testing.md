@@ -36,6 +36,9 @@ int * getCoordinate(int position):
 "getCoordinate" is used to convert a single value integer to a pair of coordinates. This function is tested using the "printCoordinate" function. the test integer is passed in and is run through the "getCoordinate" function. The output x and y value of the function are then printed to the command line
 
 
+ "getCoordinate" is used to convert a single value integer to a pair of coordinates. This function is tested using the "printCoordinate" function. the test integer is passed in and is run through the "getCoordinate" function. The output x and y value of the function are then printed to the command line and the user compares expected value to the one printed. use the "-printCr" flag and an integer value to run this test
+
+
 ## Map Testing
 
 Map testing can be activated by passing the `-map` flag to the `test` binary target. This parameter will print map layouts in the same way that the game will interpret them, line by line. This allows for the detection of any formatting inconsistencies which can result in undefined behaviour during game execution.
