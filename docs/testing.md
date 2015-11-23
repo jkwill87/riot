@@ -27,5 +27,6 @@ running './bin/test -color', is a more targeted test of colors intended to be us
 
 additional testing for UI was done in during game excecution. This was for simpler issues such as adding and removing units to the game queue, selecting and unlocking levels, adding too many units, getting proper charges and refunds for rep used when preforming various add/remove functions. going back and forth between level and the main menu, and replaying levels in odd or peculiar orders.
 
-
+int * getCoordinate(int position):
+ "getCoordinate" is used to convert a single value integer to a pair of coordinates. This function is tested using the "printCoordinate" function. the test integer is passed in and is run through the "getCoordinate" function. The output x and y value of the function are then printed to the command line
 
