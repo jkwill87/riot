@@ -1,6 +1,5 @@
 #ifndef RIOT_EXEC
 #define RIOT_EXEC
-#define _DEBUG
 
 #include <ncurses.h>
 #include <stdio.h>
@@ -105,8 +104,8 @@ enum GuardType {/*
     DOGS = 'D', //Double further damage (health/2)
     LUNCH = 'L', //lunch lady   //Inmates speed/2 for 12 cycles
     PSYCH = 'P', //psychiatrist    //Inmate to slee for 6 cycles
-    SHARP = 'S', //sharpshooter   
-    WARDEN = 'W', 
+    SHARP = 'S', //sharpshooter
+    WARDEN = 'W',
     CYBORG = 'C'
 };
 
@@ -115,7 +114,7 @@ enum AI {/*
 
  AI provides a mnemonic for guard AI profiles.*/
 
-    PROX, //proximity
+        PROX, //proximity
     AOE, //area of effect
     END, //closest to end
 };
@@ -140,12 +139,11 @@ enum GameMode {/*
  GameMode is a mnemonic which can be used to equivocate game modes with the
  associated keypresses used to inititate them.*/
 
-    MENU ='m',
     NEW = 'n',
     CONTINUE = 'c',
-    WIN = 'w',
-    LOSE = 'l',
-    UNDECIDED = 'u',
+    WIN,
+    LOSE,
+    UNDECIDED,
     EXIT = 'e',
     _GAME_MODE_LIMIT,
 };
@@ -182,7 +180,7 @@ void play(struct Windows *gameInterface,struct Map* map);/*
 DESCRIPTION: play() calls all functions that involve player unit selection, and game simulation.
 
 ARGUMENTS: Game interface struct that holds neccessary windows (struct Windows gameInterface).
-           Map struct which holds neccessary map information (struct Map map). 
+           Map struct which holds neccessary map information (struct Map map).
 
 */
 
