@@ -6,45 +6,48 @@
 #include "riotUnits.h"
 #include "riotUI.h"
 
-void printInmates(struct UnitList *list);
-/* DESCRIPTION: Prints out the guard list
- * ARGUMENTS: The guard list */
-void unitsMove(char *loadDir);
-
-/* DESCRIPTION: Testing the movement of the units
- * ARGUMENTS: The location of the directory */
-void unitsTest(void);
-
-void guardTest();
-
-/* DESCRIPTION: Testing the guard range and attacking
- * ARGUMENTS: */
-void unitsPlay(char *argument);
-
-
 /* DESCRIPTION: tests all colors that can fit on a screen*/
 void colorDumpTest ();
 
 
+/*DESCRIPTION: Prints the path of the map.
+  ARGUMENTS: -Path struct (struct Path *path).*/
+void printPath(struct Path *path);
+
+
+/*DESCRIPTION: Prints out the guard list.
+  ARGUMENTS: -The guard list (struct UnitList *guardList).*/
+void printGuardList(struct UnitList *guardList);
+
+
+/*DESCRIPTION: Prints out the Inmate list.
+  ARGUMENTS: -The Unit list (struct UnitList *list). */
+void printInmateList(struct UnitList *inmateList);
+
+
+/*DESCRIPTION: Tests the different colour schemes.*/
+void colorTest();
+
+void guardTest();
+/* DESCRIPTION: Testing the movement of the units.
+   ARGUMENTS: -The location of the directory (char *loadDir).*/
+void unitsMove(char *loadDir);
+
+
+
 /* DESCRIPTION: Tests the map
-*  ARGUMENTS: The location of the directory */
+   ARGUMENTS: -The location of the directory (char *argument).*/
+void unitsPlay(char *argument);
+
 void mapTest(char *loadDir);
 
+void printInmate(struct Inmate *inmate);
 
-void writeToFile(char *message);/*
-
-DESCRIPTION: Function that writes information to a file for debugging purposes
-
-ARGUMENTS: The message
-*/
+void printGuard(struct Guard *guard);
 
 void printCoordinates(int position);
 
-/* DESCRIPTION: test position to coordinate function
-   ARGUMENTS: 	position to be converted to coordinate
-*/ 
-void colorTest();
-
 void testingHelp();
+
 
 #endif //RIOT_TESTING
