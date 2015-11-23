@@ -333,8 +333,8 @@ struct Guard *createGuard(enum GuardType type) {
 
         case LUNCH:
             guard->damage = 0;
-            guard->range = 6;
-            guard->cooldown = 12;
+            guard->range = 4;
+            guard->cooldown = 10;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = AOE;
             guard->accuracy = 1;
@@ -342,8 +342,8 @@ struct Guard *createGuard(enum GuardType type) {
 
         case PSYCH:
             guard->damage = 0;
-            guard->range = 6;
-            guard->cooldown = 16;
+            guard->range = 3;
+            guard->cooldown = 7;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = PROX;
             guard->accuracy = 1;
