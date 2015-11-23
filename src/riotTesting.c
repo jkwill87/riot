@@ -132,6 +132,11 @@ void colorTest() {
     init_pair(21, YELLOW, DAMAGED);
     init_pair(22, RED, DAMAGED);
     init_pair(23, PURPLE, DAMAGED);
+    init_pair(27, GREEN, 6);
+    init_pair(28, YELLOW, 6);
+    init_pair(29, RED, 6);
+    init_pair(30, PURPLE, 6);
+
     attron (COLOR_PAIR(GREEN));
     mvprintw(0, 0, "Green test Foreground: %d Background: %d", GREEN,
         COLOR_BLACK);
@@ -165,6 +170,18 @@ void colorTest() {
     attron (COLOR_PAIR(26));
     mvprintw(11,0,"Guard cannot attack\tForeground: %d Background: %d\t",
         COLOR_BLACK,RED);
+    attron (COLOR_PAIR(27));
+    mvprintw(12,0,"Inmate is frozen\tForeground: %d Background: %d\t",
+        GREEN,6);
+    attron (COLOR_PAIR(28));
+    mvprintw(13,0,"Inmate is frozen\tForeground: %d Background: %d\t",
+        YELLOW,6);
+    attron (COLOR_PAIR(29));
+    mvprintw(14,0,"Inmate is frozen\tForeground: %d Background: %d\t",
+        RED,6);
+    attron (COLOR_PAIR(30));
+    mvprintw(15,0,"Inmate is frozen\tForeground: %d Background: %d\t",
+        PURPLE,6);
     refresh();
     getchar();
     endwin();
