@@ -26,7 +26,11 @@ void unitsPlay(char *argument);
  * ARGUMENTS: The location of the directory */
 void mapTest(char *loadDir);
 
+void printCoordinates(int position);
 
+/* DESCRIPTION: test position to coordinate function
+   ARGUMENTS: 	position to be converted to coordinate
+*/ 
 void colorTest();
 
 void testingHelp();

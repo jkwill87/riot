@@ -15,3 +15,6 @@ if the game is run with an optional parameter for the assets folder and the give
 
 Valgrind was used to test for memory leaks.
 
+RiotUI.c Testing
+
+int * getCoordinate(int position); is used to convert a single value integer to a pair of coordinates. This function is tested using the "printCoordinate" function. the test integer is passed in and is run through the "getCoordinate" function. The output x and y value of the function are then printed to the command line

@@ -421,6 +421,13 @@ void printGuard(struct Guard *guard) {
     return;
 }
 
+void printCoordinates(int position) {
+    int * coordinates;
+
+    coordinates = getCoordinate(position);
+    printf("y=%d x=%d\n", coordinates[0], coordinates[1]);
+
+}
 
 void testingHelp() {
     printf(
