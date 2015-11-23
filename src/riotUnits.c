@@ -254,11 +254,11 @@ struct Inmate *createInmate(enum InmateType type) {
             break;
 
         case CUTIE:
-            unit->currentHealth = unit->maxHealth = 25;
+            unit->currentHealth = unit->maxHealth = 30;
             unit->rep = REP_CUTIE;
             unit->speed = 4;
             unit->maxSpeed = unit->speed;
-            unit->panic = 1;
+            unit->panic = 6;
             unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
