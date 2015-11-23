@@ -497,12 +497,16 @@ void drawLevel(struct Windows *windows, struct Map *map,
         }
         else{
             strcat(output, getInmateName(map->inmates[i]));
-            strcat(output, "");
+            strcat(output, "\t");
         }
         if (i == 4) {
             mvwaddstr(windows->footer, 1, 15, output);
             strcpy(output, "");
         }
+
+        addstr(output);
+        getch();
+
     }
     mvwprintw(windows->footer, 1, 1, "INMATES:");
     mvwaddstr(windows->footer, 2, 15, output);
