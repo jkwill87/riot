@@ -15,11 +15,6 @@ if the game is run with an optional parameter for the assets folder and the give
 
 Valgrind was used to test for memory leaks.
 
-<<<<<<< HEAD
-
-=======
-<<<<<<< HEAD
-Valgrind was used to test for memory leaks.
 
 RiotUI.c Testing
 
@@ -28,10 +23,10 @@ A majority of testing on for the UI was verifying that certain characters and co
 Finding colors to use:
 running './bin/test -colorDump', gets the max dimensions of the current terminal window and prints all foreground/background color combinations that will fit in the current specifications. Color beyond 15 for foreground created sporatic results. A similar effect was observed for background colors beyond 7. Also colors beyond this range varied drastically between machines and terminals. This forced us to limit our colors to the more narror range of colors we used. This also impacted earlier design descisions such as the colors we used to display health. The color dump test showed that there was no orange color, and thus health colors were changed from Green->Yellow->Orange->Red to Green->Yellow->Red->Purple. 
 
-running './bin/test -color', is a more targeted test of colors intended to be used in the program. This was less for functionality but more for gameplay purposes to make sure all color combinations were both legible and not overly distracting. 
+running './bin/test -color', is a more targeted test of colors intended to be used in the program. This was less for functionality but more for gameplay purposes to make sure all color combinations were both legible and not overly distracting. colors tested here were also for features that never made it to the final game, such as damaged units and futher color effects like visualizing slows and freezing. These were cut as the screen would appear confusing and cluttered with so many different colors displaying
+
+additional testing for UI was done in during game excecution. This was for simpler issues such as adding and removing units to the game queue, selecting and unlocking levels, adding too many units, getting proper charges and refunds for rep used when preforming various add/remove functions. going back and forth between level and the main menu, and replaying levels in odd or peculiar orders.
 
 int * getCoordinate(int position):
  "getCoordinate" is used to convert a single value integer to a pair of coordinates. This function is tested using the "printCoordinate" function. the test integer is passed in and is run through the "getCoordinate" function. The output x and y value of the function are then printed to the command line
-=======
->>>>>>> 9c8e58936b78371e95f9dd354f77352e4539589d
->>>>>>> b726855fd60eadb0ae901a753d27fabeff1111db
+
