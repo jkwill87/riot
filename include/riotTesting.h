@@ -9,7 +9,6 @@
 #define TRIALS 10
 #define MAPSIZE 100
 
-
 void printInmates(struct UnitList *list);/*
 
 DESCRIPTION: Prints the inmate list
@@ -49,6 +48,7 @@ DESCRIPTION: Testing the guard range and attacking
 ARGUMENTS:
 */
 
+void guardTest();
 
 void unitsPlay(char *argument);
 
