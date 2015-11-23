@@ -30,7 +30,7 @@ void parseMap(char *loadDir, struct MapList *mapList, struct Dialog *dialog) {
     /* Use map directory passed as argument if provided, else cwd */
     if (!loadDir) {
         loadDir = getcwd(loadDir, PATH_MAX);
-        strcat(loadDir,"/assets");
+        strcat(loadDir, "/assets");
         useCwd = true;
     }
 
@@ -38,12 +38,14 @@ void parseMap(char *loadDir, struct MapList *mapList, struct Dialog *dialog) {
     if ((directory = opendir(loadDir)))
         while ((entry = readdir(directory))) {
             sprintf(path, "%s/%s", loadDir, entry->d_name);
+
             /* Skip if not readable .riot# file */
             if (regexec(&riotExt, entry->d_name, 0, NULL, 0)) continue;
             if (!(file = fopen(path, "r"))) continue;
             fseek(file, 0, SEEK_END);
             if (ftell(file) < MAP_SIZE) continue;
             rewind(file);
+
             /* Determine level number from filename*/
             if (entry->d_name[0] == '.') {
                 current = &mapList->level[entry->d_name[1] - '0'];
@@ -52,28 +54,34 @@ void parseMap(char *loadDir, struct MapList *mapList, struct Dialog *dialog) {
                 current = &mapList->level[entry->d_name[0] - '0'];
                 current->levelNo = entry->d_name[0] - '0';
             }
+
             /* Get level name */
             fgets(line, MAX_COLS, file);
             strtok(line, "]");
             strcpy(current->name, strtok(NULL, "\n"));
+
             /* Get rep */
             fgets(line, MAX_COLS, file);
             strtok(line, "]");
             current->repMax = atoi(strtok(NULL, "\n"));
+
             /* Get panic */
             fgets(line, MAX_COLS, file);
             strtok(line, "]");
             current->panicMax = atoi(strtok(NULL, "\n"));
+
             /* Get units */
             fgets(line, MAX_COLS, file);
             strtok(line, "]");
             strcpy(current->inmates, strtok(NULL, "\n"));
+
             /* Get map */
             while ((fgetc(file) == '>'));
             for (y = 0; y < MAP_ROWS; y++) {
                 fgets(current->overlay[y], MAP_COLS, file);
                 fseek(file, 2, SEEK_CUR);
             }
+
             /* Get text boxes*/
             textBox[0] = dialog[current->levelNo].textIntro;
             textBox[1] = dialog[current->levelNo].textWin;
@@ -91,6 +99,7 @@ void parseMap(char *loadDir, struct MapList *mapList, struct Dialog *dialog) {
             mapList->count++;
             firstRun = false;
         }
+
     /* Clean up memory */
     closedir(directory);
     regfree(&riotExt);
@@ -104,24 +113,28 @@ void parseMap(char *loadDir, struct MapList *mapList, struct Dialog *dialog) {
 
 
 void getPath(struct Path *path, struct Map map) {
+
     int i, j;
     int count = 0;
     int position = 0;
     int prevChecked[MAP_ROWS * MAP_COLS];
+
     for (i = 0; i < (MAP_ROWS * MAP_COLS); i++)
         prevChecked[i] = 0;
     path->count = 0;
+
     for (i = 0; i < MAP_ROWS; i++) {
         for (j = 0; j < MAP_COLS; j++) {
             if (map.overlay[i][j] == '$') {
                 position = (i * MAP_COLS) + j;
                 count = 0;
-                pushToPath(createTileNode(position, map.overlay[i][j]),path);
+                pushToPath(createTileNode(position, map.overlay[i][j]), path);
                 prevChecked[count] = position;
                 goto outer;
             }
         }
     }
+
     outer:
     pathSolve(map, path, prevChecked, count + 1, position);
 
@@ -130,6 +143,7 @@ void getPath(struct Path *path, struct Map map) {
 
 
 struct Path *pathSolve(struct Map map, struct Path *path, int prevChecked[],
+
     int count, int currentPosition) {
     int i, j, nextPosition, beingChecked;
 
@@ -166,7 +180,7 @@ struct Path *pathSolve(struct Map map, struct Path *path, int prevChecked[],
             isPathCharacter(map.overlay[i - 1][j])) {
             nextPosition = currentPosition - MAP_COLS;
             prevChecked[count] = currentPosition;
-            pushToPath(createTileNode(nextPosition, map.overlay[i-1][j]),
+            pushToPath(createTileNode(nextPosition, map.overlay[i - 1][j]),
                 path);
             pathSolve(map, path, prevChecked, count + 1, nextPosition);
         }
@@ -179,7 +193,7 @@ struct Path *pathSolve(struct Map map, struct Path *path, int prevChecked[],
             isPathCharacter(map.overlay[i][j - 1])) {
             nextPosition = currentPosition - 1;
             prevChecked[count] = currentPosition;
-            pushToPath(createTileNode(nextPosition, map.overlay[i][j-1]),
+            pushToPath(createTileNode(nextPosition, map.overlay[i][j - 1]),
                 path);
             pathSolve(map, path, prevChecked, count + 1, nextPosition);
         }
@@ -190,6 +204,7 @@ struct Path *pathSolve(struct Map map, struct Path *path, int prevChecked[],
 
 
 void pushToPath(struct TileNode *insertNode, struct Path *path) {
+
     struct TileNode *nextNode = NULL;
 
     if (path->count > 0) {
@@ -212,6 +227,7 @@ void pushToPath(struct TileNode *insertNode, struct Path *path) {
 
 
 bool beenChecked(int prevChecked[], int position) {
+
     int arrayLength;
 
     arrayLength = MAP_COLS * MAP_ROWS;
@@ -224,16 +240,18 @@ bool beenChecked(int prevChecked[], int position) {
 
 
 bool isPathCharacter(char tileChar) {
+
     return
         tileChar == '.' ||
-            tileChar == '#' ||
-            tileChar == '$' ||
-            tileChar == '&' ||
-            tileChar == '%';
+        tileChar == '#' ||
+        tileChar == '$' ||
+        tileChar == '&' ||
+        tileChar == '%';
 }
 
 
 struct TileNode *createTileNode(int location, char type) {
+
     struct TileNode *tileNode = NULL;
 
     tileNode = (struct TileNode *) malloc(sizeof(struct TileNode));
@@ -241,13 +259,14 @@ struct TileNode *createTileNode(int location, char type) {
     tileNode->next = NULL;
     tileNode->location = location;
     tileNode->type = type;
-    tileNode->durability = type=='#' ? 5 : 0;
+    tileNode->durability = type == '#' ? 5 : 0;
 
     return tileNode;
 }
 
 
 void destroyPath(struct Path *path) {
+
     struct TileNode *nextNode = NULL;
 
     if (path->count > 0)
@@ -263,20 +282,24 @@ void destroyPath(struct Path *path) {
     free(path);
 }
 
-void copyMap (struct Map *initialMap, struct Map *dupeMap){
-    int x,y;
+
+void copyMap(struct Map *initialMap, struct Map *dupeMap) {
+
+    int x, y;
     strcpy(dupeMap->name, initialMap->name);
     dupeMap->levelNo = initialMap->levelNo;
-    for(y=0; y<MAP_ROWS; y++){
-        for(x=0; x<MAP_COLS; x++){
-            dupeMap->overlay[y][x]=initialMap->overlay[y][x];
+
+    for (y = 0; y < MAP_ROWS; y++) {
+        for (x = 0; x < MAP_COLS; x++) {
+            dupeMap->overlay[y][x] = initialMap->overlay[y][x];
         }
     }
-    for(y=0; y<INMATE_TYPES; y++){
-        dupeMap->inmates[y]= initialMap->inmates[y];
+    for (y = 0; y < INMATE_TYPES; y++) {
+        dupeMap->inmates[y] = initialMap->inmates[y];
     }
-    dupeMap->panicCur=0;
-    dupeMap->panicMax= initialMap->panicMax;
-    dupeMap->repMax= initialMap->repMax;
+
+    dupeMap->panicCur = 0;
+    dupeMap->panicMax = initialMap->panicMax;
+    dupeMap->repMax = initialMap->repMax;
 
 }

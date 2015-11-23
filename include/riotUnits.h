@@ -3,21 +3,24 @@
 
 #include "riotExec.h"
 #include "riotMap.h"
+
+
 /* Data Types */
 
 #define CYCLE 50000000L;
 #define REL_DELAY 5
-#define HEALCOOLDOWN 12
 
-enum Effect{
+
+enum Effect {
     EFFECT_LUNCH = 12,
     EFFECT_PSYCH = 6,
     EFFECT_DOGS = 1,
 };
 
-struct UnitNode {/*
 
-UnitNode stores the information related to inmate units.*/
+struct UnitNode {
+
+/* UnitNode stores the information related to inmate units.*/
 
     void *unit;
     struct UnitNode *next;
@@ -26,9 +29,8 @@ UnitNode stores the information related to inmate units.*/
 
 
 struct Inmate {
-    /*
 
-     Inmate stores the stats related to inmate units.*/
+    /* Inmate stores the stats related to inmate units.*/
 
     char type;
     int position;
@@ -49,9 +51,9 @@ struct Inmate {
 };
 
 
-struct Guard {/*
+struct Guard {
 
- Inmate stores the stats related to guard units.*/
+    /* Inmate stores the stats related to guard units.*/
 
     char type;
     int position;
@@ -63,7 +65,8 @@ struct Guard {/*
     float accuracy;
 };
 
-void writeToFile(char *string);
+
+/* Function prototypes */
 
 /*DESCRIPTION: Deallocate memory for a UnitList struct.
   ARGUMENTS: -A Pointer to the UnitList to be destroyed (struct UnitList *list).
@@ -153,8 +156,8 @@ struct Guard *createGuard(enum GuardType type);
              -List of units in the wave (struct UnitList *queued)
              -The path of the map (struct Path *path)
              -The map that is being played (struct Map *map)*/
-enum GameMode simulate(struct Windows *win, struct UnitList *guards,  
-  struct UnitList *queued, struct Path *path, struct Map *map);
+enum GameMode simulate(struct Windows *win, struct UnitList *guards,
+    struct UnitList *queued, struct Path *path, struct Map *map);
 
 
 /*DESCRIPTION: Handles the movement of the units on the screen.
@@ -172,14 +175,16 @@ void setDeadInmates(struct UnitList *inmateList);
   ARGUMENTS: -Guard list to be updated(struct UnitList *guardList).
              -Current game panic (int currentPanic).
              -Maximum game panic (int maximumPanic).*/
-void updateGuardAccuracy(struct UnitList *guardList, int currentPanic, int maximumPanic);
+void updateAccuracy(struct UnitList *guardList, int currentPanic,
+    int maximumPanic);
 
 
 /*DESCRIPTION: Has every guard attack an inmate within its range.
   ARGUMENTS: -List of guards (struct UnitList * guardList)
              -List of the units (struct UnitList *inmateList) 
              -Path of the map (struct Path path)*/
-void guardAttack(struct UnitList * guardList, struct UnitList *inmateList, struct Path path);
+void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,
+    struct Path path);
 
 
 /*DESCRIPTION: Guard attacks all inmates within its range.
@@ -191,7 +196,8 @@ void guardAttackAOE(struct UnitNode *guardNode, struct UnitList *inmateList);
 /*DESCRIPTION: Returns the UnitNode closest to position.
   ARGUMENTS: -Inmate List that the closest inmate will be chosen from (struct UnitList inmateList).
              -Position to calculate the distance of the inmate from (int position).*/
-struct UnitNode* getClosestInmateToPosition(struct UnitList inmateList, int position);
+struct UnitNode *getClosestInmateToPosition(struct UnitList inmateList,
+    int position);
 
 
 /*DESCRIPTION: Returns the distance between two positions.
@@ -204,13 +210,15 @@ int getDistance(int positionFrom, int positionTo);
   ARGUMENTS: -Guard that is attacking the inmate(struct UnitNode *guardNode).
              -Inmate list that the inmates are found in(struct UnitList *inmateList). 
              -The furthest distance that the guard can attack the units*/
-void guardAttackEnd(struct UnitNode *guardNode, struct UnitList *inmateList, int exitPosition);
+void guardAttackEnd(struct UnitNode *guardNode, struct UnitList *inmateList,
+    int exitPosition);
 
 
 /*DESCRIPTION: Guard attacks the inmate closest to it.
   ARGUMENTS: -Guard that is attacking the inmate(struct UnitNode *guardNode).
              -Inmate list that the inmates are found in (struct UnitList *inmateList).*/
-void guardAttackProximity(struct UnitNode *guardNode, struct UnitList *inmateList);
+void guardAttackProximity(struct UnitNode *guardNode,
+    struct UnitList *inmateList);
 
 
 /*DESCRIPTION: Returns a boolean based on if the guard missed or not, this depends on the 
@@ -222,7 +230,7 @@ bool tryAttack(struct UnitNode guardNode);
 /*DESCRIPTION: Decrements the inmates health by the guards damage during an attack
   ARGUMENTS: -Inmate that is being dealt damage (struct UnitNode *inmateNode).
              -Guard that is dealing damage (struct UnitNode *guardNode).*/
-void dealDamage(struct UnitNode * inmateNode, struct UnitNode * guardNode);
+void dealDamage(struct UnitNode *inmateNode, struct UnitNode *guardNode);
 
 
 /*DESCRIPTION: Returns a boolean based on if the inmate is within the guards range
@@ -241,6 +249,5 @@ bool inmateExistsInRange(struct UnitList inmateList, struct UnitNode guard);
   ARGUMENTS: -List of guards (struct UnitList *guards).
              -The map that is being loaded in (struct Map map).*/
 struct UnitList *getGuards(struct UnitList *guards, struct Map map);
-
 
 #endif //RIOT_UNITS
