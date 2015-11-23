@@ -114,7 +114,7 @@ enum AI {/*
 
  AI provides a mnemonic for guard AI profiles.*/
 
-        PROX, //proximity
+    PROX, //proximity
     AOE, //area of effect
     END, //closest to end
 };
@@ -139,11 +139,12 @@ enum GameMode {/*
  GameMode is a mnemonic which can be used to equivocate game modes with the
  associated keypresses used to inititate them.*/
 
+    MENU ='m',
     NEW = 'n',
     CONTINUE = 'c',
-    WIN,
-    LOSE,
-    UNDECIDED,
+    WIN = 'w',
+    LOSE = 'l',
+    UNDECIDED = 'u',
     EXIT = 'e',
     _GAME_MODE_LIMIT,
 };
