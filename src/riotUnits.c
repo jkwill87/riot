@@ -333,7 +333,7 @@ struct Guard *createGuard(enum GuardType type) {
 
         case LUNCH:
             guard->damage = 0;
-            guard->range = 4;
+            guard->range = 3;
             guard->cooldown = 10;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = AOE;
