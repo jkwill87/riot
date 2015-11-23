@@ -1,8 +1,7 @@
 #include "riotExec.h"
 #include "riotUI.h"
 
-//#pragma clang diagnostic push
-//#pragma ide diagnostic ignored "OCDFAInspection"
+
 int main(int argc, char **argv) {
 
     enum GameMode gameMode = MENU;
@@ -22,25 +21,28 @@ int main(int argc, char **argv) {
     /* Create nCurses WINDOWs */
     uiInit(&windows);
 
-    while(gameMode != EXIT) {
+    while (gameMode != EXIT) {
+
 
         /* Start with main menu */
-        gameMode=menuMain(&windows);
-        if (gameMode == EXIT) { break;}
-
+        gameMode = menuMain(&windows);
+        if (gameMode == EXIT) { break; }
 
         /* Determine level to be loaded */
-        if(gameMode==NEW){level = 0;}
+        if (gameMode == NEW) level = 0;
         else {
+
             level = levelSelect(&windows, &mapList, progress);
-            /*Checks if the user picked the [b]ack button*/
-            if (level == -1) { gameMode = MENU;}
+
+            /* Check if user picked the [b]ack button; return to main menu */
+            if (level == -1) gameMode = MENU;
         }
 
         /*checks if the menu is current gamemode to skip back to the top of the loop*/
         if (gameMode != MENU) {
+
             /*checks if new level or if */
-            if(gameMode!=UNDECIDED) {
+            if (gameMode != UNDECIDED) {
                 /* Select current map */
                 currentMap = mapList.level[level];
                 currentMap.panicCur = 0;
@@ -65,14 +67,16 @@ int main(int argc, char **argv) {
                 /* Create snapshot of current map (deep copy) */
                 copyMap(&currentMap, &mapCopy);
             }
-            do {
 
+
+            do {
                 /* Prompt user for unit selection */
-                drawInmateSelection(&windows, &mapCopy, &inmates, &guards, gameMode);
+                drawInmateSelection(&windows, &mapCopy, &inmates, &guards,
+                    gameMode);
 
                 /* Simulate unit interactions */
                 gameMode = simulate(&windows, &guards, &inmates, &path,
-                                      &mapCopy);
+                    &mapCopy);
                 if (gameMode == WIN) {
                     if (level == progress)
                         progress++;
@@ -81,18 +85,19 @@ int main(int argc, char **argv) {
                     drawText(&windows, dialog[level], LOSE, &mapCopy);
                 }
 
+
             }while (gameMode==UNDECIDED);
             getchar();
             gameMode=CONTINUE;
         }
     }
 
-   /* Free memory, exit */
+    /* Free memory, exit */
     uiFree(&windows);
+//    destroyPath(&path);
     quit("Thanks for playing.\n");
     return 0;
 }
-//#pragma clang diagnostic pop
 
 
 void quit(char *message) {
@@ -100,4 +105,3 @@ void quit(char *message) {
     printf("%s. Exiting.\n", message);
     exit(1);
 }
-

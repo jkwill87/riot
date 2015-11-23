@@ -1,4 +1,5 @@
 **Atleast one combination to complete each level**
+**The combinations are not 100% accurate as the accurracy of the towers is randomly generated**
 
 Level 0: h,p
 
