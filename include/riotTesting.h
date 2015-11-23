@@ -6,71 +6,28 @@
 #include "riotUnits.h"
 #include "riotUI.h"
 
-#define TRIALS 10
-#define MAPSIZE 100
+
+/* DESCRIPTION: Prints out the guard list
+ * ARGUMENTS: The guard list */
+void unitsMove(char *loadDir);
 
 
-void printInmates(struct UnitList *list);/*
-
-DESCRIPTION: Prints the inmate list
-
-ARGUMENTS: The inmate list
-*/
+/* DESCRIPTION: Testing the movement of the units
+ * ARGUMENTS: The location of the directory */
+void unitsTest(void);
 
 
-void printGuards(struct UnitList *list);/*
-
-DESCRIPTION: Prints the guard list
-
-ARGUMENTS: The guard list
-*/
-
-
-void printGuardList(struct UnitList *guardList);/*
-
-DESCRIPTION: Prints out the guard list
-
-ARGUMENTS: The guard list 
-*/
-
-
-void unitsMove(char *loadDir);/*
-
-DESCRIPTION: Testing the movement of the units
-
-ARGUMENTS: The location of the directory
-*/
-
-
-void unitsTest(void);/*
-
-DESCRIPTION: Testing the guard range and attacking
-
-ARGUMENTS:
-*/
-
-
+/* DESCRIPTION: Testing the guard range and attacking
+ * ARGUMENTS: */
 void unitsPlay(char *argument);
 
 
-void mapTest(char *loadDir);/*
-
-DESCRIPTION: Tests the map
-
-ARGUMENTS: The location of the directory
-*/
-
-
-void writeToFile(char *message);/*
-
-DESCRIPTION: Function that writes information to a file for debugging purposes
-
-ARGUMENTS: The message
-*/
+/* DESCRIPTION: Tests the map
+ * ARGUMENTS: The location of the directory */
+void mapTest(char *loadDir);
 
 
 void colorTest();
-
 
 void testingHelp();
 

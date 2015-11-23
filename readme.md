@@ -35,10 +35,17 @@ RIOT! intends to switch the roles of a traditional tower defence game, placing t
 * Escape from dangerous guards from dogs to cyborgs!
 
 
-## Testing
-
-
 ## Installation and Running
+
+In order to play RIOT! You will have to do following...
+    1.	From the command line inside the root folder of the game, type and enter “make” in-order to compile the game.
+    2.	Afterwards, type “./bin/riot” to run the game
+
+To use a different assets folder, you can run the game with an additional argument (./bin/riot [arg]) to run it with a different map file.
+
+The map files must start at 0 and continue progressively, and have a .riot extension.  These map files must follow the exact format as the default map files.
+
+If the assets is missing, an error will occur without running the game.
 
 
 ## Changelog

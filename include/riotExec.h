@@ -35,9 +35,10 @@ Breaks up the screen into window sections*/
 };
 
 
-struct Dialog{/*
 
-Struct of dialog for each result */
+struct Dialog{
+
+    /* Struct of dialog for each result */
 
     char textIntro[MAX_TEXT];
     char textWin[MAX_TEXT];
@@ -45,14 +46,14 @@ Struct of dialog for each result */
 };
 
 
-struct Map {/*
+struct Map {
 
- Map stores the game landscape as a 2D array, along with a linked list
- containing the path.*/
+/* Map stores the game landscape as a 2D array, along with a linked list
+  containing the path.*/
 
     char name[LINE_MAX];
     int levelNo;
-    char overlay[MAP_ROWS][MAP_COLS+1]; //+1 for null char
+    char overlay[MAP_ROWS][MAP_COLS + 1]; //+1 for null char
     char inmates[INMATE_TYPES];
     int panicMax;
     int panicCur;
@@ -60,11 +61,10 @@ struct Map {/*
 };
 
 
+struct UnitList {
 
-struct UnitList {/*
-
- UnitList stores the head, tail, and count of a doubly linked list of
- UnitNodes.*/
+/* UnitList stores the head, tail, and count of a doubly linked list
+ * of UnitNodes.*/
 
     struct UnitNode *head;
     struct UnitNode *tail;
@@ -73,12 +73,12 @@ struct UnitList {/*
 };
 
 
-enum InmateType {/*
+enum InmateType {
 
- InmateType is a mnemonic which can be used to equivocate inmate types with
- the associated keypresses used to spawn them.*/
+    /* InmateType is a mnemonic which can be used to equivocate inmate types
+     * with the associated keypresses used to spawn them.*/
 
-    PROTAGONIST = 'p',
+        PROTAGONIST = 'p',
     HOMEBOY = 'h',
     BRUISER = 'b',
     LUNATIC = 'l',
@@ -88,6 +88,7 @@ enum InmateType {/*
     ATTORNEY = 'a',
     DOCTOR = 'd'
 };
+
 
 enum InmateRep{/*
 
@@ -105,9 +106,9 @@ The cost to send each unit onto the path*/
 };
 
 
-enum GuardType {/*
+enum GuardType {
 
- GuardType provides a mnemonic for guard unit types.*/
+    /* GuardType provides a mnemonic for guard unit types. */
 
     GUARD = 'G',
     DOGS = 'D', //Double further damage (health/2)
@@ -119,9 +120,9 @@ enum GuardType {/*
 };
 
 
-enum AI {/*
+enum AI {
 
- AI provides a mnemonic for guard AI profiles.*/
+    /* AI provides a mnemonic for guard AI profiles. */
 
     PROX, //proximity
     AOE, //area of effect
@@ -129,9 +130,10 @@ enum AI {/*
 };
 
 
-enum Colour {/*
+enum Colour {
 
- Colour provides a mnemonic for the colours used to convey health values.*/
+    /* Colour provides a mnemonic for the colours used to convey health
+     * values. */
 
     GREEN = 10,
     YELLOW = 11,
@@ -143,12 +145,12 @@ enum Colour {/*
 };
 
 
-enum GameMode {/*
+enum GameMode {
 
- GameMode is a mnemonic which can be used to equivocate game modes with the
- associated keypresses used to inititate them.*/
+    /* GameMode is a mnemonic which can be used to equivocate game modes with
+     * the associated keypresses used to inititate them.*/
 
-    MENU ='m',
+    MENU = 'm',
     NEW = 'n',
     CONTINUE = 'c',
     WIN = 'w',
@@ -159,9 +161,35 @@ enum GameMode {/*
 };
 
 
-/*DESCRIPTION: Will exit curses mode if it is activated and provide the user with a message as
- to the nature of the error.
-  ARGUMENTS: -A string with the message to be printed to stdout (char *message).*/
+/* Function Prototypes */
+
 void quit(char *message);
+
+/* DESCRIPTION: quit() is called as a method for the program to gracefully
+ *              return to the command prompt when facing undefined behaviour
+ *              or user input. Will exit curses mode if it is activated and
+ *              provide the user with a message as to the nature of the error.
+ * ARGUMENTS:   A string with the message to be printed to stdout.
+ * POSTCONDITIONS: Program termination. */
+
+
+void checkArgs(int argc, char **argv);
+
+/* DESCRIPTION: checkArgs() can be used to validate the command-line arguments
+ *              passed by the user.
+ * ARGUMENTS:   argc, represents the number of command line paramers passed to the
+ *              program at runtime and argv is an array containing the character strings
+ *              representing those parameters.
+ * POSTCONDITIONS: May call quit() to terminate program operation if the user
+ *              has provided an invalid map file path.*/
+
+
+void play(struct Windows *gameInterface, struct Map *map);
+
+
+/* DESCRIPTION: play() calls all functions that involve player unit
+ *              selection, and game simulation.
+ * ARGUMENTS:   Game interface struct that holds neccessary windows (struct
+ *              Windows gameInterface). */
 
 #endif //RIOT_EXEC
