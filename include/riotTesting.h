@@ -38,7 +38,11 @@ DESCRIPTION: Function that writes information to a file for debugging purposes
 ARGUMENTS: The message
 */
 
+void printCoordinates(int position);
 
+/* DESCRIPTION: test position to coordinate function
+   ARGUMENTS: 	position to be converted to coordinate
+*/ 
 void colorTest();
 
 void testingHelp();
