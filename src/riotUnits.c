@@ -201,11 +201,11 @@ struct Inmate *createInmate(enum InmateType type) {
             break;
 
         case BRUISER:
-            unit->currentHealth = unit->maxHealth = 16;
+            unit->currentHealth = unit->maxHealth = 28;
             unit->rep = REP_BRUISER;
             unit->speed = 3;
             unit->maxSpeed = unit->speed;
-            unit->panic = 6;
+            unit->panic = 4;
             unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
@@ -245,7 +245,7 @@ struct Inmate *createInmate(enum InmateType type) {
             unit->rep = 20;
             unit->speed = 1;
             unit->maxSpeed = unit->speed;
-            unit->panic = 4;
+            unit->panic = 6;
             unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
@@ -325,7 +325,7 @@ struct Guard *createGuard(enum GuardType type) {
         case DOGS:
             guard->damage = 1;
             guard->range = 3;
-            guard->cooldown = 2;
+            guard->cooldown = 3;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = AOE;
             guard->accuracy = 1;
@@ -932,7 +932,7 @@ struct UnitList *getGuards(struct UnitList *guards, struct Map map) {
             if (isalpha(mapChar)) {
                 guard = createGuard(mapChar);
                 guard->position = position;
-                enqueue(guards, guard);
+                enqueue(guards, guard); 
             }
         }
     }
