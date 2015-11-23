@@ -24,7 +24,10 @@
 
 /* Data Types */
 
-struct Windows {
+struct Windows {/*
+
+Breaks up the screen into window sections*/
+
     WINDOW *menu;
     WINDOW *body;
     WINDOW *header;
@@ -32,7 +35,10 @@ struct Windows {
 };
 
 
-struct Dialog{
+struct Dialog{/*
+
+Struct of dialog for each result */
+
     char textIntro[MAX_TEXT];
     char textWin[MAX_TEXT];
     char textLose[MAX_TEXT];
@@ -83,7 +89,10 @@ enum InmateType {/*
     DOCTOR = 'd'
 };
 
-enum InmateRep{
+enum InmateRep{/*
+
+The cost to send each unit onto the path*/
+
     REP_PROTAGONIST = 0,
     REP_HOMEBOY = 10,
     REP_BRUISER = 15,
@@ -150,39 +159,9 @@ enum GameMode {/*
 };
 
 
-/* Function Prototypes */
-void quit(char *message);/*
-
-DESCRIPTION: quit() is called as a method for the program to gracefully return
- to the command prompt when facing undefined behaviour or user input. Will
- exit curses mode if it is activated and provide the user with a message as
+/*DESCRIPTION: Will exit curses mode if it is activated and provide the user with a message as
  to the nature of the error.
-
-ARGUMENTS: A string with the message to be printed to stdout.
-
-POSTCONDITIONS: Program termination.*/
-
-
-void checkArgs(int argc, char **argv);/*
-
-DESCRIPTION: checkArgs() can be used to validate the command-line arguments
- passed by the user.
-
-ARGUMENTS: argc, represents the number of command line paramers passed to the
- program at runtime and argv is an array containing the character strings
- representing those parameters.
-
-POSTCONDITIONS: May call quit() to terminate program operation if the user
- has provided an invalid map file path.*/
-
-
-void play(struct Windows *gameInterface,struct Map* map);/*
-
-DESCRIPTION: play() calls all functions that involve player unit selection, and game simulation.
-
-ARGUMENTS: Game interface struct that holds neccessary windows (struct Windows gameInterface).
-           Map struct which holds neccessary map information (struct Map map).
-
-*/
+  ARGUMENTS: -A string with the message to be printed to stdout (char *message).*/
+void quit(char *message);
 
 #endif //RIOT_EXEC
