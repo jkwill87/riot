@@ -1,8 +1,13 @@
 # Testing
 
-RiotUnits.c Testing
+## Testing Overview
 
-riotUnits.c is made up of three primary componenets. These being inmateMove(),guardAttack(), and simulate(). The majority of testing for these functions was performed inside the riotTesting.c file where test cases were used to improve code robustness and functionality.
+The *RIOT* Makefile produces two targets, `riot` and `test`. As its name suggests, `test` performs automated test cases that where used to guide development. Not to be confused with testing, the `riot` executable also allows for debug mode when compiled with the `make -D_DEBUG`, which allows the user or developer to unlock all levels from the game's start.
+
+
+## Units Testing
+
+Riot Units is made up of three primary components: inmateMove(), guardAttack(), and simulate(). Testing of these functions is performed inside the riotTesting.c file where test cases were used to improve code robustness and functionality.
 
 Inmates moving was tested by creating an arbitrary path and inmate list. Debug statements were printed to the screen to ensure that inmate positions changed as they were supposed to. Inmates were added with adjacent positions to ensure a unit is not moving to the next tile when it is occupied.
 
@@ -16,17 +21,21 @@ if the game is run with an optional parameter for the assets folder and the give
 Valgrind was used to test for memory leaks.
 
 
-RiotUI.c Testing
+## UI Testing
 
-A majority of testing on for the UI was verifying that certain characters and colors work.
+A majority of testing on for the UI was verifying that certain characters and colours work.
 
-Finding colors to use:
-running './bin/test -colorDump', gets the max dimensions of the current terminal window and prints all foreground/background color combinations that will fit in the current specifications. Color beyond 15 for foreground created sporatic results. A similar effect was observed for background colors beyond 7. Also colors beyond this range varied drastically between machines and terminals. This forced us to limit our colors to the more narror range of colors we used. This also impacted earlier design descisions such as the colors we used to display health. The color dump test showed that there was no orange color, and thus health colors were changed from Green->Yellow->Orange->Red to Green->Yellow->Red->Purple. 
+Finding colours to use:
+running './bin/test -colourDump', gets the max dimensions of the current terminal window and prints all foreground/background colour combinations that will fit in the current specifications. colour beyond 15 for foreground created sporadic results. A similar effect was observed for background colours beyond 7. Also colours beyond this range varied drastically between machines and terminals. This forced us to limit our colours to the more narrower range of colours we used. This also impacted earlier design decisions such as the colours we used to display health. The colour dump test showed that there was no orange colour, and thus health colours were changed from Green->Yellow->Orange->Red to Green->Yellow->Red->Purple. 
 
-running './bin/test -color', is a more targeted test of colors intended to be used in the program. This was less for functionality but more for gameplay purposes to make sure all color combinations were both legible and not overly distracting. colors tested here were also for features that never made it to the final game, such as damaged units and futher color effects like visualizing slows and freezing. These were cut as the screen would appear confusing and cluttered with so many different colors displaying
+running './bin/test -color', is a more targeted test of colours intended to be used in the program. This was less for functionality but more for game play purposes to make sure all colour combinations were both legible and not overly distracting. colours tested here were also for features that never made it to the final game, such as damaged units and further colour effects like visualizing slows and freezing. These were cut as the screen would appear confusing and cluttered with so many different colours displaying
 
-additional testing for UI was done in during game excecution. This was for simpler issues such as adding and removing units to the game queue, selecting and unlocking levels, adding too many units, getting proper charges and refunds for rep used when preforming various add/remove functions. going back and forth between level and the main menu, and replaying levels in odd or peculiar orders.
+additional testing for UI was done in during game execution. This was for simpler issues such as adding and removing units to the game queue, selecting and unlocking levels, adding too many units, getting proper charges and refunds for rep used when preforming various add/remove functions. going back and forth between level and the main menu, and replaying levels in odd or peculiar orders.
 
 int * getCoordinate(int position):
- "getCoordinate" is used to convert a single value integer to a pair of coordinates. This function is tested using the "printCoordinate" function. the test integer is passed in and is run through the "getCoordinate" function. The output x and y value of the function are then printed to the command line
+"getCoordinate" is used to convert a single value integer to a pair of coordinates. This function is tested using the "printCoordinate" function. the test integer is passed in and is run through the "getCoordinate" function. The output x and y value of the function are then printed to the command line
 
+
+## Map Testing
+
+Map testing can be activated by passing the `-map` flag to the `test` binary target. This parameter will print map layouts in the same way that the game will interpret them, line by line. This allows for the detection of any formatting inconsistencies which can result in undefined behaviour during game execution.
