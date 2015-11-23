@@ -68,7 +68,6 @@ int main(int argc, char **argv) {
                 copyMap(&currentMap, &mapCopy);
             }
 
-
             do {
                 /* Prompt user for unit selection */
                 drawInmateSelection(&windows, &mapCopy, &inmates, &guards,
@@ -85,7 +84,6 @@ int main(int argc, char **argv) {
                     drawText(&windows, dialog[level], LOSE, &mapCopy);
                 }
 
-
             }while (gameMode==UNDECIDED);
             getchar();
             gameMode=CONTINUE;
@@ -94,8 +92,10 @@ int main(int argc, char **argv) {
 
     /* Free memory, exit */
     uiFree(&windows);
-//    destroyPath(&path);
-    quit("Thanks for playing.\n");
+    destroyPath(&path);
+    destroyList(&inmates);
+    destroyList(&guards);
+    quit("Thanks for playing");
     return 0;
 }
 

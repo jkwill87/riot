@@ -17,7 +17,6 @@ void destroyList(struct UnitList *list) {
         list->count--;
         list->head = tempNode;
     }
-    free(list);
 
     return;
 }
