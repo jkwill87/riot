@@ -440,7 +440,7 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
                 removeUnit(&deployed, i);
             }
             /* Remove exited inmates from the board */
-            if (((struct Inmate *) inmate->unit)->reachedEnd) {
+            else if (((struct Inmate *) inmate->unit)->reachedEnd) {
                 if (((struct Inmate*) inmate->unit)->type == 'p')
                     winCondition=WIN;
                 map->panicCur += ((struct Inmate *) inmate->unit)->panic;
