@@ -493,7 +493,7 @@ void drawLevel(struct Windows *windows, struct Map *map,
     for (i = 0; i < strlen(map->inmates); i++) {
         if (map->inmates[i]==PROTAGONIST){
             strcat(protName, getInmateName(map->inmates[i]));
-            mvwaddstr(windows->footer, 2,1,protName);
+//            mvwaddstr(windows->footer, 2,1,protName);
         }
         else{
             strcat(output, getInmateName(map->inmates[i]));
