@@ -50,6 +50,9 @@ RIOT! intends to switch the roles of a traditional tower defence game, placing t
 * (11/22/2015) Lunatic panic generation lowered (8->6)
 * (11/22/2015) Speedy and Cutie HP buffed
 * (11/22/2015) Bruiser speed increased(4->3)
+* (11/22/2015) Sharpshooter damage and cooldown increased
+* (11/22/2015) Dog damage decreased and cooldown decreased
+* (11/22/2015) Nerfed Level 3
 
 ## Contributors
 
