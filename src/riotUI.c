@@ -758,5 +758,6 @@ char *getInmateName(char ch) {
 //            strcpy(returnString,"FAIL");
 //            return returnString
             quit("FAIL");
+            return "FAIL?";
     }
 }
