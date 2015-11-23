@@ -350,9 +350,9 @@ struct Guard *createGuard(enum GuardType type) {
             break;
 
         case SHARP:
-            guard->damage = 6;
+            guard->damage = 12;
             guard->range = 10;
-            guard->cooldown = 12;
+            guard->cooldown = 20;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = END;
             guard->accuracy = 1;
