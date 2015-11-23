@@ -435,7 +435,6 @@ void drawMap(WINDOW *body, struct Map *map) {
 
 void drawLevel(struct Windows *windows, struct Map *map,
     struct UnitList *guards) {
-    char protName[20];
     char output[100];
     int i;
     int y;
@@ -492,7 +491,6 @@ void drawLevel(struct Windows *windows, struct Map *map,
     strcpy(output, "");
     for (i = 0; i < strlen(map->inmates); i++) {
         if (map->inmates[i]==PROTAGONIST){
-            strcat(protName, getInmateName(map->inmates[i]));
             mvwprintw(windows->footer, 2,1,"[p]rotagonist");
         }
         else{
@@ -759,9 +757,7 @@ char *getInmateName(char ch) {
             sprintf(returnString, "[d]octor(%d)",REP_DOCTOR);
             return returnString;
         default:
-//            strcpy(returnString,"FAIL");
-//            return returnString
-            quit("FAIL");
-            return "FAIL?";
+            strcpy(returnString,"FAIL");
+            return returnString;
     }
 }
