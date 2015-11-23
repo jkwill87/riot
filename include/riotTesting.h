@@ -22,11 +22,27 @@ void guardTest();
 void unitsPlay(char *argument);
 
 
+/* DESCRIPTION: tests all colors that can fit on a screen*/
+void colorDumpTest ();
+
+
 /* DESCRIPTION: Tests the map
  * ARGUMENTS: The location of the directory */
-void mapTest(char *loadDir);
+void mapTest(char *loadDir);/*
 
 
+void writeToFile(char *message);/*
+
+DESCRIPTION: Function that writes information to a file for debugging purposes
+
+ARGUMENTS: The message
+*/
+
+void printCoordinates(int position);
+
+/* DESCRIPTION: test position to coordinate function
+   ARGUMENTS: 	position to be converted to coordinate
+*/ 
 void colorTest();
 
 void testingHelp();

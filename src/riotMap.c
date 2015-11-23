@@ -29,13 +29,14 @@ void parseMap(char *loadDir, struct MapList *mapList, struct Dialog *dialog) {
 
     /* Use map directory passed as argument if provided, else cwd */
     if (!loadDir) {
+
         loadDir = getcwd(loadDir, PATH_MAX);
         strcat(loadDir, "/assets");
         useCwd = true;
     }
 
     /* Attempt to iterate through files in loadDir */
-    if ((directory = opendir(loadDir)))
+    if ((directory = opendir(loadDir))){
         while ((entry = readdir(directory))) {
             sprintf(path, "%s/%s", loadDir, entry->d_name);
 
@@ -99,11 +100,13 @@ void parseMap(char *loadDir, struct MapList *mapList, struct Dialog *dialog) {
             mapList->count++;
             firstRun = false;
         }
+    } else quit("Assets directory not found");
 
     /* Clean up memory */
     closedir(directory);
     regfree(&riotExt);
     if (useCwd) free(loadDir); //getcwd calls malloc, if used must free loadDir
+
     /* Terminate if no map files where found */
     if (firstRun) {
         quit("No map files found");
@@ -279,7 +282,6 @@ void destroyPath(struct Path *path) {
             path->count--;
         }
     }
-    free(path);
 }
 
 
