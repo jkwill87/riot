@@ -43,8 +43,16 @@ RIOT! intends to switch the roles of a traditional tower defence game, placing t
 
 ## Changelog
 
-* (11/18/2015)Unit speeds changed from random values to powers of 2 (1,2,4,8..)
-* (11/20/2015)Breaking down doors reduced from 5 ticks to 4 ticks
+* (11/18/2015) Unit speeds changed from random values to powers of 2 (1,2,4,8..)
+* (11/20/2015) Breaking down doors reduced from 5 ticks to 4 ticks
+* (11/22/2015) Nerfed Level 7
+* (11/22/2015) Attorney HP lowered (30->26)
+* (11/22/2015) Lunatic panic generation lowered (8->6)
+* (11/22/2015) Speedy and Cutie HP buffed
+* (11/22/2015) Bruiser speed increased(4->3)
+* (11/22/2015) Sharpshooter damage and cooldown increased
+* (11/22/2015) Dog damage decreased and cooldown decreased
+* (11/22/2015) Nerfed Level 3
 
 ## Contributors
 

@@ -24,7 +24,10 @@
 
 /* Data Types */
 
-struct Windows {
+struct Windows {/*
+
+Breaks up the screen into window sections*/
+
     WINDOW *menu;
     WINDOW *body;
     WINDOW *header;
@@ -32,7 +35,11 @@ struct Windows {
 };
 
 
-struct Dialog {
+
+struct Dialog{
+
+    /* Struct of dialog for each result */
+
     char textIntro[MAX_TEXT];
     char textWin[MAX_TEXT];
     char textLose[MAX_TEXT];
@@ -83,7 +90,10 @@ enum InmateType {
 };
 
 
-enum InmateRep {
+enum InmateRep{/*
+
+The cost to send each unit onto the path*/
+
     REP_PROTAGONIST = 0,
     REP_HOMEBOY = 10,
     REP_BRUISER = 15,
@@ -140,7 +150,7 @@ enum GameMode {
     /* GameMode is a mnemonic which can be used to equivocate game modes with
      * the associated keypresses used to inititate them.*/
 
-        MENU = 'm',
+    MENU = 'm',
     NEW = 'n',
     CONTINUE = 'c',
     WIN = 'w',

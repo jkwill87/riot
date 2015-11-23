@@ -84,8 +84,10 @@ int main(int argc, char **argv) {
                     drawText(&windows, dialog[level], LOSE, &mapCopy);
                 }
 
-            } while (gameMode == UNDECIDED);
-            gameMode = CONTINUE;
+
+            }while (gameMode==UNDECIDED);
+            getchar();
+            gameMode=CONTINUE;
         }
     }
 
