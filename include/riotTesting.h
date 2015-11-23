@@ -53,6 +53,8 @@ ARGUMENTS:
 void unitsPlay(char *argument);
 
 
+void colorDumpTest ();
+
 void mapTest(char *loadDir);/*
 
 DESCRIPTION: Tests the map

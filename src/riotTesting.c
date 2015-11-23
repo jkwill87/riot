@@ -19,6 +19,7 @@ int main(int argc, char **argv) {
         else if (!strcmp(argv[i], "-unitmove"))
             unitsMove(argv[2] ? argv[2] : NULL);
         else if (!strcmp(argv[i], "-color")) colorTest();
+        else if (!strcmp(argv[i], "-colorDump")) colorDumpTest();
 //        else if (!strcmp(argv[i], "-logo")) logoTest();
         else if (!strcmp(argv[i], "-play")) unitsPlay(argv[2]);
         else printf("Unknown command (%s)\n", argv[i]);
@@ -29,6 +30,34 @@ int main(int argc, char **argv) {
 
 }
 
+
+void colorDumpTest (){
+    initscr();
+    start_color();
+    int maxx, maxy;
+    int z=0;
+    int y=0;
+    int x=0;
+    int a=0;
+    int b=1;
+    getmaxyx(stdscr,maxy,maxx);
+    for (z=0;z<maxx;z++)
+    {
+        for (a=0;a<maxy;a++)
+        {
+            y=a;
+            init_pair(b,z,a);
+            attron (COLOR_PAIR(b));
+            mvprintw(y,x,"z:%d,a:%d",z,a);
+            b++;
+        }
+        x=x+10;
+    }
+    refresh();
+    getch();
+    endwin();
+    return;
+}
 
 void printPath(struct Path *path) {
     struct TileNode *nextNode;
@@ -96,6 +125,9 @@ void colorTest() {
     init_pair(RED, RED, COLOR_BLACK);
     init_pair(PURPLE, PURPLE, COLOR_BLACK);
     init_pair(DAMAGED, COLOR_BLACK, DAMAGED);
+    init_pair(24, COLOR_BLACK, GREEN);
+    init_pair(25, COLOR_BLACK, YELLOW);
+    init_pair(26, COLOR_BLACK, RED);
     init_pair(20, GREEN, DAMAGED);
     init_pair(21, YELLOW, DAMAGED);
     init_pair(22, RED, DAMAGED);
@@ -109,15 +141,21 @@ void colorTest() {
     attron (COLOR_PAIR(PURPLE));
     mvprintw(3, 0, "Purple test");
     attron (COLOR_PAIR(DAMAGED));
-    mvprintw(4,0, "Damaged test Foreground: %d Background: %d\t",COLOR_BLACK,DAMAGED);
+    mvprintw(4,0, "Damaged test Foreground: %d Background: %d\t\t",COLOR_BLACK,DAMAGED);
     attron (COLOR_PAIR(20));
-    mvprintw(5,0, "Damaged test Foreground: %d Background: %d\t",GREEN,DAMAGED);
+    mvprintw(5,0, "Damaged test Foreground: %d Background: %d\t\t",GREEN,DAMAGED);
     attron (COLOR_PAIR(21));
-    mvprintw(6,0, "Damaged test Foreground: %d Background: %d\t",YELLOW,DAMAGED);
+    mvprintw(6,0, "Damaged test Foreground: %d Background: %d\t\t",YELLOW,DAMAGED);
     attron (COLOR_PAIR(22));
-    mvprintw(7,0, "Damaged test Foreground: %d Background: %d\t",RED,DAMAGED);
+    mvprintw(7,0, "Damaged test Foreground: %d Background: %d\t\t",RED,DAMAGED);
     attron (COLOR_PAIR(23));
-    mvprintw(8,0, "Damaged test Foreground: %d Background: %d\t",PURPLE,DAMAGED);
+    mvprintw(8,0, "Damaged test Foreground: %d Background: %d\t\t",PURPLE,DAMAGED);
+    attron (COLOR_PAIR(24));
+    mvprintw(9,0, "Guard can attack\tForeground: %d Background: %d\t",COLOR_BLACK,GREEN);
+    attron (COLOR_PAIR(25));
+    mvprintw(10,0,"Guard cant att yet\tForeground: %d Background: %d\t",COLOR_BLACK,YELLOW);
+    attron (COLOR_PAIR(26));
+    mvprintw(11,0,"Guard cannot attack\tForeground: %d Background: %d\t",COLOR_BLACK,RED);
     refresh();
     getchar();
     endwin();

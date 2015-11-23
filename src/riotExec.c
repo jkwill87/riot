@@ -74,7 +74,8 @@ int main(int argc, char **argv) {
                 gameMode = simulate(&windows, &guards, &inmates, &path,
                                       &mapCopy);
                 if (gameMode == WIN) {
-                    progress++;
+                    if (level == progress)
+                        progress++;
                     drawText(&windows, dialog[level], WIN, &mapCopy);
                 } else if (gameMode == LOSE) {
                     drawText(&windows, dialog[level], LOSE, &mapCopy);
