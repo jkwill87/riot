@@ -203,7 +203,7 @@ struct Inmate *createInmate(enum InmateType type) {
         case BRUISER:
             unit->currentHealth = unit->maxHealth = 16;
             unit->rep = REP_BRUISER;
-            unit->speed = 4;
+            unit->speed = 3;
             unit->maxSpeed = unit->speed;
             unit->panic = 6;
             unit->doubleDamage = 0;
@@ -240,7 +240,7 @@ struct Inmate *createInmate(enum InmateType type) {
             break;
 
         case SPEEDY:
-            unit->currentHealth = unit->maxHealth = 10;
+            unit->currentHealth = unit->maxHealth = 18;
             unit->rep = REP_SPEEDY;
             unit->rep = 20;
             unit->speed = 1;
@@ -254,7 +254,7 @@ struct Inmate *createInmate(enum InmateType type) {
             break;
 
         case CUTIE:
-            unit->currentHealth = unit->maxHealth = 20;
+            unit->currentHealth = unit->maxHealth = 25;
             unit->rep = REP_CUTIE;
             unit->speed = 4;
             unit->maxSpeed = unit->speed;
