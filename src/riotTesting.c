@@ -60,7 +60,7 @@ void printGuardList(struct UnitList *guardList) {
         printf("Range: %d\n", guard->range);
         printf("Cool Down: %d\n", guard->cooldown);
         printf("\n");
-        if (nextNode->next != NULL){
+        if (nextNode->next != NULL) {
             nextNode = nextNode->next;
         }
         guard = (struct Guard *) nextNode->unit;
@@ -80,7 +80,7 @@ void printInmateList(struct UnitList *inmateList) {
         printf("Inmate Type : %c\n", inmate->type);
         printf("Location: %d\n", inmate->position);
         printf("\n");
-        if (nextNode->next != NULL){
+        if (nextNode->next != NULL) {
             nextNode = nextNode->next;
         }
         inmate = (struct Inmate *) nextNode->unit;
@@ -102,7 +102,8 @@ void colorTest() {
     init_pair(22, RED, DAMAGED);
     init_pair(23, PURPLE, DAMAGED);
     attron (COLOR_PAIR(GREEN));
-    mvprintw(0, 0, "Green test Foreground: %d Background: %d",GREEN,COLOR_BLACK);
+    mvprintw(0, 0, "Green test Foreground: %d Background: %d", GREEN,
+        COLOR_BLACK);
     attron (COLOR_PAIR(YELLOW));
     mvprintw(1, 0, "Yellow test");
     attron (COLOR_PAIR(RED));
@@ -110,15 +111,20 @@ void colorTest() {
     attron (COLOR_PAIR(PURPLE));
     mvprintw(3, 0, "Purple test");
     attron (COLOR_PAIR(DAMAGED));
-    mvprintw(4,0, "Damaged test Foreground: %d Background: %d\t",COLOR_BLACK,DAMAGED);
+    mvprintw(4, 0, "Damaged test Foreground: %d Background: %d\t", COLOR_BLACK,
+        DAMAGED);
     attron (COLOR_PAIR(20));
-    mvprintw(5,0, "Damaged test Foreground: %d Background: %d\t",GREEN,DAMAGED);
+    mvprintw(5, 0, "Damaged test Foreground: %d Background: %d\t", GREEN,
+        DAMAGED);
     attron (COLOR_PAIR(21));
-    mvprintw(6,0, "Damaged test Foreground: %d Background: %d\t",YELLOW,DAMAGED);
+    mvprintw(6, 0, "Damaged test Foreground: %d Background: %d\t", YELLOW,
+        DAMAGED);
     attron (COLOR_PAIR(22));
-    mvprintw(7,0, "Damaged test Foreground: %d Background: %d\t",RED,DAMAGED);
+    mvprintw(7, 0, "Damaged test Foreground: %d Background: %d\t", RED,
+        DAMAGED);
     attron (COLOR_PAIR(23));
-    mvprintw(8,0, "Damaged test Foreground: %d Background: %d\t",PURPLE,DAMAGED);
+    mvprintw(8, 0, "Damaged test Foreground: %d Background: %d\t", PURPLE,
+        DAMAGED);
     refresh();
     getchar();
     endwin();
@@ -170,16 +176,16 @@ void unitsMove(char *loadDir) {
     // enqueue(inmates, inmateUnit);
     // printf("Adding an inmate to the list (%d)\n", inmates->count);
     // printf("Inmate position is: %f\n-----\n", inmateUnit->position);
-    for (int i=0;i<10;i++){
+    for (int i = 0; i < 10; i++) {
         inmateUnit = createInmate(HOMEBOY);
-        inmateUnit->position = i*20;
+        inmateUnit->position = i * 20;
         enqueue(inmates, inmateUnit);
         printf("Enqueued!\n");
         printInmateList(inmates);
 
     }
-    for (int i=0;i<4;i++){
-        removeUnit(inmates,5);
+    for (int i = 0; i < 4; i++) {
+        removeUnit(inmates, 5);
         printf("Removed!\n");
         printInmateList(inmates);
     }
@@ -189,18 +195,17 @@ void unitsMove(char *loadDir) {
     //simulate(&gameInterface,guards, inmates, path);
     putchar('\n');
 
-   /* while (inmates->count) {
-        //printf("Removing units (%d)\n", inmates->count);
-        rmUnit(dequeue(inmates));
-    }
-    //putchar('\n');*/
+    /* while (inmates->count) {
+         //printf("Removing units (%d)\n", inmates->count);
+         rmUnit(dequeue(inmates));
+     }
+     //putchar('\n');*/
 
     destroyList(inmates);
 }
 
 
-
-void unitsPlay(char *argument){
+void unitsPlay(char *argument) {
 
 //    enum GameMode gameMode;
 //struct Windows windows;
@@ -211,7 +216,7 @@ void unitsPlay(char *argument){
     struct UnitList guards;
 //    struct UnitNode *unitNode;
     struct Path path;
-    int level=3;
+    int level = 3;
 
     /* Parse map files */
     parseMap(argument, &mapList, dialog);
@@ -229,11 +234,11 @@ void unitsPlay(char *argument){
     //        // level = levelSelect(&windows, &mapList, progress);
     //     }
 
-        /* Select current map */
-        map = &(mapList).level[level];
+    /* Select current map */
+    map = &(mapList).level[level];
 
-        getGuards(&guards, *map);
-        getPath(&path, *map);
+    getGuards(&guards, *map);
+    getPath(&path, *map);
     //     inmates.count = 0;
     //     inmates.head = NULL;
     //     inmates.tail = NULL;
@@ -273,7 +278,7 @@ void mapTest(char *loadDir) {
     struct Path path;
     struct UnitList guardList;
     struct UnitList *inmates;
-    struct Inmate * inmate;
+    struct Inmate *inmate;
     printf("Riot Levels Found %d:\n\n", testList->count);
 
     inmates = malloc(sizeof(struct UnitList));
@@ -299,10 +304,11 @@ void mapTest(char *loadDir) {
         getPath(&path, current);
         getGuards(&guardList, current);
         inmate = createInmate('s');
-        inmate->position = ((struct Guard*)getHead(&guardList)->unit)->position + 2;
-        enqueue(inmates,inmate);
-       // printf("\n\nGuard list size after function %d\n\n");
-        guardAttack(&guardList,inmates,path);
+        inmate->position =
+            ((struct Guard *) getHead(&guardList)->unit)->position + 2;
+        enqueue(inmates, inmate);
+        // printf("\n\nGuard list size after function %d\n\n");
+        guardAttack(&guardList, inmates, path);
         printf("LEVEL %d: \n\n", i);
 
         printf("Name: %s\n", current.name);
@@ -314,7 +320,7 @@ void mapTest(char *loadDir) {
         }
 
 //        printPath(path);
-  //      printGuardList(guardList);
+        //      printGuardList(guardList);
         printf("\n\n");
 
         //destroyList(&guardList);

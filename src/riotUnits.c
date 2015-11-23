@@ -5,13 +5,7 @@
 #include "riotUnits.h"
 #include "riotUI.h"
 
-void writeToFile(char *string){
-    FILE *file;
 
-    file = fopen("temp.txt","a+");
-
-    fprintf(file,"%s\n",string);
-}
 
 void destroyList(struct UnitList *list) {
 
@@ -28,6 +22,7 @@ void destroyList(struct UnitList *list) {
     return;
 }
 
+
 struct UnitNode *getNext(struct UnitNode *list) {
     return list ? list->next : NULL;
 }
@@ -41,6 +36,7 @@ struct UnitNode *getHead(struct UnitList *listIn) {
 struct UnitNode *getTail(struct UnitList *listIn) {
     return listIn ? listIn->tail : NULL;
 }
+
 
 int getLength(struct UnitList *listIn) {
     return listIn ? listIn->count : (int) -1;
@@ -72,6 +68,7 @@ struct UnitNode *enqueue(struct UnitList *queue, void *unit) {
 
 }
 
+
 void *dequeue(struct UnitList *queue) {
 
     struct UnitNode *tempNode;
@@ -90,7 +87,9 @@ void *dequeue(struct UnitList *queue) {
     return request;
 }
 
+
 void removeUnit(struct UnitList *list, int position) {
+
     struct UnitNode *temp, *target;
 
     /*If a remove is requested from a position not within
@@ -110,14 +109,14 @@ void removeUnit(struct UnitList *list, int position) {
             list->head = NULL;
             list->tail = NULL;
         }
-    /*Remove tail from list and free memory*/
-    } else if (position  == list->count - 1) {
+        /*Remove tail from list and free memory*/
+    } else if (position == list->count - 1) {
         temp = list->tail;
         list->tail = list->tail->prev;
         list->tail->next = NULL;
         free(temp);
-    /*Remove node from list that is not the head or tail
-       and free memory*/
+        /*Remove node from list that is not the head or tail
+           and free memory*/
     } else {
         target = moveTo(position - 1, list);
         temp = target->next;
@@ -128,13 +127,15 @@ void removeUnit(struct UnitList *list, int position) {
     list->count--;
 }
 
+
 struct UnitNode *moveTo(int position, struct UnitList *list) {
+
     struct UnitNode *target;
     target = list->head;
 
-    /*Return node at position within a list*/
+    /* Return node at position within a list */
     for (int i = 0; i < position - 1; i++) {
-        if (target->next != NULL){
+        if (target->next != NULL) {
             target = target->next;
         }
     }
@@ -142,11 +143,12 @@ struct UnitNode *moveTo(int position, struct UnitList *list) {
     return target;
 }
 
+
 struct UnitNode *pop(struct UnitList *stack) {
 
     struct UnitNode *tempNode, *request = NULL;
 
-    /*Remove top of stack*/
+    /* Remove top of stack */
     if (stack->count) {
         tempNode = stack->head->next;
         request = stack->head;
@@ -170,8 +172,8 @@ struct Inmate *createInmate(enum InmateType type) {
     unit->dead = FALSE;
     unit->reachedEnd = FALSE;
 
-    /*Create inmate based on the type that is passed in to the 
-      function and initialize its values, than return the Inmate*/
+    /* Create inmate based on the type that is passed in to the function and
+     * initialize its values, than return the Inmate */
     switch (type) {
 
         case PROTAGONIST:
@@ -308,8 +310,8 @@ struct Guard *createGuard(enum GuardType type) {
     guard->type = type;
     guard->position = -1;
 
-    /*Create Guard based on the type that is passed in to the 
-      function and initialize its values, than return the Guard*/
+    /* Create Guard based on the type that is passed in to the function and
+     * initialize its values, than return the Guard*/
 
     switch (type) {
 
@@ -386,11 +388,11 @@ struct Guard *createGuard(enum GuardType type) {
 
 
 enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
-                       struct UnitList *queued, struct Path *path,
-                       struct Map *map) {
+    struct UnitList *queued, struct Path *path,
+    struct Map *map) {
 
     struct UnitList deployed;
-    struct UnitNode *inmate,*nextUnit;
+    struct UnitNode *inmate, *nextUnit;
     int elapsed = 1;
     struct timespec delay;
     enum GameMode winCondition = UNDECIDED; //TODO placeholder, revise
@@ -403,9 +405,9 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
 
     /* Deploy first unit */
     nextUnit = getHead(queued);
-    for (int i=0;i<queued->count;i++){
-        ((struct Inmate*)nextUnit->unit)->currentTile = path->first;
-        if (getNext(nextUnit) != NULL){
+    for (int i = 0; i < queued->count; i++) {
+        ((struct Inmate *) nextUnit->unit)->currentTile = path->first;
+        if (getNext(nextUnit) != NULL) {
             nextUnit = getNext(nextUnit);
         }
     }
@@ -416,18 +418,16 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
         /* Process inmate moves (every other pass) */
         if (!(elapsed % 4)) inmateMove(&deployed, elapsed);
 
-       /* Deploy next unit */
-        if (queued->count >0 && !((elapsed) % (REL_DELAY*4))){
+        /* Deploy next unit */
+        if (queued->count > 0 && !((elapsed) % (REL_DELAY * 4))) {
             enqueue(&deployed, dequeue(queued));
         }
 
         /* Process guard attacks (every other pass) */
-        /*else*/ if (!(elapsed %5))
-        {
-            updateGuardAccuracy(guards, map->panicCur, map->panicMax);
+        /*else*/ if (!(elapsed % 5)) {
+            updateAccuracy(guards, map->panicCur, map->panicMax);
             guardAttack(guards, &deployed, *path);
-        } 
-
+        }
 
 
         inmate = getHead(&deployed);
@@ -435,18 +435,19 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
 
             /* Remove dead inmates from the board */
             if (((struct Inmate *) inmate->unit)->dead) {
-                if (((struct Inmate*) inmate->unit)->type == 'p')
-                    winCondition=LOSE;
+                if (((struct Inmate *) inmate->unit)->type == PROTAGONIST)
+                    winCondition = LOSE;
                 removeUnit(&deployed, i);
             }
+
             /* Remove exited inmates from the board */
             else if (((struct Inmate *) inmate->unit)->reachedEnd) {
                 if (((struct Inmate*) inmate->unit)->type == 'p')
                     winCondition=WIN;
                 map->panicCur += ((struct Inmate *) inmate->unit)->panic;
                 removeUnit(&deployed, i);
-                updateGuardAccuracy(guards, map->panicCur, map->panicMax);
-                updateHeader(gameInterface->header,map);
+                updateAccuracy(guards, map->panicCur, map->panicMax);
+                updateHeader(gameInterface->header, map);
             }
             if (inmate->next) inmate = inmate->next;
         }
@@ -458,7 +459,7 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
         elapsed++;
 
         wrefresh(gameInterface->body);
-     //   getchar();
+        //   getchar();
     } while (deployed.count > 0);
 
     return winCondition;
@@ -467,115 +468,129 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
 
 void inmateMove(struct UnitList *inmates, int elapsed) {
 
-    struct UnitNode *nextUnit,*otherUnit;
-    struct Inmate *nextInmate,*otherInmate;
-    bool moveUnit,inmateSlowed;
-    
+    struct UnitNode *nextUnit, *otherUnit;
+    struct Inmate *nextInmate, *otherInmate;
+    bool moveUnit, inmateSlowed;
+
     nextUnit = getHead(inmates);
-    nextInmate = nextUnit->unit; 
+    nextInmate = nextUnit->unit;
     nextInmate->position = nextInmate->currentTile->location;
 
     /* Iterate through list of inmates */
-    for (int i=0;i<inmates->count;i++){
+    for (int i = 0; i < inmates->count; i++) {
         moveUnit = true;
         inmateSlowed = false;
 
         otherUnit = getHead(inmates);
         otherInmate = otherUnit->unit;
-        /*If the unit is a healer and the cooldown is greater than 0 than decrement it*/
-        if (nextInmate->healCooldown > 0 && nextInmate->healer == true){
+
+        /* If the unit is a healer and the cooldown is greater than 0 than
+         * decrement it*/
+        if (nextInmate->healCooldown > 0 && nextInmate->healer == true) {
             nextInmate->healCooldown -= 1;
         }
-        /*If the inmate is asleep than do not move and decrement the counter*/
-        if (nextInmate->sleepCounter > 0){
+
+        /* If the inmate is asleep than do not move and decrement the counter*/
+        if (nextInmate->sleepCounter > 0) {
             nextInmate->sleepCounter -= 1;
             moveUnit = false;
         }
-        /*If the inmate is slowed than decrement slowed counter*/
-        if (nextInmate->slowedCounter > 0){
+
+        /* If the inmate is slowed than decrement slowed counter*/
+        if (nextInmate->slowedCounter > 0) {
             nextInmate->slowedCounter -= 1;
             inmateSlowed = true;
         }
-        /*Iterate through list of inamtes that are being compared*/
-        for (int j=0;j<inmates->count;j++){
-            /*If another inmate exists with the location of the tile the current
-              inmate is going to move to, set move to false and break*/
-            if (nextInmate->currentTile->next->location == otherInmate->currentTile->location){
+
+        /* Iterate through list of inamtes that are being compared*/
+        for (int j = 0; j < inmates->count; j++) {
+            /* If another inmate exists with the location of the tile the
+             * current inmate is going to move to, set move to false and break*/
+            if (nextInmate->currentTile->next->location ==
+                otherInmate->currentTile->location) {
                 moveUnit = false;
-                /*If next inmate is a doctor and cooldown is 0 than heal the unit in front*/
-                if (nextInmate->healer == true && nextInmate->healCooldown == 0){
+
+                /* If next inmate is a doctor and cooldown is 0 than heal the
+                 * unit in front*/
+                if (nextInmate->healer == true &&
+                    nextInmate->healCooldown == 0) {
                     otherInmate->currentHealth += 10;
-                    if (otherInmate->currentHealth > otherInmate->maxHealth){
+                    if (otherInmate->currentHealth > otherInmate->maxHealth) {
                         otherInmate->currentHealth = otherInmate->maxHealth;
                     }
                 }
                 break;
             }
-            if (getNext(otherUnit) != NULL){
+            if (getNext(otherUnit) != NULL) {
                 otherUnit = getNext(otherUnit);
                 otherInmate = otherUnit->unit;
             }
         }
-        /*If move was not set to false than perform moving logic*/
-        if (moveUnit){
 
-            switch(nextInmate->currentTile->next->type){
-                /*If the tile being moved to is the final tile in the path
+        /* If move was not set to false than perform moving logic*/
+        if (moveUnit) {
+
+            switch (nextInmate->currentTile->next->type) {
+                /* If the tile being moved to is the final tile in the path
                   than set reached end to true*/
                 case '&':
                     nextInmate->reachedEnd = true;
                     break;
-                /*If the tile being moved to is a door than damage the door*/
+                    /*If the tile being moved to is a door than damage the door*/
                 case '#':
-                    if (nextInmate->currentTile->next->durability > 0){
+                    if (nextInmate->currentTile->next->durability > 0) {
                         nextInmate->currentTile->next->durability -= 1;
                     }
-                    else{
-                        nextInmate->currentTile = nextInmate->currentTile->next;
-                        nextInmate->position = nextInmate->currentTile->location;    
-                    }
-                    break;
-                /*If the tile being to is a movable tile type than move to the
-                  next tile and set the inmates position to that tiles location*/
-                case '%':
-                case '.':
-                    /*Check for the inmate being slowed, if the inmate is being slowed
-                       than increase the wait time to move*/
-                    if(!(elapsed%(nextInmate->speed + (nextInmate->speed*inmateSlowed*2)))) {
+                    else {
                         nextInmate->currentTile = nextInmate->currentTile->next;
                         nextInmate->position = nextInmate->currentTile->location;
                     }
                     break;
-                default: quit("Attempted move to undefined tile");
+                    /* If the tile being to is a movable tile type than move
+                     * to the  next tile and set the inmates position to that
+                     * tiles location*/
+                case '%':
+                case '.':
+                    /* Check for the inmate being slowed, if the inmate is
+                     * being slowed than increase the wait time to move*/
+                    if (!(elapsed % (nextInmate->speed +
+                                     (nextInmate->speed * inmateSlowed * 2)))) {
+                        nextInmate->currentTile = nextInmate->currentTile->next;
+                        nextInmate->position = nextInmate->currentTile->location;
+                    }
+                    break;
+                default:
+                    quit("Attempted move to undefined tile");
             }
         }
-        if (getNext(nextUnit) != NULL){
+        if (getNext(nextUnit) != NULL) {
             nextUnit = getNext(nextUnit);
             nextInmate = nextUnit->unit;
-        }   
+        }
     }
     return;
 }
 
+
 void setDeadInmates(struct UnitList *inmateList) {
     struct UnitNode *nextInmate;
 
-    if (getHead(inmateList) != NULL){
+    if (getHead(inmateList) != NULL) {
         nextInmate = getHead(inmateList);
     }
-    /*Iterate through inmates and remove all dead inmates*/
+    /* Iterate through inmates and remove all dead inmates*/
     for (int i = 0; i < inmateList->count; i++) {
         if (((struct Inmate *) nextInmate->unit)->currentHealth <= 0) {
-          //  removeUnit(inmateList,i);
-            ((struct Inmate*)nextInmate->unit)->dead = true;
+            ((struct Inmate *) nextInmate->unit)->dead = true;
         }
-        if (getNext(nextInmate) != NULL){
+        if (getNext(nextInmate) != NULL) {
             nextInmate = nextInmate->next;
         }
     }
 }
 
-void updateGuardAccuracy(struct UnitList *guardList, int currentPanic,
+
+void updateAccuracy(struct UnitList *guardList, int currentPanic,
     int maximumPanic) {
     struct UnitNode *nextNode;
     struct Guard *nextGuard;
@@ -585,7 +600,8 @@ void updateGuardAccuracy(struct UnitList *guardList, int currentPanic,
     /*Iterate through guards and update every guards accuracy to the inverse
       of the percentage of panic present*/
     for (int j = 0; j < guardList->count; j++) {
-        nextGuard->accuracy = 1 - ((double) currentPanic / (double) maximumPanic);
+        nextGuard->accuracy =
+            1 - ((double) currentPanic / (double) maximumPanic);
         if (nextNode->next != NULL) {
             nextNode = nextNode->next;
         }
@@ -593,16 +609,18 @@ void updateGuardAccuracy(struct UnitList *guardList, int currentPanic,
     }
 }
 
-void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,struct Path path) {
+
+void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,
+    struct Path path) {
     struct UnitNode *nextGuard;
     int exitPosition;
 
     exitPosition = path.last->location;
     nextGuard = getHead(guardList);
 
-    for (int j=0;j<guardList->count;j++){
+    for (int j = 0; j < guardList->count; j++) {
 
-        #ifdef _DEBUGN
+#ifdef _DEBUGN
         if (inmateExistsInRange(*inmateList,*nextGuard)){
             printf("Inmate exists in range!\n");
         }
@@ -610,28 +628,28 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,struct 
             printf("No inmates exist in range!\n");
         }
         printf("Cooldown before decrement is: %d\n",((struct Guard *)nextGuard->unit)->cooldownRemaining);
-        #endif
+#endif
 
         /*If cooldown is 0 than attack and perform special abilities on inmates*/
-        if (((struct Guard *)nextGuard->unit)->cooldownRemaining == 0 &&
-         inmateExistsInRange(*inmateList,*nextGuard)) {
+        if (((struct Guard *) nextGuard->unit)->cooldownRemaining == 0 &&
+            inmateExistsInRange(*inmateList, *nextGuard)) {
 
             /*Attempts to attack based on current guard accuracy*/
-            if (tryAttack(*nextGuard)){
+            if (tryAttack(*nextGuard)) {
                 /*Apply different attack types based on the guards attack type*/
-                switch(((struct Guard*)nextGuard->unit)->ai){
+                switch (((struct Guard *) nextGuard->unit)->ai) {
                     /*Attack closest inmate to guard that is in range*/
                     case PROX:
-                        guardAttackProximity(nextGuard,inmateList);
+                        guardAttackProximity(nextGuard, inmateList);
                         break;
-                    /*Attack all inmates within the guards range*/
+                        /*Attack all inmates within the guards range*/
                     case AOE:
-                        guardAttackAOE(nextGuard,inmateList);
+                        guardAttackAOE(nextGuard, inmateList);
                         break;
-                    /*Attack the inmate that is within range and closest to the end of
-                      the path*/
+                        /*Attack the inmate that is within range and closest to the end of
+                          the path*/
                     case END:
-                        guardAttackEnd(nextGuard,inmateList,exitPosition);
+                        guardAttackEnd(nextGuard, inmateList, exitPosition);
                         break;
                     default:
                         exit(1);
@@ -639,21 +657,22 @@ void guardAttack(struct UnitList *guardList, struct UnitList *inmateList,struct 
                 }
             }
         }
-        else if (((struct Guard *)nextGuard->unit)->cooldownRemaining != 0){
+        else if (((struct Guard *) nextGuard->unit)->cooldownRemaining != 0) {
             ((struct Guard *) nextGuard->unit)->cooldownRemaining -= 1;
         }
 
-        #ifdef _DEBUBN
+#ifdef _DEBUBN
         printf("Cooldown after decrement is: %d\n",((struct Guard *)nextGuard->unit)->cooldownRemaining);
-        #endif
+#endif
 
-        if (getNext(nextGuard) != NULL){
+        if (getNext(nextGuard) != NULL) {
             nextGuard = getNext(nextGuard);
         }
     }
-    /*Set all inmates that are below 1 health to dead*/
+    /* Set all inmates that are below 1 health to dead */
     setDeadInmates(inmateList);
 }
+
 
 void guardAttackAOE(struct UnitNode *guardNode,
     struct UnitList *inmateList) {
@@ -668,8 +687,9 @@ void guardAttackAOE(struct UnitNode *guardNode,
             /*Deal damage to the inmate*/
             dealDamage(nextInmate, guardNode);
             /*If the guard is a lunch lady than apply the lunch lady debuff*/
-            if (((struct Guard*)guardNode->unit)->type == LUNCH){
-                ((struct Inmate*)nextInmate->unit)->slowedCounter = EFFECT_LUNCH;
+            if (((struct Guard *) guardNode->unit)->type == LUNCH) {
+                ((struct Inmate *) nextInmate->unit)->slowedCounter =
+                    EFFECT_LUNCH;
             }
         }
         if (getNext(nextInmate) != NULL) {
@@ -677,29 +697,31 @@ void guardAttackAOE(struct UnitNode *guardNode,
         }
     }
     /*Reset cooldown*/
-    if (((struct Guard *)guardNode->unit)->cooldownRemaining == 0){
-        ((struct Guard *) guardNode->unit)->cooldownRemaining = 
-        ((struct Guard *) guardNode->unit)->cooldown;
+    if (((struct Guard *) guardNode->unit)->cooldownRemaining == 0) {
+        ((struct Guard *) guardNode->unit)->cooldownRemaining =
+            ((struct Guard *) guardNode->unit)->cooldown;
     }
 }
 
-struct UnitNode* getClosestInmateToPosition(struct UnitList inmateList, int position){
-    int i,distance,lowestDistance = MAP_COLS * MAP_ROWS + 1;
-    struct UnitNode *nextUnit,*closestUnit;
+
+struct UnitNode *getClosestInmateToPosition(struct UnitList inmateList,
+    int position) {
+    int i, distance, lowestDistance = MAP_COLS * MAP_ROWS + 1;
+    struct UnitNode *nextUnit, *closestUnit;
     struct Inmate *nextInmate;
 
     nextUnit = getHead(&inmateList);
     nextInmate = nextUnit->unit;
 
-    /*Iterate through inmates*/
-    for (i=0;i<inmateList.count;i++){
-        /*Get the distance of the current inmate*/
-        distance = (getDistance(position,nextInmate->position));
-        /*Get the closest unit*/
-        if (distance < lowestDistance){
+    /* Iterate through inmates */
+    for (i = 0; i < inmateList.count; i++) {
+        /* Get the distance of the current inmate */
+        distance = (getDistance(position, nextInmate->position));
+        /* Get the closest unit */
+        if (distance < lowestDistance) {
             closestUnit = nextUnit;
         }
-        if (getNext(nextUnit) != NULL){
+        if (getNext(nextUnit) != NULL) {
             nextUnit = getNext(nextUnit);
             nextInmate = nextUnit->unit;
         }
@@ -708,31 +730,37 @@ struct UnitNode* getClosestInmateToPosition(struct UnitList inmateList, int posi
     return closestUnit;
 }
 
-int getDistance(int positionFrom,int positionTo){
 
-    int xDifference,yDifference;
-    int fromY,toY;
+int getDistance(int positionFrom, int positionTo) {
 
-    /*Calculate the vertical value of the position from*/
+    int xDifference, yDifference;
+    int fromY, toY;
+
+    /* Calculate the vertical value of the position from */
     fromY = ((positionFrom - 1) / MAP_COLS);
-    /*Calculate the vertical value of the position to*/
+
+    /* Calculate the vertical value of the position to */
     toY = ((positionTo - 1) / MAP_COLS);
-    /*Calculate the vertical difference between the positions*/
+
+    /* Calculate the vertical difference between the positions */
     yDifference = (fromY + 1) - (toY + 1);
-    /*Calculate the horizontal difference between the positions*/
+
+    /* Calculate the horizontal difference between the positions */
     xDifference = abs(positionFrom - (fromY * MAP_COLS))
-                 - abs(positionTo - (toY * MAP_COLS));
+                  - abs(positionTo - (toY * MAP_COLS));
     yDifference = abs(yDifference);
     xDifference = abs(xDifference);
-    /*Return the total distance*/
-    return xDifference + yDifference;
 
+    /* Return the total distance */
+    return xDifference + yDifference;
 }
 
+
 void guardAttackEnd(struct UnitNode *guardNode,
-    struct UnitList *inmateList,int exitPosition) {
-    struct UnitList inRangeList;   
-    struct UnitNode *nextUnit,*unitToAttack;
+
+    struct UnitList *inmateList, int exitPosition) {
+    struct UnitList inRangeList;
+    struct UnitNode *nextUnit, *unitToAttack;
     struct Inmate *nextInmate;
     int i;
     bool attacked = false;
@@ -745,33 +773,37 @@ void guardAttackEnd(struct UnitNode *guardNode,
     nextInmate = nextUnit->unit;
 
     /*Iterate through all the inmates in the list*/
-    for (i=0;i<inmateList->count;i++){
-        /*Add all inmates in range of the guard to the inrange queue*/
-        if(inRange(nextUnit,guardNode)){
+    for (i = 0; i < inmateList->count; i++) {
+
+        /* Add all inmates in range of the guard to the inrange queue */
+        if (inRange(nextUnit, guardNode)) {
             attacked = true;
-            enqueue(&inRangeList,nextInmate);
+            enqueue(&inRangeList, nextInmate);
         }
-        if (getNext(nextUnit) != NULL){
+        if (getNext(nextUnit) != NULL) {
             nextUnit = getNext(nextUnit);
         }
     }
-    /*Reset the cooldown*/
-    if (((struct Guard *)guardNode->unit)->cooldownRemaining == 0){
-        ((struct Guard *) guardNode->unit)->cooldownRemaining = 
-        ((struct Guard *) guardNode->unit)->cooldown;
+
+    /* Reset the cooldown */
+    if (((struct Guard *) guardNode->unit)->cooldownRemaining == 0) {
+        ((struct Guard *) guardNode->unit)->cooldownRemaining =
+            ((struct Guard *) guardNode->unit)->cooldown;
     }
 
     /*Get the closest inmate to the guard in the inrange queue and deal damage*/
-    if (attacked){
-        unitToAttack = getClosestInmateToPosition(inRangeList,exitPosition);
-        dealDamage(unitToAttack,guardNode);
+    if (attacked) {
+        unitToAttack = getClosestInmateToPosition(inRangeList, exitPosition);
+        dealDamage(unitToAttack, guardNode);
     }
 }
 
+
 void guardAttackProximity(struct UnitNode *guardNode,
     struct UnitList *inmateList) {
-    struct UnitList inRangeList;   
-    struct UnitNode *nextUnit,*unitToAttack;
+
+    struct UnitList inRangeList;
+    struct UnitNode *nextUnit, *unitToAttack;
     struct Inmate *nextInmate;
     int i;
     bool attacked = false;
@@ -784,45 +816,48 @@ void guardAttackProximity(struct UnitNode *guardNode,
     nextInmate = nextUnit->unit;
 
     /*Iterate through all the inmates in the list*/
-    for (i=0;i<inmateList->count;i++){
+    for (i = 0; i < inmateList->count; i++) {
+
         /*Add all inmates in range of the guard to the inrange queue*/
-        if(inRange(nextUnit,guardNode)){
-            enqueue(&inRangeList,nextInmate);
+        if (inRange(nextUnit, guardNode)) {
+            enqueue(&inRangeList, nextInmate);
             attacked = true;
         }
-        if (getNext(nextUnit) != NULL){
+        if (getNext(nextUnit) != NULL) {
             nextUnit = getNext(nextUnit);
             nextInmate = nextUnit->unit;
         }
     }
 
     /*Reset the cooldown*/
-    if (((struct Guard *)guardNode->unit)->cooldownRemaining == 0){
-        ((struct Guard *) guardNode->unit)->cooldownRemaining =  
-        ((struct Guard *) guardNode->unit)->cooldown;
+    if (((struct Guard *) guardNode->unit)->cooldownRemaining == 0) {
+        ((struct Guard *) guardNode->unit)->cooldownRemaining =
+            ((struct Guard *) guardNode->unit)->cooldown;
     }
 
-    /*Get the closest inmate to the last position in the path
-        inside inrange queue and deal damage*/
-    if (attacked){
+    /* Get the closest inmate to the last position in the path inside inrange
+     * queue and deal damage*/
+    if (attacked) {
 
-        #ifdef _DEBUGN
+#ifdef _DEBUGN
         printf("In Range List Size: %d\n",inRangeList.count);
-        #endif
+#endif
 
         unitToAttack = getClosestInmateToPosition(inRangeList,
-            ((struct Guard*)guardNode->unit)->position);
+            ((struct Guard *) guardNode->unit)->position);
 
-        dealDamage(unitToAttack,guardNode);
-        /*Apply special ability debuff on the inmate if the guard attacking has special ability*/
-        if (((struct Guard*)guardNode->unit)->type == PSYCH){
-            ((struct Inmate*)unitToAttack->unit)->sleepCounter = EFFECT_PSYCH;
+        dealDamage(unitToAttack, guardNode);
+        /* Apply special ability debuff on the inmate if the guard attacking
+         * has  special ability*/
+        if (((struct Guard *) guardNode->unit)->type == PSYCH) {
+            ((struct Inmate *) unitToAttack->unit)->sleepCounter = EFFECT_PSYCH;
         }
-        else if(((struct Guard*)guardNode->unit)->type == DOGS){
-            ((struct Inmate*)unitToAttack->unit)->doubleDamage = EFFECT_DOGS;
+        else if (((struct Guard *) guardNode->unit)->type == DOGS) {
+            ((struct Inmate *) unitToAttack->unit)->doubleDamage = EFFECT_DOGS;
         }
     }
 }
+
 
 bool tryAttack(struct UnitNode guardNode) {
     float missChance, guardAccuracy;
@@ -840,7 +875,7 @@ void dealDamage(struct UnitNode *inmateNode, struct UnitNode *guardNode) {
     int currentHealth;
     int damage;
 
-    /*Reduce the inmates dealth by the guards damage*/
+    /* Reduce the inmates dealth by the guards damage */
     currentHealth = ((struct Inmate *) inmateNode->unit)->currentHealth;
     damage = ((struct Guard *) guardNode->unit)->damage;
     ((struct Inmate *) inmateNode->unit)->currentHealth =
@@ -849,6 +884,7 @@ void dealDamage(struct UnitNode *inmateNode, struct UnitNode *guardNode) {
 
 
 bool inRange(struct UnitNode *inmate, struct UnitNode *guard) {
+
     int inmatePosition;
     int guardPosition;
     int range;
@@ -860,13 +896,15 @@ bool inRange(struct UnitNode *inmate, struct UnitNode *guard) {
     guardPosition = ((struct Guard *) guard->unit)->position;
     range = ((struct Guard *) guard->unit)->range;
 
-    /*Calculate the vertical position of the inmate*/
+    /* Calculate the vertical position of the inmate */
     inmateY = (inmatePosition - 1) / MAP_COLS;
-    /*Calculate the vertical position of the guard*/
+    /* Calculate the vertical position of the guard */
     guardY = (guardPosition - 1) / MAP_COLS;
-    /*Calculate vertical difference between the inmate and the guard*/
+
+    /* Calculate vertical difference between the inmate and the guard */
     yDifference = (inmateY + 1) - (guardY + 1);
-    /*Calculate the horizontal difference between the inmate and the guard*/
+
+    /* Calculate the horizontal difference between the inmate and the guard */
     xDifference = abs(guardPosition - (guardY * MAP_COLS)) -
                   abs(inmatePosition - (inmateY * MAP_COLS));
     yDifference = abs(yDifference);
@@ -876,40 +914,45 @@ bool inRange(struct UnitNode *inmate, struct UnitNode *guard) {
     return range >= totalDifference;
 }
 
-bool inmateExistsInRange(struct UnitList inmateList,struct UnitNode guard){
-    int inmatePosition,guardPosition, range;
+
+bool inmateExistsInRange(struct UnitList inmateList, struct UnitNode guard) {
+
+    int inmatePosition, guardPosition, range;
     int xDifference, yDifference;
-    int inmateY, guardY,totalDifference;
+    int inmateY, guardY, totalDifference;
     int i;
-    struct UnitNode* nextUnit;
+    struct UnitNode *nextUnit;
 
     nextUnit = getHead(&inmateList);
-    /*Iterate through inmate list*/
-    for (i=0;i<inmateList.count;i++){
-        inmatePosition = ((struct Inmate*)nextUnit->unit)->position;
-        guardPosition = ((struct Guard*)guard.unit)->position;
-        range = ((struct Guard*)guard.unit)->range;
 
-        /*Calculate the y position of inmate*/
+    /* Iterate through inmate list */
+    for (i = 0; i < inmateList.count; i++) {
+        inmatePosition = ((struct Inmate *) nextUnit->unit)->position;
+        guardPosition = ((struct Guard *) guard.unit)->position;
+        range = ((struct Guard *) guard.unit)->range;
+
+        /* Calculate the y position of inmate */
         inmateY = (inmatePosition - 1) / MAP_COLS;
-        /*Calculate the y position of*/
+
+        /* Calculate the y position of */
         guardY = (guardPosition - 1) / MAP_COLS;
-        yDifference = (inmateY +1) - (guardY + 1);
+        yDifference = (inmateY + 1) - (guardY + 1);
         xDifference = abs(guardPosition - (guardY * MAP_COLS)) -
                       abs(inmatePosition - (inmateY * MAP_COLS));
         yDifference = abs(yDifference);
         xDifference = abs(xDifference);
         totalDifference = xDifference + yDifference;
-        if (totalDifference <= range){
+        if (totalDifference <= range) {
             return true;
         }
-        if (getNext(nextUnit) != NULL){
+        if (getNext(nextUnit) != NULL) {
             nextUnit = getNext(nextUnit);
         }
     }
 
     return false;
 }
+
 
 struct UnitList *getGuards(struct UnitList *guards, struct Map map) {
 
@@ -927,8 +970,10 @@ struct UnitList *getGuards(struct UnitList *guards, struct Map map) {
         for (j = 0; j < MAP_COLS; j++) {
             position = (i * MAP_COLS) + j;
             mapChar = toupper(map.overlay[i][j]);
+
             /*If the map overlay character being parsed is an alpha character
-              than create a guard, considering only guards can be alpha characters*/
+             * than create a guard, considering only guards can be alpha
+             * characters*/
             if (isalpha(mapChar)) {
                 guard = createGuard(mapChar);
                 guard->position = position;
