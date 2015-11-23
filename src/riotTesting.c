@@ -131,18 +131,19 @@ void colorTest() {
 }
 
 void guardTest(){
-    struct UnitList guardList;
+    struct UnitList *guardList;
+    guardList = malloc(sizeof(struct UnitList));
 
     /*Enqueue all avilable guards*/
-    enqueue(&guardList,createGuard(LUNCH));
-    enqueue(&guardList,createGuard(PSYCH));
-    enqueue(&guardList,createGuard(GUARD));
-    enqueue(&guardList,createGuard(DOGS));
-    enqueue(&guardList,createGuard(SHARP));
-    enqueue(&guardList,createGuard(WARDEN));
-    enqueue(&guardList,createGuard(CYBORG));
+    enqueue(guardList,createGuard(LUNCH));
+    enqueue(guardList,createGuard(PSYCH));
+    enqueue(guardList,createGuard(GUARD));
+    enqueue(guardList,createGuard(DOGS));
+    enqueue(guardList,createGuard(SHARP));
+    enqueue(guardList,createGuard(WARDEN));
+    enqueue(guardList,createGuard(CYBORG));
 
-    destroyList(&guardList);
+    printGuardList(guardList);
 }
 void unitsMove(char *loadDir) {
     struct UnitList *inmates;
