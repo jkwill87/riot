@@ -16,23 +16,21 @@ int main(int argc, char **argv) {
 
 //        if (!strcmp(argv[i], "-units")) unitsTest();
         else if (!strcmp(argv[i], "-map")) mapTest(argv[2] ? argv[2] : NULL);
-        else if (!strcmp(argv[i], "-unitmove"))
-            unitsMove(argv[2] ? argv[2] : NULL);
+        else if (!strcmp(argv[i], "-unitmove"))unitsMove(argv[2] ? argv[2] : NULL);
         else if (!strcmp(argv[i], "-color")) colorTest();
         else if (!strcmp(argv[i], "-colorDump")) colorDumpTest();
         else if (!strcmp(argv[i], "-guardtest"))guardTest();
-//        else if (!strcmp(argv[i], "-logo")) logoTest();
         else if (!strcmp(argv[i], "-play")) unitsPlay(argv[2]);
         else printf("Unknown command (%s)\n", argv[i]);
     }
 
     printf("Testing done.\n");
     return 0;
-
 }
 
 
 void colorDumpTest (){
+
     initscr();
     start_color();
     int maxx, maxy;
@@ -60,7 +58,9 @@ void colorDumpTest (){
     return;
 }
 
+
 void printPath(struct Path *path) {
+
     struct TileNode *nextNode;
 
     nextNode = path->first;
@@ -96,6 +96,7 @@ void printGuardList(struct UnitList *guardList) {
     }
     printf("\n########################\n");
 }
+
 
 void printInmateList(struct UnitList *inmateList) {
     struct UnitNode *nextNode;
@@ -188,6 +189,7 @@ void colorTest() {
     endwin();
 }
 
+
 void guardTest(){
     struct UnitList guardList;
 
@@ -202,6 +204,8 @@ void guardTest(){
 
     destroyList(&guardList);
 }
+
+
 void unitsMove(char *loadDir) {
     struct UnitList *inmates;
     //struct UnitList *guards;
@@ -329,6 +333,7 @@ void unitsPlay(char *argument) {
 
 
 void mapTest(char *loadDir) {
+
     struct Dialog *dialog = calloc(MAX_LEVELS, sizeof(struct Dialog));
     struct MapList *testList = malloc(sizeof(struct MapList));
     parseMap(loadDir, testList, dialog);
@@ -346,18 +351,7 @@ void mapTest(char *loadDir) {
     inmates->tail = NULL;
 
 
-    /*for (int i=0;i<30;i++){
-        inmate = createInmate('f');
-        inmate->position = rand() % (MAP_ROWS*MAP_COLS);
-        enqueue(inmates,inmate);
-        inmate = createInmate('s');
-        inmate->position = rand() % (MAP_ROWS*MAP_COLS);
-        enqueue(inmates,inmate);
-    }*/
-    /*inmate = createInmate('s');
-    inmate->position = rand() % (MAP_ROWS*MAP_COLS);
-    enqueue(inmates,inmate);*/
-    for (int i = 4; i < 5; i++) {
+    for (int i = 0; i < testList->count; i++) {
         current = testList->level[i];
         getPath(&path, current);
         getGuards(&guardList, current);
@@ -495,6 +489,7 @@ void printGuard(struct Guard *guard) {
 
 
 void testingHelp() {
+
     printf(
         "Usage:\ttest [FLAG]... [OPTION]\n\n"
             "Flags:"
@@ -506,5 +501,6 @@ void testingHelp() {
 
 
 void quit(char *message) {
+
     printf("ERROR: %s\n", message);
 }
