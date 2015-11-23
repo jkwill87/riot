@@ -6,16 +6,16 @@
 #include "riotUnits.h"
 #include "riotUI.h"
 
-
+void printInmates(struct UnitList *list);
 /* DESCRIPTION: Prints out the guard list
  * ARGUMENTS: The guard list */
 void unitsMove(char *loadDir);
-
 
 /* DESCRIPTION: Testing the movement of the units
  * ARGUMENTS: The location of the directory */
 void unitsTest(void);
 
+void guardTest();
 
 /* DESCRIPTION: Testing the guard range and attacking
  * ARGUMENTS: */
