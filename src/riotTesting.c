@@ -20,6 +20,7 @@ int main(int argc, char **argv) {
             unitsMove(argv[2] ? argv[2] : NULL);
         else if (!strcmp(argv[i], "-color")) colorTest();
         else if (!strcmp(argv[i], "-colorDump")) colorDumpTest();
+        else if (!strcmp(argv[i], "-guardtest"))guardTest();
 //        else if (!strcmp(argv[i], "-logo")) logoTest();
         else if (!strcmp(argv[i], "-play")) unitsPlay(argv[2]);
         else printf("Unknown command (%s)\n", argv[i]);
@@ -187,7 +188,20 @@ void colorTest() {
     endwin();
 }
 
+void guardTest(){
+    struct UnitList guardList;
 
+    /*Enqueue all avilable guards*/
+    enqueue(&guardList,createGuard(LUNCH));
+    enqueue(&guardList,createGuard(PSYCH));
+    enqueue(&guardList,createGuard(GUARD));
+    enqueue(&guardList,createGuard(DOGS));
+    enqueue(&guardList,createGuard(SHARP));
+    enqueue(&guardList,createGuard(WARDEN));
+    enqueue(&guardList,createGuard(CYBORG));
+
+    destroyList(&guardList);
+}
 void unitsMove(char *loadDir) {
     struct UnitList *inmates;
     //struct UnitList *guards;
