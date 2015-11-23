@@ -1,7 +1,7 @@
 # CIS*3250 Assignment 2 Makefile
 
 CC      = gcc
-CFLAGS  = -Wall -std=c99 -pedantic -g
+CFLAGS  = -Wall -std=c99 -pedantic
 LDFLAGS = -lncurses
 INCLUDES = -Iinclude
 
@@ -15,7 +15,7 @@ TEST_OBJ = riotTesting.o riotMap.o riotUI.o riotUnits.o
 
 default: riotLink testLink
 
-compile: 
+compile:
 	$(CC) $(CFLAGS) -c $(SRC) $(INCLUDES)
 
 riotLink: compile
@@ -25,7 +25,9 @@ testLink: compile
 	$(CC) -o $(BINDIR)/test $(TEST_OBJ) $(LDFLAGS)
 
 debug:
-	$(CC) $(CFLAGS) -c $(SRC) $(INCLUDES) -g -D_NOLOCKS
+	$(CC) $(CFLAGS) -c $(SRC) $(INCLUDES) -g -D_DEBUG
+	$(CC) -o $(BINDIR)/riot $(RIOT_OBJ) $(LDFLAGS)
+	$(CC) -o $(BINDIR)/test $(TEST_OBJ) $(LDFLAGS)
 
 clean:
 	rm -r -f *.o bin/*
