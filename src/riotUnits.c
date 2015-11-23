@@ -435,13 +435,14 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
 
             /* Remove dead inmates from the board */
             if (((struct Inmate *) inmate->unit)->dead) {
-                if (((struct Inmate*) inmate->unit)->type == 'p')
+                if (((struct Inmate*) inmate->unit)->type == PROTAGONIST)
                     winCondition=LOSE;
                 removeUnit(&deployed, i);
             }
+
             /* Remove exited inmates from the board */
             if (((struct Inmate *) inmate->unit)->reachedEnd) {
-                if (((struct Inmate*) inmate->unit)->type == 'p')
+                if (((struct Inmate*) inmate->unit)->type == PROTAGONIST)
                     winCondition=WIN;
                 map->panicCur += ((struct Inmate *) inmate->unit)->panic;
                 removeUnit(&deployed, i);
@@ -566,7 +567,6 @@ void setDeadInmates(struct UnitList *inmateList) {
     /*Iterate through inmates and remove all dead inmates*/
     for (int i = 0; i < inmateList->count; i++) {
         if (((struct Inmate *) nextInmate->unit)->currentHealth <= 0) {
-          //  removeUnit(inmateList,i);
             ((struct Inmate*)nextInmate->unit)->dead = true;
         }
         if (getNext(nextInmate) != NULL){

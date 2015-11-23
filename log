@@ -1,0 +1,271 @@
+==22427== Memcheck, a memory error detector
+==22427== Copyright (C) 2002-2015, and GNU GPL'd, by Julian Seward et al.
+==22427== Using Valgrind-3.11.0 and LibVEX; rerun with -h for copyright info
+==22427== Command: bin/riot assets
+==22427== Parent PID: 19601
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x1000064F9: drawText (riotUI.c:704)
+==22427==    by 0x100001057: main (riotExec.c:49)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x100000E47: main (riotExec.c:6)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x100006508: drawText (riotUI.c:705)
+==22427==    by 0x100001057: main (riotExec.c:49)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x100000E47: main (riotExec.c:6)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x1000146C8: strlen (in /usr/local/Cellar/valgrind/3.11.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==22427==    by 0x1000238B8: waddnstr (in /usr/lib/libncurses.5.4.dylib)
+==22427==    by 0x1000065D0: drawText (riotUI.c:716)
+==22427==    by 0x100001057: main (riotExec.c:49)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x100000E47: main (riotExec.c:6)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x10000442A: drawMap (riotUI.c:387)
+==22427==    by 0x100004D6A: drawLevel (riotUI.c:448)
+==22427==    by 0x100001125: main (riotExec.c:56)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x7FFF5FC01036: _dyld_start (in /usr/lib/dyld)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x10000445F: drawMap (riotUI.c:387)
+==22427==    by 0x100004D6A: drawLevel (riotUI.c:448)
+==22427==    by 0x100001125: main (riotExec.c:56)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x7FFF5FC01036: _dyld_start (in /usr/lib/dyld)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x100004494: drawMap (riotUI.c:387)
+==22427==    by 0x100004D6A: drawLevel (riotUI.c:448)
+==22427==    by 0x100001125: main (riotExec.c:56)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x7FFF5FC01036: _dyld_start (in /usr/lib/dyld)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x1000044C9: drawMap (riotUI.c:387)
+==22427==    by 0x100004D6A: drawLevel (riotUI.c:448)
+==22427==    by 0x100001125: main (riotExec.c:56)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x7FFF5FC01036: _dyld_start (in /usr/lib/dyld)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x1000146C8: strlen (in /usr/local/Cellar/valgrind/3.11.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==22427==    by 0x100273CF5: __strcat_chk (in /usr/lib/system/libsystem_c.dylib)
+==22427==    by 0x100005600: drawLevel (riotUI.c:495)
+==22427==    by 0x100001125: main (riotExec.c:56)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x100004D10: drawLevel (riotUI.c:437)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x10000114F: main (riotExec.c:60)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x100000E47: main (riotExec.c:6)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x100003EBD: updateQueue (riotUI.c:354)
+==22427==    by 0x10000307D: drawInmateSelection (riotUI.c:137)
+==22427==    by 0x1000011D2: main (riotExec.c:71)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x100000E47: main (riotExec.c:6)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x100003F44: updateQueue (riotUI.c:360)
+==22427==    by 0x10000307D: drawInmateSelection (riotUI.c:137)
+==22427==    by 0x1000011D2: main (riotExec.c:71)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x100000E47: main (riotExec.c:6)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x1000030D6: drawInmateSelection (riotUI.c:146)
+==22427==    by 0x1000011D2: main (riotExec.c:71)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x100000E47: main (riotExec.c:6)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x100006839: enqueue (riotUnits.c:56)
+==22427==    by 0x100003234: drawInmateSelection (riotUI.c:165)
+==22427==    by 0x1000011D2: main (riotExec.c:71)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x100000E47: main (riotExec.c:6)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x100003EBD: updateQueue (riotUI.c:354)
+==22427==    by 0x100003276: drawInmateSelection (riotUI.c:166)
+==22427==    by 0x1000011D2: main (riotExec.c:71)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x100000E47: main (riotExec.c:6)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x100003F44: updateQueue (riotUI.c:360)
+==22427==    by 0x100003276: drawInmateSelection (riotUI.c:166)
+==22427==    by 0x1000011D2: main (riotExec.c:71)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x100000E47: main (riotExec.c:6)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x100003AB1: drawInmateSelection (riotUI.c:289)
+==22427==    by 0x1000011D2: main (riotExec.c:71)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x100000E47: main (riotExec.c:6)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x100003C4E: drawInmateSelection (riotUI.c:309)
+==22427==    by 0x1000011D2: main (riotExec.c:71)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x100000E47: main (riotExec.c:6)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x100003BF4: drawInmateSelection (riotUI.c:302)
+==22427==    by 0x1000011D2: main (riotExec.c:71)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x100000E47: main (riotExec.c:6)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x100007482: simulate (riotUnits.c:406)
+==22427==    by 0x1000011FA: main (riotExec.c:74)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x100000E47: main (riotExec.c:6)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x1000068EB: dequeue (riotUnits.c:80)
+==22427==    by 0x1000074D9: simulate (riotUnits.c:412)
+==22427==    by 0x1000011FA: main (riotExec.c:74)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x100000E47: main (riotExec.c:6)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x100007526: simulate (riotUnits.c:420)
+==22427==    by 0x1000011FA: main (riotExec.c:74)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x100000E47: main (riotExec.c:6)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x1000068EB: dequeue (riotUnits.c:80)
+==22427==    by 0x100007559: simulate (riotUnits.c:421)
+==22427==    by 0x1000011FA: main (riotExec.c:74)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x100000E47: main (riotExec.c:6)
+==22427== 
+==22427== Invalid read of size 8
+==22427==    at 0x100007637: simulate (riotUnits.c:443)
+==22427==    by 0x1000011FA: main (riotExec.c:74)
+==22427==  Address 0x100b716b0 is 0 bytes inside a block of size 24 free'd
+==22427==    at 0x1000132F7: free (in /usr/local/Cellar/valgrind/3.11.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==22427==    by 0x100006A78: removeUnit (riotUnits.c:118)
+==22427==    by 0x100007632: simulate (riotUnits.c:440)
+==22427==    by 0x1000011FA: main (riotExec.c:74)
+==22427==  Block was alloc'd at
+==22427==    at 0x100012EBB: malloc (in /usr/local/Cellar/valgrind/3.11.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==22427==    by 0x10000681E: enqueue (riotUnits.c:52)
+==22427==    by 0x1000074E5: simulate (riotUnits.c:412)
+==22427==    by 0x1000011FA: main (riotExec.c:74)
+==22427== 
+==22427== Invalid read of size 8
+==22427==    at 0x1000076B9: simulate (riotUnits.c:451)
+==22427==    by 0x1000011FA: main (riotExec.c:74)
+==22427==  Address 0x100b716b8 is 8 bytes inside a block of size 24 free'd
+==22427==    at 0x1000132F7: free (in /usr/local/Cellar/valgrind/3.11.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==22427==    by 0x100006A78: removeUnit (riotUnits.c:118)
+==22427==    by 0x100007632: simulate (riotUnits.c:440)
+==22427==    by 0x1000011FA: main (riotExec.c:74)
+==22427==  Block was alloc'd at
+==22427==    at 0x100012EBB: malloc (in /usr/local/Cellar/valgrind/3.11.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==22427==    by 0x10000681E: enqueue (riotUnits.c:52)
+==22427==    by 0x1000074E5: simulate (riotUnits.c:412)
+==22427==    by 0x1000011FA: main (riotExec.c:74)
+==22427== 
+==22427== Invalid read of size 8
+==22427==    at 0x1000076CB: simulate (riotUnits.c:451)
+==22427==    by 0x1000011FA: main (riotExec.c:74)
+==22427==  Address 0x100b71a18 is 8 bytes inside a block of size 24 free'd
+==22427==    at 0x1000132F7: free (in /usr/local/Cellar/valgrind/3.11.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==22427==    by 0x100006A03: removeUnit (riotUnits.c:108)
+==22427==    by 0x100007632: simulate (riotUnits.c:440)
+==22427==    by 0x1000011FA: main (riotExec.c:74)
+==22427==  Block was alloc'd at
+==22427==    at 0x100012EBB: malloc (in /usr/local/Cellar/valgrind/3.11.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==22427==    by 0x10000681E: enqueue (riotUnits.c:52)
+==22427==    by 0x100007565: simulate (riotUnits.c:421)
+==22427==    by 0x1000011FA: main (riotExec.c:74)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x100006839: enqueue (riotUnits.c:56)
+==22427==    by 0x100003474: drawInmateSelection (riotUI.c:197)
+==22427==    by 0x1000011D2: main (riotExec.c:71)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x100000E47: main (riotExec.c:6)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x100003EBD: updateQueue (riotUI.c:354)
+==22427==    by 0x1000034B6: drawInmateSelection (riotUI.c:198)
+==22427==    by 0x1000011D2: main (riotExec.c:71)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x100000E47: main (riotExec.c:6)
+==22427== 
+==22427== Conditional jump or move depends on uninitialised value(s)
+==22427==    at 0x100003F44: updateQueue (riotUI.c:360)
+==22427==    by 0x1000034B6: drawInmateSelection (riotUI.c:198)
+==22427==    by 0x1000011D2: main (riotExec.c:71)
+==22427==  Uninitialised value was created by a stack allocation
+==22427==    at 0x100000E47: main (riotExec.c:6)
+==22427== 
+==22427== 
+==22427== HEAP SUMMARY:
+==22427==     in use at exit: 615,290 bytes in 536 blocks
+==22427==   total heap usage: 708 allocs, 172 frees, 732,684 bytes allocated
+==22427== 
+==22427== 24 bytes in 1 blocks are definitely lost in loss record 42 of 172
+==22427==    at 0x100012EBB: malloc (in /usr/local/Cellar/valgrind/3.11.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==22427==    by 0x10000681E: enqueue (riotUnits.c:52)
+==22427==    by 0x100007565: simulate (riotUnits.c:421)
+==22427==    by 0x1000011FA: main (riotExec.c:74)
+==22427== 
+==22427== 30 bytes in 1 blocks are definitely lost in loss record 45 of 172
+==22427==    at 0x100012EBB: malloc (in /usr/local/Cellar/valgrind/3.11.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==22427==    by 0x100005937: getInmateName (riotUI.c:729)
+==22427==    by 0x1000055EC: drawLevel (riotUI.c:495)
+==22427==    by 0x100001125: main (riotExec.c:56)
+==22427== 
+==22427== 144 (120 direct, 24 indirect) bytes in 5 blocks are definitely lost in loss record 106 of 172
+==22427==    at 0x100012EBB: malloc (in /usr/local/Cellar/valgrind/3.11.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==22427==    by 0x10000681E: enqueue (riotUnits.c:52)
+==22427==    by 0x100008053: guardAttackProximity (riotUnits.c:790)
+==22427==    by 0x100007CB1: guardAttack (riotUnits.c:625)
+==22427==    by 0x1000075D8: simulate (riotUnits.c:428)
+==22427==    by 0x1000011FA: main (riotExec.c:74)
+==22427== 
+==22427== 180 bytes in 6 blocks are definitely lost in loss record 109 of 172
+==22427==    at 0x100012EBB: malloc (in /usr/local/Cellar/valgrind/3.11.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==22427==    by 0x100005937: getInmateName (riotUI.c:729)
+==22427==    by 0x100005680: drawLevel (riotUI.c:499)
+==22427==    by 0x100001125: main (riotExec.c:56)
+==22427== 
+==22427== 240 (120 direct, 120 indirect) bytes in 5 blocks are definitely lost in loss record 126 of 172
+==22427==    at 0x100012EBB: malloc (in /usr/local/Cellar/valgrind/3.11.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==22427==    by 0x10000681E: enqueue (riotUnits.c:52)
+==22427==    by 0x1000082EA: guardAttackEnd (riotUnits.c:752)
+==22427==    by 0x100007CD8: guardAttack (riotUnits.c:634)
+==22427==    by 0x1000075D8: simulate (riotUnits.c:428)
+==22427==    by 0x1000011FA: main (riotExec.c:74)
+==22427== 
+==22427== 400 (24 direct, 376 indirect) bytes in 1 blocks are definitely lost in loss record 137 of 172
+==22427==    at 0x100012EBB: malloc (in /usr/local/Cellar/valgrind/3.11.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==22427==    by 0x10000681E: enqueue (riotUnits.c:52)
+==22427==    by 0x100003234: drawInmateSelection (riotUI.c:165)
+==22427==    by 0x1000011D2: main (riotExec.c:71)
+==22427== 
+==22427== LEAK SUMMARY:
+==22427==    definitely lost: 498 bytes in 19 blocks
+==22427==    indirectly lost: 520 bytes in 15 blocks
+==22427==      possibly lost: 0 bytes in 0 blocks
+==22427==    still reachable: 592,107 bytes in 314 blocks
+==22427==         suppressed: 22,165 bytes in 188 blocks
+==22427== Reachable blocks (those to which a pointer was found) are not shown.
+==22427== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==22427== 
+==22427== For counts of detected and suppressed errors, rerun with: -v
+==22427== ERROR SUMMARY: 739 errors from 34 contexts (suppressed: 18 from 18)

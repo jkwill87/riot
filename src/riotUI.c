@@ -726,8 +726,8 @@ void drawText(struct Windows *windows, struct Dialog dialog,
 
 
 char *getInmateName(char ch) {
-    char *returnString=malloc(sizeof(char)*30);
     switch (ch) {
+        static char returnString[15];
         case PROTAGONIST:
             return "[p]rotagonist";
         case HOMEBOY:
