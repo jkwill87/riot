@@ -31,6 +31,6 @@ running './bin/test -colorDump', gets the max dimensions of the current terminal
 running './bin/test -color', is a more targeted test of colors intended to be used in the program. This was less for functionality but more for gameplay purposes to make sure all color combinations were both legible and not overly distracting. 
 
 int * getCoordinate(int position):
- "getCoordinate" is used to convert a single value integer to a pair of coordinates. This function is tested using the "printCoordinate" function. the test integer is passed in and is run through the "getCoordinate" function. The output x and y value of the function are then printed to the command line. use the "-printCr" flag and an integer value to run this test
+ "getCoordinate" is used to convert a single value integer to a pair of coordinates. This function is tested using the "printCoordinate" function. the test integer is passed in and is run through the "getCoordinate" function. The output x and y value of the function are then printed to the command line and the user compares expected value to the one printed. use the "-printCr" flag and an integer value to run this test
 =======
 
