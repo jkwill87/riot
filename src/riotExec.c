@@ -81,6 +81,7 @@ int main(int argc, char **argv) {
                 }
 
             }while (gameMode==UNDECIDED);
+            getchar();
             gameMode=CONTINUE;
         }
     }
