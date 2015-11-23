@@ -19,7 +19,6 @@ void parseMap(char *loadDir, struct MapList *mapList, struct Dialog *dialog) {
     char checkChar;
     bool useCwd = false;
     bool firstRun = true;
-
     int x, y;
 
     /* Compile regex */

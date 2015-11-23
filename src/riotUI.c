@@ -10,6 +10,16 @@ void uiInit(struct Windows *win) {
     /* Verify terminal dimensions */
     getmaxyx(stdscr, y, x);
     if ((x < MAX_COLS) || (y < MAX_ROWS)) quit("Terminal size too small");
+    //Initializes all colors
+    init_pair(DEFAULT, COLOR_WHITE, COLOR_BLACK);
+    init_pair(GREEN, GREEN, COLOR_BLACK);
+    init_pair(YELLOW, YELLOW, COLOR_BLACK);
+    init_pair(RED, RED, COLOR_BLACK);
+    init_pair(PURPLE, PURPLE, COLOR_BLACK);
+    init_pair(DAMAGED, COLOR_BLACK, DAMAGED);
+    init_pair(20, COLOR_BLACK, GREEN);
+    init_pair(21, COLOR_BLACK, YELLOW);
+    init_pair(22, COLOR_BLACK, RED);
     /* Set window positions*/
     win->header = newwin(HEADER, MAX_COLS, 0, 0);
     win->body = newwin(MAIN, MAX_COLS, HEADER, 0);
@@ -512,16 +522,6 @@ void gameplayRefresh (WINDOW *body, struct Map *map, struct UnitList *guardList,
     struct Inmate *inmate;
     struct Guard *guard;
     int *coordinates;
-    //Initializes all colors
-    init_pair(DEFAULT, COLOR_WHITE, COLOR_BLACK);
-    init_pair(GREEN, GREEN, COLOR_BLACK);
-    init_pair(YELLOW, YELLOW, COLOR_BLACK);
-    init_pair(RED, RED, COLOR_BLACK);
-    init_pair(PURPLE, PURPLE, COLOR_BLACK);
-    init_pair(DAMAGED, COLOR_BLACK, DAMAGED);
-    init_pair(20, COLOR_BLACK, GREEN);
-    init_pair(21, COLOR_BLACK, YELLOW);
-    init_pair(22, COLOR_BLACK, RED);
     //set color black/white
     wattron(body,COLOR_PAIR(DEFAULT));
     redrawPath(body,path,map->levelNo);

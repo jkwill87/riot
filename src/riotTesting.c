@@ -29,10 +29,6 @@ int main(int argc, char **argv) {
 
 }
 
-//void logoTest (){
-//    int maxLengh = 38;
-//    char line[maxLength];
-//}
 
 void printPath(struct Path *path) {
     struct TileNode *nextNode;
