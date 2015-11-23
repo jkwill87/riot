@@ -161,10 +161,6 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                         enqueue(inmates, inmate);
                         updateQueue(win->body, inmates, getLength(inmates));
                     }
-                    else {
-                        mvwprintw(win->footer, 0, 40,
-                            "PROTAGONIST ALREADY PRESENT");
-                    }
                     break;
 
                 case HOMEBOY:
@@ -176,10 +172,6 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                                 enqueue(inmates, inmate);
                                 updateQueue(win->body, inmates,
                                     getLength(inmates));
-                            }
-                            else {
-                                mvwprintw(win->footer, 0, 40,
-                                    "INSUFICIENT FUNDS");
                             }
                             break;
                         }
@@ -196,10 +188,6 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                                 updateQueue(win->body, inmates,
                                     getLength(inmates));
                             }
-                            else {
-                                mvwprintw(win->footer, 0, 40,
-                                    "INSUFICIENT FUNDS");
-                            }
                             break;
                         }
                     }
@@ -214,10 +202,6 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                                 enqueue(inmates, inmate);
                                 updateQueue(win->body, inmates,
                                     getLength(inmates));
-                            }
-                            else {
-                                mvwprintw(win->footer, 0, 40,
-                                    "INSUFICIENT FUNDS");
                             }
                             break;
                         }
@@ -234,10 +218,6 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                                 updateQueue(win->body, inmates,
                                     getLength(inmates));
                             }
-                            else {
-                                mvwprintw(win->footer, 0, 40,
-                                    "INSUFICIENT FUNDS");
-                            }
                             break;
                         }
                     }
@@ -252,10 +232,6 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                                 enqueue(inmates, inmate);
                                 updateQueue(win->body, inmates,
                                     getLength(inmates));
-                            }
-                            else {
-                                mvwprintw(win->footer, 0, 40,
-                                    "INSUFICIENT FUNDS");
                             }
                             break;
                         }
@@ -291,10 +267,6 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                                 updateQueue(win->body, inmates,
                                     getLength(inmates));
                             }
-                            else {
-                                mvwprintw(win->footer, 0, 40,
-                                    "INSUFICIENT FUNDS");
-                            }
                             break;
                         }
                     }
@@ -309,10 +281,6 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
                                 enqueue(inmates, inmate);
                                 updateQueue(win->body, inmates,
                                     getLength(inmates));
-                            }
-                            else {
-                                mvwprintw(win->footer, 0, 40,
-                                    "INSUFICIENT FUNDS");
                             }
                             break;
                         }
@@ -333,12 +301,8 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
             updateQueue(win->body, inmates, getLength(inmates));
         }
 
-        else if (input == '\b' || input == 127 || input == 8) {
-            mvwprintw(win->footer, 0, 30, "Please select at least one units");
-        }
 
         if (input == '\n' && getLength(inmates) == 0) {
-            mvwprintw(win->footer, 0, 30, "Please select at least one unit");
             input = ' ';
         }
 
@@ -347,12 +311,9 @@ void drawInmateSelection(struct Windows *win, struct Map *map,
         }
 
         if (getLength(inmates) >= 5) {
-            mvwprintw(win->footer, 0, 30, "Queue full");
-
         }
 
         if (map->repMax < 10) {
-            mvwprintw(win->footer, 0, 20, "INSUFICIENT FUNDS");
             wrefresh(win->footer);
         }
 
