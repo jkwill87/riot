@@ -240,12 +240,12 @@ struct Inmate *createInmate(enum InmateType type) {
             break;
 
         case SPEEDY:
-            unit->currentHealth = unit->maxHealth = 18;
+            unit->currentHealth = unit->maxHealth = 25;
             unit->rep = REP_SPEEDY;
             unit->rep = 20;
             unit->speed = 1;
             unit->maxSpeed = unit->speed;
-            unit->panic = 2;
+            unit->panic = 4;
             unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
