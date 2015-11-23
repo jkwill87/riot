@@ -20,6 +20,7 @@ int main(int argc, char **argv) {
             unitsMove(argv[2] ? argv[2] : NULL);
         else if (!strcmp(argv[i], "-color")) colorTest();
         else if (!strcmp(argv[i], "-colorDump")) colorDumpTest();
+        else if (!strcmp(argv[i], "-printCr")) printCoordinates((int)argv[2]);
         else if (!strcmp(argv[i], "-guardtest"))guardTest();
 //        else if (!strcmp(argv[i], "-logo")) logoTest();
         else if (!strcmp(argv[i], "-play")) unitsPlay(argv[2]);
