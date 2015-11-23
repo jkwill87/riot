@@ -201,11 +201,11 @@ struct Inmate *createInmate(enum InmateType type) {
             break;
 
         case BRUISER:
-            unit->currentHealth = unit->maxHealth = 16;
+            unit->currentHealth = unit->maxHealth = 28;
             unit->rep = REP_BRUISER;
-            unit->speed = 4;
+            unit->speed = 3;
             unit->maxSpeed = unit->speed;
-            unit->panic = 6;
+            unit->panic = 4;
             unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
@@ -240,12 +240,12 @@ struct Inmate *createInmate(enum InmateType type) {
             break;
 
         case SPEEDY:
-            unit->currentHealth = unit->maxHealth = 10;
+            unit->currentHealth = unit->maxHealth = 25;
             unit->rep = REP_SPEEDY;
             unit->rep = 20;
             unit->speed = 1;
             unit->maxSpeed = unit->speed;
-            unit->panic = 2;
+            unit->panic = 6;
             unit->doubleDamage = 0;
             unit->slowedCounter = 0;
             unit->sleepCounter = 0;
@@ -254,7 +254,7 @@ struct Inmate *createInmate(enum InmateType type) {
             break;
 
         case CUTIE:
-            unit->currentHealth = unit->maxHealth = 20;
+            unit->currentHealth = unit->maxHealth = 25;
             unit->rep = REP_CUTIE;
             unit->speed = 4;
             unit->maxSpeed = unit->speed;
@@ -323,9 +323,9 @@ struct Guard *createGuard(enum GuardType type) {
             break;
 
         case DOGS:
-            guard->damage = 2;
+            guard->damage = 1;
             guard->range = 3;
-            guard->cooldown = 10;
+            guard->cooldown = 3;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = AOE;
             guard->accuracy = 1;
@@ -333,8 +333,8 @@ struct Guard *createGuard(enum GuardType type) {
 
         case LUNCH:
             guard->damage = 0;
-            guard->range = 6;
-            guard->cooldown = 12;
+            guard->range = 3;
+            guard->cooldown = 10;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = AOE;
             guard->accuracy = 1;
@@ -342,17 +342,17 @@ struct Guard *createGuard(enum GuardType type) {
 
         case PSYCH:
             guard->damage = 0;
-            guard->range = 6;
-            guard->cooldown = 16;
+            guard->range = 3;
+            guard->cooldown = 7;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = PROX;
             guard->accuracy = 1;
             break;
 
         case SHARP:
-            guard->damage = 6;
+            guard->damage = 12;
             guard->range = 10;
-            guard->cooldown = 12;
+            guard->cooldown = 20;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = END;
             guard->accuracy = 1;
@@ -440,7 +440,7 @@ enum GameMode simulate(struct Windows *gameInterface, struct UnitList *guards,
                 removeUnit(&deployed, i);
             }
             /* Remove exited inmates from the board */
-            if (((struct Inmate *) inmate->unit)->reachedEnd) {
+            else if (((struct Inmate *) inmate->unit)->reachedEnd) {
                 if (((struct Inmate*) inmate->unit)->type == 'p')
                     winCondition=WIN;
                 map->panicCur += ((struct Inmate *) inmate->unit)->panic;
@@ -932,7 +932,7 @@ struct UnitList *getGuards(struct UnitList *guards, struct Map map) {
             if (isalpha(mapChar)) {
                 guard = createGuard(mapChar);
                 guard->position = position;
-                enqueue(guards, guard);
+                enqueue(guards, guard); 
             }
         }
     }
