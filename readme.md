@@ -48,7 +48,8 @@ RIOT! intends to switch the roles of a traditional tower defence game, placing t
 * (11/22/2015) Nerfed Level 7
 * (11/22/2015) Attorney HP lowered (30->26)
 * (11/22/2015) Lunatic panic generation lowered (8->6)
-
+* (11/22/2015) Speedy and Cutie HP buffed
+* (11/22/2015) Bruiser speed increased(4->3)
 ## Contributors
 
 * Jessy Williams
