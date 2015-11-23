@@ -755,6 +755,8 @@ char *getInmateName(char ch) {
             sprintf(returnString, "[d]octor(%d)",REP_DOCTOR);
             return returnString;
         default:
-            return "FAIL";
+//            strcpy(returnString,"FAIL");
+//            return returnString
+            quit("FAIL");
     }
 }
