@@ -316,7 +316,7 @@ struct Guard *createGuard(enum GuardType type) {
         case GUARD:
             guard->damage = 5;
             guard->range = 2;
-            guard->cooldown = 4;
+            guard->cooldown = 6;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = PROX;
             guard->accuracy = 1;
@@ -343,7 +343,7 @@ struct Guard *createGuard(enum GuardType type) {
         case PSYCH:
             guard->damage = 0;
             guard->range = 6;
-            guard->cooldown = 12;
+            guard->cooldown = 16;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = PROX;
             guard->accuracy = 1;
@@ -352,7 +352,7 @@ struct Guard *createGuard(enum GuardType type) {
         case SHARP:
             guard->damage = 6;
             guard->range = 10;
-            guard->cooldown = 8;
+            guard->cooldown = 12;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = END;
             guard->accuracy = 1;
@@ -360,7 +360,7 @@ struct Guard *createGuard(enum GuardType type) {
 
         case WARDEN:
             guard->damage = 100;
-            guard->range = 4;
+            guard->range = 2;
             guard->cooldown = 60;
             guard->cooldownRemaining = 0;//guard->cooldown;
             guard->ai = PROX;
