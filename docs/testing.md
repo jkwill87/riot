@@ -15,6 +15,22 @@ if the game is run with an optional parameter for the assets folder and the give
 
 Valgrind was used to test for memory leaks.
 
+<<<<<<< HEAD
 RiotUI.c Testing
 
 int * getCoordinate(int position); is used to convert a single value integer to a pair of coordinates. This function is tested using the "printCoordinate" function. the test integer is passed in and is run through the "getCoordinate" function. The output x and y value of the function are then printed to the command line
+=======
+<<<<<<< HEAD
+Valgrind was used to test for memory leaks.
+
+RiotUI.c Testing
+
+A majority of testing on for the UI was verifying that certain characters and colors work.
+
+Finding colors to use:
+running './bin/test -colorDump', gets the max dimensions of the current terminal window and prints all foreground/background color combinations that will fit in the current specifications. Color beyond 15 for foreground created sporatic results. A similar effect was observed for background colors beyond 7. Also colors beyond this range varied drastically between machines and terminals. This forced us to limit our colors to the more narror range of colors we used. This also impacted earlier design descisions such as the colors we used to display health. The color dump test showed that there was no orange color, and thus health colors were changed from Green->Yellow->Orange->Red to Green->Yellow->Red->Purple. 
+
+running './bin/test -color', is a more targeted test of colors intended to be used in the program. This was less for functionality but more for gameplay purposes to make sure all color combinations were both legible and not overly distracting. 
+=======
+>>>>>>> 9c8e58936b78371e95f9dd354f77352e4539589d
+>>>>>>> b726855fd60eadb0ae901a753d27fabeff1111db
