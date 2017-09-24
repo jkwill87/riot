@@ -1,15 +1,15 @@
 # Information
 
 * **Name**: RIOT!
-* **Class**: CIS3250
+* **Class**: CIS3250 @ University of Guelph 
 * **Instructor**: David McCaughan
-* **Version**: 0.1
+* **Version**: 1.0
 * **Date**: November 20, 2015
 
 
 ## Game Overview
 
-:hammer:RIOT! is a reverse tower defence game set in a prison theme.
+RIOT! is a reverse tower defence game set in a prison theme.
 
 It is a turn-based strategy game where the player is tasked with breaking out of correctional facilities by recruiting and deploying waves of inmates against statically positioned guards with the intention of generating panic and making their escape.
 
@@ -47,19 +47,6 @@ The map files must start at 0 and continue progressively, and have a .riot exten
 
 If the assets is missing, an error will occur without running the game.
 
-
-## Changelog
-
-* (11/18/2015) Unit speeds changed from random values to powers of 2 (1,2,4,8..)
-* (11/20/2015) Breaking down doors reduced from 5 ticks to 4 ticks
-* (11/22/2015) Nerfed Level 7
-* (11/22/2015) Attorney HP lowered (30->26)
-* (11/22/2015) Lunatic panic generation lowered (8->6)
-* (11/22/2015) Speedy and Cutie HP buffed
-* (11/22/2015) Bruiser speed increased(4->3)
-* (11/22/2015) Sharpshooter damage and cooldown increased
-* (11/22/2015) Dog damage decreased and cooldown decreased
-* (11/22/2015) Nerfed Level 3
 
 ## Contributors
 
